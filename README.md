@@ -1,4 +1,4 @@
-# Item Management (ITM) - MVP
+# In The Moment (ITM) - MVP
 
 This README provides a guide to setup and run the Item Management (ITM) application.
 
