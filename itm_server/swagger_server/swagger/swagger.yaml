@@ -1,0 +1,647 @@
+openapi: 3.0.3
+info:
+  title: ITM TA3 MVP API
+  description: |-
+    This is the specification of a proposed TA3 API for the In The Moment (ITM) Minimum Viable Product (MVP).
+
+    It is based on the OpenAPI 3.0 specification.
+
+    Some objects and operations are not necessarily planned for the MVP, but are currently present for fostering discussion.
+
+    The API is currently in an early/draft state, even for an MVP.
+  version: 0.0.2
+servers:
+- url: /
+paths:
+  /scenario/start:
+    get:
+      summary: Start a new scenario
+      description: "Start a new scenario with the specified username, returning a\
+        \ Scenario object and unique id"
+      operationId: start_scenario
+      parameters:
+      - name: username
+        in: query
+        description: A self-assigned user name.  Can add authentication later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        "418":
+          description: The server is not ready to start a scenario; see returned reason.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /scenario/getState:
+    get:
+      summary: Retrieve scenario state
+      description: Retrieve state of the scenario with the specified id
+      operationId: get_scenario_state
+      parameters:
+      - name: scenario_id
+        in: query
+        description: The ID of the scenario for which to retrieve status
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioState'
+        "400":
+          description: Invalid scenario ID supplied
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /scenario/probe:
+    get:
+      summary: Request the next probe
+      description: Request the next probe of the scenario with the specified id
+      operationId: get_probe
+      parameters:
+      - name: scenario_id
+        in: query
+        description: The ID of the scenario for which to request a probe
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Probe'
+        "400":
+          description: Invalid scenario ID supplied
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    post:
+      summary: Respond to a probe
+      description: Respond to the specified probe with the specified patient_id (decision)
+        and optional explanation
+      operationId: respond_to_probe
+      parameters:
+      - name: probe_id
+        in: query
+        description: The ID of the probe to which to respond
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: patient_id
+        in: query
+        description: The ID of the patient to treat
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: explanation
+        in: query
+        description: An explanation of the response to the probe
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioState'
+        "400":
+          description: Invalid probe ID supplied
+        "404":
+          description: Patient not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patient/getVitals:
+    get:
+      summary: Retrieve all patient vital signs
+      description: Retrieve all vital signs of the specified patient in the specified
+        scenario.  May not need this for MVP.
+      operationId: get_patient_vitals
+      parameters:
+      - name: scenario_id
+        in: query
+        description: The ID of the scenario for which to request patient vitals
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: patient_id
+        in: query
+        description: The ID of the patient to query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vitals'
+        "400":
+          description: Invalid scenario ID supplied
+        "404":
+          description: Patient not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patient/getHeartRate:
+    get:
+      summary: Retrieve patient heart rate
+      description: "This is just here to discuss whether we will someday have/need\
+        \ this level of granularity, probably not for MVP"
+      operationId: get_patient_heart_rate
+      parameters:
+      - name: scenario_id
+        in: query
+        description: The ID of the scenario containing the specified patient
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: patient_id
+        in: query
+        description: The ID of the patient to for which to request heart rate
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: integer
+                format: int32
+                x-content-type: text/plain
+        "400":
+          description: Invalid scenario ID supplied
+        "404":
+          description: Patient not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    Scenario:
+      type: object
+      properties:
+        id:
+          type: string
+          description: a unique id for the scenario
+        name:
+          type: string
+          description: the scenario name
+          example: MVP small unit triage
+        description:
+          type: string
+          description: a plain text natural language description of the scenario
+        startTime:
+          type: string
+          description: "the wall clock local start time of the scenario, expressed\
+            \ as hh:mm"
+          example: 14:02
+        environment:
+          $ref: '#/components/schemas/Environment'
+        patients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Patient'
+        medical_supplies:
+          type: array
+          items:
+            $ref: '#/components/schemas/MedicalSupply'
+        triage_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TriageCategory'
+      example:
+        environment:
+          threat_level: 0
+          noise_ambient: 0.5
+          visibility: 0.5
+          weather: sunny
+          location: inside a subway station
+          noise_peak: 0.8
+        patients:
+        - assessed: true
+          injuries:
+          - name: bicep puncture
+            location: right arm
+          - name: bicep puncture
+            location: right arm
+          sex: female
+          name: Mary
+          id: id
+          tag: delayed
+          age: 32
+          vitals:
+            respiratory_rate: 40
+            heart_rate: 150
+            blood_pressure: 180/110
+            oxygen_level: 95
+          mental_status: calm
+        - assessed: true
+          injuries:
+          - name: bicep puncture
+            location: right arm
+          - name: bicep puncture
+            location: right arm
+          sex: female
+          name: Mary
+          id: id
+          tag: delayed
+          age: 32
+          vitals:
+            respiratory_rate: 40
+            heart_rate: 150
+            blood_pressure: 180/110
+            oxygen_level: 95
+          mental_status: calm
+        name: MVP small unit triage
+        description: description
+        startTime: 14:02
+        id: id
+        medical_supplies:
+        - quantity: 4
+          name: gauze
+          description: "thin cotton fabric suitable for cleansing, packing, scrubbing,\
+            \ covering, and securing a variety of wounds"
+        - quantity: 4
+          name: gauze
+          description: "thin cotton fabric suitable for cleansing, packing, scrubbing,\
+            \ covering, and securing a variety of wounds"
+        triage_categories:
+        - criteria: criteria
+          color_tag: minimal
+          description: description
+        - criteria: criteria
+          color_tag: minimal
+          description: description
+    Environment:
+      type: object
+      properties:
+        weather:
+          type: string
+          description: a text description of local weather conditions
+          example: sunny
+        location:
+          type: string
+          description: a general natural language description of where the scenario
+            takes place
+          example: inside a subway station
+        visibility:
+          type: number
+          description: an numeric indicator (0-1) of current visibility conditions;
+            lower is darker
+          example: 0.5
+        noise_ambient:
+          type: number
+          description: an numeric indicator (0-1) of ambient noise at the scenario
+            location; higher is louder
+          example: 0.5
+        noise_peak:
+          type: number
+          description: an numeric indicator (0-1) of peak noise at the scenario location;
+            higher is louder
+          example: 0.8
+        threat_level:
+          type: number
+          description: an numeric indicator (0-1) of enemy threat level at the scenario
+            location; higher is more dangerous
+          example: 0
+      description: an encapsulation of environmental factors at the site
+      example:
+        threat_level: 0
+        noise_ambient: 0.5
+        visibility: 0.5
+        weather: sunny
+        location: inside a subway station
+        noise_peak: 0.8
+    ScenarioState:
+      type: object
+      properties:
+        id:
+          type: string
+          description: a unique id for the scenario
+        name:
+          type: string
+          description: the scenario name
+          example: MVP small unit triage
+        elapsedTime:
+          type: number
+          description: the elapsed time (in minutes) since the scenario started
+          example: 5.2
+        patients:
+          type: array
+          description: the list of patients in the scenario
+          items:
+            $ref: '#/components/schemas/Patient'
+        medical_supplies:
+          type: array
+          description: a list of medical supplies available to the medic
+          items:
+            $ref: '#/components/schemas/MedicalSupply'
+      example:
+        patients:
+        - assessed: true
+          injuries:
+          - name: bicep puncture
+            location: right arm
+          - name: bicep puncture
+            location: right arm
+          sex: female
+          name: Mary
+          id: id
+          tag: delayed
+          age: 32
+          vitals:
+            respiratory_rate: 40
+            heart_rate: 150
+            blood_pressure: 180/110
+            oxygen_level: 95
+          mental_status: calm
+        - assessed: true
+          injuries:
+          - name: bicep puncture
+            location: right arm
+          - name: bicep puncture
+            location: right arm
+          sex: female
+          name: Mary
+          id: id
+          tag: delayed
+          age: 32
+          vitals:
+            respiratory_rate: 40
+            heart_rate: 150
+            blood_pressure: 180/110
+            oxygen_level: 95
+          mental_status: calm
+        name: MVP small unit triage
+        id: id
+        elapsedTime: 5.2
+        medical_supplies:
+        - quantity: 4
+          name: gauze
+          description: "thin cotton fabric suitable for cleansing, packing, scrubbing,\
+            \ covering, and securing a variety of wounds"
+        - quantity: 4
+          name: gauze
+          description: "thin cotton fabric suitable for cleansing, packing, scrubbing,\
+            \ covering, and securing a variety of wounds"
+    Probe:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "an id for the probe, unique within the scenario"
+        question:
+          type: string
+          description: a plain text natural language question for the decision-maker
+        patient_ids:
+          type: array
+          description: the list of valid patient ids for the decision-maker to choose
+            among
+          example:
+          - "1234"
+          - "5678"
+          items:
+            type: string
+      example:
+        question: question
+        patient_ids:
+        - "1234"
+        - "5678"
+        id: id
+    Patient:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "the patient id, having scenario scope"
+        name:
+          type: string
+          description: the name of the patient
+          example: Mary
+        age:
+          type: integer
+          description: the age of the patient
+          format: int32
+          example: 32
+        sex:
+          type: string
+          description: "the sex of the patient, or unknown"
+          example: female
+          enum:
+          - male
+          - female
+          - unknown
+        injuries:
+          type: array
+          description: an array of patient injuries
+          items:
+            $ref: '#/components/schemas/Injury'
+        vitals:
+          $ref: '#/components/schemas/Vitals'
+        mental_status:
+          type: string
+          description: mood and apparent mental state
+          example: calm
+          enum:
+          - calm
+          - confused
+          - upset
+          - agony
+          - unresponsive
+        assessed:
+          type: boolean
+          description: whether or not this patient has been assessed in the current
+            scenario
+        tag:
+          type: string
+          description: "the tag assigned to this patient, or none if untagged"
+          example: delayed
+          enum:
+          - none
+          - minimal
+          - delayed
+          - immediate
+          - expectant
+          - deceased
+      example:
+        assessed: true
+        injuries:
+        - name: bicep puncture
+          location: right arm
+        - name: bicep puncture
+          location: right arm
+        sex: female
+        name: Mary
+        id: id
+        tag: delayed
+        age: 32
+        vitals:
+          respiratory_rate: 40
+          heart_rate: 150
+          blood_pressure: 180/110
+          oxygen_level: 95
+        mental_status: calm
+    Injury:
+      type: object
+      properties:
+        name:
+          type: string
+          description: a brief label for the injury
+          example: bicep puncture
+        location:
+          type: string
+          description: the injury location on the patient's body
+          example: right arm
+      description: an injury on a patient. This could potentially use a controlled
+        vocabulary
+      example:
+        name: bicep puncture
+        location: right arm
+    Vitals:
+      type: object
+      properties:
+        heart_rate:
+          type: integer
+          description: heart rate in beats per minute
+          format: int16
+          example: 150
+        blood_pressure:
+          type: string
+          description: "blood pressure in systolic over diastolic, in mmHg"
+          example: 180/110
+        respiratory_rate:
+          type: integer
+          description: respiratory rate in breaths/minute
+          format: int16
+          example: 40
+        oxygen_level:
+          type: integer
+          description: Oxygen saturation level (Sp02%)
+          format: int16
+          example: 95
+      description: vital levels for a patient
+      example:
+        respiratory_rate: 40
+        heart_rate: 150
+        blood_pressure: 180/110
+        oxygen_level: 95
+    TriageCategory:
+      type: object
+      properties:
+        color_tag:
+          type: string
+          example: minimal
+          enum:
+          - minimal
+          - delayed
+          - immediate
+          - expectant
+          - deceased
+        description:
+          type: string
+          description: a one-line description of the color_tag category
+        criteria:
+          type: string
+          description: detailed criteria for the color_tag category
+      description: The type of supported triage categories for this scenario
+      example:
+        criteria: criteria
+        color_tag: minimal
+        description: description
+    MedicalSupply:
+      type: object
+      properties:
+        name:
+          type: string
+          description: a short label for the item
+          example: gauze
+        description:
+          type: string
+          description: a brief natural language description of the item
+          example: "thin cotton fabric suitable for cleansing, packing, scrubbing,\
+            \ covering, and securing a variety of wounds"
+        quantity:
+          type: integer
+          description: the number of these items available to the medic at the present
+            time
+          format: int32
+          example: 4
+      description: an encapsulation of medical supplies available to the medic
+      example:
+        quantity: 4
+        name: gauze
+        description: "thin cotton fabric suitable for cleansing, packing, scrubbing,\
+          \ covering, and securing a variety of wounds"
+

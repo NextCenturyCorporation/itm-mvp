@@ -1,0 +1,42 @@
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# IDE or editor-specific files
+.vscode/
+.idea/
+*.sublime*
+*.swp
+*.swo
+*.pyc
+
+# Logs and output files
+*.log
+*.txt
+*.out
+
+# System and environment-specific files
+*.env
+.env
+.env.*
+venv/
+
+# Package and dependency files
+*.egg-info/
+dist/
+build/
+
+# Generated files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Miscellaneous files
+.DS_Store
+Thumbs.db
