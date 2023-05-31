@@ -1,7 +1,7 @@
-from itm import ITMScenarioRunner
+from itm import ITMHumanScenarioRunner
 
 def main():
-    runner = ITMScenarioRunner()
+    runner = ITMHumanScenarioRunner()
     runner.run()
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ pip install -r requirements.txt
 After the installation is complete, you can start the server. From the `itm_server` directory, start the server by running:
 
 ```
-python -m swagger_server
+python3 -m swagger_server
 ```
 
 
@@ -45,7 +45,7 @@ python -m swagger_server
 To interact with the server, you will need to run the client. Please ensure that the server is running before you start the client. Open a new terminal, activate your virtual environment and inside the `itm_client` directory run:
 
 ```
-python itm_human_input.py
+python3 itm_human_input.py
 ```
 
 
