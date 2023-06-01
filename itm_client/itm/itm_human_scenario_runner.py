@@ -19,12 +19,16 @@ class ITMHumanScenarioRunner(ScenarioRunner):
 
 
     def run(self):
-        while self.session_active:
+        temp_username = self.username
+        scene_type = input(f"Use a randomly generated or pre-made yaml scene (r/y): ")
+        if scene_type == 'r':
+            temp_username += "_random"
 
+        while self.session_active:
             command_1 = input(f"Enter a Command from the following options {[command_option.value for command_option in CommandOption]}: ").lower()
 
             if command_1 == CommandOption.START.value:
-                response: Scenario = self.itm.start_scenario("Test")
+                response: Scenario = self.itm.start_scenario(temp_username)
                 self.scenario_id = response.id
                 self.scenario = response
                 print(response)

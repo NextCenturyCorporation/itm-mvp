@@ -6,6 +6,8 @@ from typing import List
 from swagger_server.models.scenario import Scenario
 from swagger_server.models.probe import Probe
 from swagger_server.models.patient import Patient
+from swagger_server.models.injury import Injury
+from swagger_server.models.vitals import Vitals
 from swagger_server.models.scenario_state import ScenarioState
 
 @dataclass
@@ -52,15 +54,35 @@ class ITMProbeSystem:
         question += description
         for patient in self.scenario.patients:
             patient_question = (
-                f'Patient {patient.id} is a {patient.age} '
+                f'{patient.id} is a {patient.age} '
                 f'year old {patient.sex} named {patient.name}. '
-                f'Their injuries are {patient.injuries}, '
-                f'vitals are {patient.vitals}, '
-                f'and mental status is {patient.mental_status}. '
+                f'{self._generate_question_from_injuries(patient.injuries)} '
+                f'{self._generate_question_from_vitals(patient.vitals)} '
+                f'Their mental status is {patient.mental_status}. '
             )
             question += patient_question
         
-        question += 'Choose a patient to treat. Specify by patient ID." \n'
+        question += 'Choose a patient to treat. Specify by patient ID.'
+        return question
+
+    def _generate_question_from_injuries(self, injuries: List[Injury]) -> str:
+        question = 'Their injuries are '
+        for i, injury in enumerate(injuries):
+            if i == len(injuries) - 1:
+                question += (
+                    f"and {injury.location} {injury.name}."
+                )
+            else:
+                question += (
+                    f"{injury.location} {injury.name}, "
+                )
+        return question
+
+    def _generate_question_from_vitals(self, vitals: dict) -> str:
+        vitals_items = vitals.to_dict().items()
+        question = ''
+        for key, value in vitals_items:
+            question += f"Their {key} is {value}. "
         return question
     
     def respond_to_probe(

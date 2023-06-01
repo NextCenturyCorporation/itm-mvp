@@ -1,11 +1,12 @@
-import time
 import uuid
 import random
+from typing import List
 
 from swagger_server.models.scenario import Scenario
 from swagger_server.models.environment import Environment
 from swagger_server.models.patient import Patient
 from swagger_server.models.vitals import Vitals
+from swagger_server.models.injury import Injury
 from swagger_server.models.medical_supply import MedicalSupply
 from swagger_server.models.triage_category import TriageCategory
 
@@ -29,13 +30,16 @@ FEMALE_FIRST_NAMES = [
 ]
 
 INJURIES = [
-    'Bilateral leg fractures', 'Chest gunshot wound', 'Foot crush injury',
-    'Groin trauma', 'Hand laceration', 'Head trauma', 'Left ear damage',
-    'Left shoulder dislocation', 'Neck fracture',
-    'Penetrating abdominal trauma', 'Pelvic injury',
-    'Right arm gunshot wound', 'Right eye injury', 'Right leg amputation',
-    'Right lung puncture', 'Severe burns', 'Spinal cord injury',
-    'Traumatic brain injury'
+    'fracture', 'gunshot wound', 'stab', 'trauma', 'laceration',
+    'amputation', 'burn'
+]
+
+INJURY_LOCATIONS = [
+    'head', 'neck', 'spine', 'spinal cord', 'left chest', 'right chest',
+    'left shoulder', 'right shoulder', 'left bicep', 'right bicep'
+    'left forearm', 'right forearm', 'left hand', 'right hand', 'abdominal', 
+    'left thigh', 'right thigh', 'left calf', 'right calf', 'left foot',
+    'right foot', 'pelvis'
 ]
 
 MALE_FIRST_NAMES = [
@@ -89,7 +93,7 @@ class ITMScenarioGenerator:
     def generate_random_id(self):
         return str(uuid.uuid4())
 
-    def generate_scenario(self, total_patients=2):
+    def generate_scenario(self, total_patients=2) -> Scenario:
         self.scenario_id = "scenario_" + self.generate_random_id()
         return Scenario(
             id=self.scenario_id,
@@ -102,14 +106,13 @@ class ITMScenarioGenerator:
             triage_categories=self._generate_triage_categories()
         )
 
-    def _generate_patient(self):
+    def _generate_patient(self) -> Patient:
         sex = random.choice(SEX)
         first_name = random.choice(MALE_FIRST_NAMES) if sex == 'male' else \
                      random.choice(FEMALE_FIRST_NAMES)
         last_name = random.choice(LAST_NAMES)
         age = random.randint(18, 80)
-        num_injuries = random.randint(1, 5)
-        injuries = random.sample(INJURIES, num_injuries)
+        injuries = self._generate_injuries()
         vitals = self._generate_vitals()
         patient_id = "patient_" + self.generate_random_id()
         name = f"{first_name} {last_name}"
@@ -127,7 +130,20 @@ class ITMScenarioGenerator:
         )
         return patient
 
-    def _generate_vitals(self):
+    def _generate_injuries(self) -> List[Injury]:
+        num_injuries = random.randint(1, 5)
+        injury_names = random.sample(INJURIES, num_injuries)
+        injury_locations = random.sample(INJURY_LOCATIONS, num_injuries)
+        injuries = []
+        for i in range(num_injuries):
+            injury = Injury(
+                name=injury_names[i],
+                location=injury_locations[i]
+            )
+            injuries.append(injury)
+        return injuries
+
+    def _generate_vitals(self) -> Vitals:
         heart_rate = random.randint(0, 160)
         systolic_pressure = str(random.randint(90, 140))
         diastolic_pressure = str(random.randint(60, 90))
@@ -142,7 +158,7 @@ class ITMScenarioGenerator:
         )
         return vitals
 
-    def _generate_medical_supplies(self):
+    def _generate_medical_supplies(self) -> List[MedicalSupply]:
         number_of_supplies = random.randint(1, len(MEDICAL_SUPPLIES))
         medical_supplies = random.sample(MEDICAL_SUPPLIES, number_of_supplies)
         inventory = [
@@ -151,7 +167,7 @@ class ITMScenarioGenerator:
         ]
         return inventory
     
-    def generate_environment(self):
+    def generate_environment(self) -> Environment:
         weather = random.choice(WEATHER_TYPES)
         location = random.choice(LOCATIONS)
         visibility = 0.5
@@ -168,7 +184,7 @@ class ITMScenarioGenerator:
         )
         return environment
 
-    def _generate_triage_categories(self):
+    def _generate_triage_categories(self) -> List[TriageCategory]:
         return [
             TriageCategory(color_tag=tc[0], description=tc[1], criteria=tc[2])
             for tc in TRIAGE_CATEGORIES

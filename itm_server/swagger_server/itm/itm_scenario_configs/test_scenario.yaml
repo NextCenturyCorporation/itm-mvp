@@ -1,0 +1,68 @@
+name: Test Scenario
+description: Bomb Explosion
+environment:
+  weather: cloudy
+  location: city
+  visibility: 0.5
+  noise_ambient: 0.5
+  noise_peak: 0.5
+  threat_level: 0.5
+patients:
+  - name: John Smith
+    age: 23
+    sex: male
+    mental_status: unresponsive
+    # TODO make this reference somehwere that this is the correct tag for this patient
+    tag: immediate
+    injuries:
+      - location: head
+        name: trauma
+      - location: chest
+        name: burn
+      - location: left leg
+        name: laceration
+    vitals:
+      heart_rate: 20
+      blood_pressure: 160/40
+      respiratory_rate: 30
+      oxygen_level: 40
+    # TODO make these an int or a list that can be different values over time: [1, 5, 15, 30]
+    vitals_changes_over_time:
+      heart_rate_change: 2
+      blood_pressure_change_systolic: 3
+      blood_pressure_change_diastolic: -4
+      respiratory_rate_change: 5
+      oxygen_level_change: -6
+    treatements_needed:
+      - gauze
+  - name: Sara Jones
+    age: 45
+    sex: female
+    mental_status: calm
+    # TODO make this reference somehwere that this is the correct tag for this patient
+    tag: delayed
+    injuries:
+      - location: right hand
+        name: burn
+    vitals:
+      heart_rate: 30
+      blood_pressure: 120/80
+      respiratory_rate: 20
+      oxygen_level: 60
+    # TODO make these an int or a list that can be different values over time: [1, 5, 15, 30]
+    vitals_changes_over_time:
+      heart_rate_change: 0
+      blood_pressure_change_systolic: 0
+      blood_pressure_change_diastolic: 0
+      respiratory_rate_change: 0
+      oxygen_level_change: 0
+    treatements_needed:
+      - gauze
+medical_supplies:
+  - name: gauze
+    description: used for wound dressing and absorbing blood
+    quantity: 10
+  - name: tourniquet
+    description: used to control severe bleeding by constricting blood flow
+    quantity: 5
+  
