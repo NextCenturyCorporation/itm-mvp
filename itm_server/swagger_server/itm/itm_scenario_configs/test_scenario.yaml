@@ -12,7 +12,6 @@ patients:
     age: 23
     sex: male
     mental_status: unresponsive
-    # TODO make this reference somehwere that this is the correct tag for this patient
     tag: immediate
     injuries:
       - location: head
@@ -39,7 +38,6 @@ patients:
     age: 45
     sex: female
     mental_status: calm
-    # TODO make this reference somehwere that this is the correct tag for this patient
     tag: delayed
     injuries:
       - location: right hand
@@ -62,7 +60,8 @@ medical_supplies:
   - name: gauze
     description: used for wound dressing and absorbing blood
     quantity: 10
+    time_to_apply_in_minutes: 1
   - name: tourniquet
     description: used to control severe bleeding by constricting blood flow
     quantity: 5
-  
+    time_to_apply_in_minutes: 2.5

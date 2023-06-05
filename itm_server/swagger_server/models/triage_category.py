@@ -14,28 +14,28 @@ class TriageCategory(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, color_tag: str=None, description: str=None, criteria: str=None):  # noqa: E501
+    def __init__(self, tag_label: str=None, description: str=None, criteria: str=None):  # noqa: E501
         """TriageCategory - a model defined in Swagger
 
-        :param color_tag: The color_tag of this TriageCategory.  # noqa: E501
-        :type color_tag: str
+        :param tag_label: The tag_label of this TriageCategory.  # noqa: E501
+        :type tag_label: str
         :param description: The description of this TriageCategory.  # noqa: E501
         :type description: str
         :param criteria: The criteria of this TriageCategory.  # noqa: E501
         :type criteria: str
         """
         self.swagger_types = {
-            'color_tag': str,
+            'tag_label': str,
             'description': str,
             'criteria': str
         }
 
         self.attribute_map = {
-            'color_tag': 'color_tag',
+            'tag_label': 'tagLabel',
             'description': 'description',
             'criteria': 'criteria'
         }
-        self._color_tag = color_tag
+        self._tag_label = tag_label
         self._description = description
         self._criteria = criteria
 
@@ -51,37 +51,37 @@ class TriageCategory(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def color_tag(self) -> str:
-        """Gets the color_tag of this TriageCategory.
+    def tag_label(self) -> str:
+        """Gets the tag_label of this TriageCategory.
 
 
-        :return: The color_tag of this TriageCategory.
+        :return: The tag_label of this TriageCategory.
         :rtype: str
         """
-        return self._color_tag
+        return self._tag_label
 
-    @color_tag.setter
-    def color_tag(self, color_tag: str):
-        """Sets the color_tag of this TriageCategory.
+    @tag_label.setter
+    def tag_label(self, tag_label: str):
+        """Sets the tag_label of this TriageCategory.
 
 
-        :param color_tag: The color_tag of this TriageCategory.
-        :type color_tag: str
+        :param tag_label: The tag_label of this TriageCategory.
+        :type tag_label: str
         """
         allowed_values = ["minimal", "delayed", "immediate", "expectant", "deceased"]  # noqa: E501
-        if color_tag not in allowed_values:
+        if tag_label not in allowed_values:
             raise ValueError(
-                "Invalid value for `color_tag` ({0}), must be one of {1}"
-                .format(color_tag, allowed_values)
+                "Invalid value for `tag_label` ({0}), must be one of {1}"
+                .format(tag_label, allowed_values)
             )
 
-        self._color_tag = color_tag
+        self._tag_label = tag_label
 
     @property
     def description(self) -> str:
         """Gets the description of this TriageCategory.
 
-        a one-line description of the color_tag category  # noqa: E501
+        a one-line description of the tagLabel category  # noqa: E501
 
         :return: The description of this TriageCategory.
         :rtype: str
@@ -92,7 +92,7 @@ class TriageCategory(Model):
     def description(self, description: str):
         """Sets the description of this TriageCategory.
 
-        a one-line description of the color_tag category  # noqa: E501
+        a one-line description of the tagLabel category  # noqa: E501
 
         :param description: The description of this TriageCategory.
         :type description: str
@@ -104,7 +104,7 @@ class TriageCategory(Model):
     def criteria(self) -> str:
         """Gets the criteria of this TriageCategory.
 
-        detailed criteria for the color_tag category  # noqa: E501
+        detailed criteria for the tagLabel category  # noqa: E501
 
         :return: The criteria of this TriageCategory.
         :rtype: str
@@ -115,7 +115,7 @@ class TriageCategory(Model):
     def criteria(self, criteria: str):
         """Sets the criteria of this TriageCategory.
 
-        detailed criteria for the color_tag category  # noqa: E501
+        detailed criteria for the tagLabel category  # noqa: E501
 
         :param criteria: The criteria of this TriageCategory.
         :type criteria: str

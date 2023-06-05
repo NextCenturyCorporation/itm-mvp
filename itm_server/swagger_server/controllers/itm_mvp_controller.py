@@ -111,3 +111,24 @@ def start_scenario(username):  # noqa: E501
     return itm_session.start_scenario(
         username=username
     )
+
+
+def tag_patient(scenario_id, patient_id, tag):  # noqa: E501
+    """Tag a patient with a triage category
+
+    Apply a triage tag to the specified patient with the specified tag # noqa: E501
+
+    :param scenario_id: The ID of the scenario containing the specified patient
+    :type scenario_id: str
+    :param patient_id: The ID of the patient to tag
+    :type patient_id: str
+    :param tag: The tag to apply to the patient, chosen from triage categories
+    :type tag: str
+
+    :rtype: str
+    """
+    return itm_session.tag_patient(
+        scenario_id=scenario_id,
+        patient_id=patient_id,
+        tag=tag
+    )

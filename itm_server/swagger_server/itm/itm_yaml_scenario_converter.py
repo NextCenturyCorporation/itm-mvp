@@ -3,6 +3,7 @@ import uuid
 import yaml
 from typing import Tuple, List
 from .itm_patient_simulator import PatientSimulation
+from .itm_medical_supplies import ITMMedicalSupplies, MedicalSupplyDetails
 from swagger_server.models.environment import Environment
 from swagger_server.models.injury import Injury
 from swagger_server.models.medical_supply import MedicalSupply
@@ -26,8 +27,9 @@ class YAMLScenarioConverter:
             self._generate_patient_simulations(patient_data)
             for patient_data in self.yaml_data['patients']
         ]
+        medical_supply_details = ITMMedicalSupplies()
         medical_supplies = [
-            self._generate_medical_supply(supply_data)
+            self._generate_medical_supply(supply_data, medical_supply_details)
             for supply_data in self.yaml_data['medical_supplies']
         ]
         environment = self._generate_environment(
@@ -45,7 +47,7 @@ class YAMLScenarioConverter:
             triage_categories=[]
         )
 
-        return scenario, patient_simulations
+        return scenario, patient_simulations, medical_supply_details
 
     def _generate_patient(self, patient_data) -> Patient:
         """Generate a Patient instance from the YAML data."""
@@ -68,7 +70,7 @@ class YAMLScenarioConverter:
             vitals=vitals,
             mental_status=patient_data['mental_status'],
             assessed=False,
-            tag=patient_data['tag']
+            tag=None
         )
         return patient
 
@@ -94,13 +96,19 @@ class YAMLScenarioConverter:
         )
         return patient_simulation
 
-    def _generate_medical_supply(self, supply_data) -> MedicalSupply:
+    def _generate_medical_supply(self, supply_data, supply_details) -> MedicalSupply:
         """Generate a MedicalSupply instance from the YAML data."""
-        return MedicalSupply(
+        medical_supply = MedicalSupply(
             name=supply_data['name'],
             description=supply_data['description'],
             quantity=supply_data['quantity']
         )
+        supply_details.medical_supply_details[medical_supply.name] = \
+            MedicalSupplyDetails(
+                medical_supply=medical_supply,
+                time_to_apply=supply_data['time_to_apply_in_minutes']
+            )
+        return medical_supply
 
     def _generate_environment(self, environment_data) -> Environment:
         """Generate an Environment instance from the YAML data."""

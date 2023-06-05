@@ -11,6 +11,7 @@ from .itm_probe_system import ITMProbeSystem
 from .itm_patient_simulator import ITMPatientSimulator
 from .itm_yaml_scenario_converter import YAMLScenarioConverter
 from .itm_scenario_generator import ITMScenarioGenerator
+from .itm_medical_supplies import ITMMedicalSupplies
 
 
 class ITMScenarioSession:
@@ -21,9 +22,12 @@ class ITMScenarioSession:
         self.session_id = str(uuid.uuid4())
         self.username = ''
         self.time_started = 0
-        self.time_elapsed = 0
+        self.time_elapsed_realtime = 0
+        self.time_elapsed_scenario_time = 0
         self.formatted_start_time = None
         self.scenario: Scenario = None
+        self.scenario_complete = False
+        self.medical_supply_details = ITMMedicalSupplies()
         self.probe_system = ITMProbeSystem()
         self.patient_simulator = ITMPatientSimulator()
 
@@ -31,12 +35,12 @@ class ITMScenarioSession:
         """Generate a random UUID as a string."""
         return str(uuid.uuid4())
 
-    def get_elapsed_time(self) -> float:
+    def get_realtime_elapsed_time(self) -> float:
         """Return the elapsed time since the session started."""
         if self.time_started:
-            self.time_elapsed = time.time() - self.time_started
-        return round(self.time_elapsed, 2)
-
+            self.time_elapsed_realtime = time.time() - self.time_started
+        return round(self.time_elapsed_realtime, 2)
+    
     def check_scenario_id(self, scenario_id):
         """Check if the provided scenario ID matches the session's scenario ID."""
         # TODO change this
@@ -62,7 +66,6 @@ class ITMScenarioSession:
     def get_probe(self, scenario_id: str) -> Probe:
         """Get a probe from the probe system."""
         # Simulate time by updating all patient vital when asking for a probe
-        self.patient_simulator.update_vitals()
         self.check_scenario_id(scenario_id)
         probe = self.probe_system.generate_probe()
         return probe
@@ -73,9 +76,10 @@ class ITMScenarioSession:
         scenario_state = ScenarioState(
             id="state_" + self.generate_random_id(),
             name=self.scenario.name,
-            elapsed_time=self.get_elapsed_time(),
+            elapsed_time=self.time_elapsed_scenario_time,
             patients=self.scenario.patients,
-            medical_supplies=self.scenario.medical_supplies
+            medical_supplies=self.scenario.medical_supplies,
+            scenario_complete=self.scenario_complete
         )
         return scenario_state
 
@@ -87,8 +91,14 @@ class ITMScenarioSession:
         self.probe_system.respond_to_probe(
             probe_id=probe_id, patient_id=patient_id, explanation=explanation)
         # TODO change medical supply from explanation to something else
-        self.patient_simulator.treat_patient(
-            patient_id=patient_id, medical_supply=explanation)
+        time_elapsed_during_treatment = self.patient_simulator.treat_patient(
+            patient_id=patient_id,
+            medical_supply=explanation,
+            medical_supply_details=self.medical_supply_details
+        )
+        self.time_elapsed_scenario_time += time_elapsed_during_treatment
+        self.scenario_complete = all(
+            [patient.assessed for patient in self.scenario.patients])
         return self.get_scenario_state(self.scenario.id)
 
     def start_scenario(self, username: str) -> Scenario:
@@ -102,7 +112,8 @@ class ITMScenarioSession:
             yaml_path = "swagger_server/itm/itm_scenario_configs/"
             yaml_file = "test_scenario.yaml"
             yaml_converter = YAMLScenarioConverter(yaml_path + yaml_file)
-            self.scenario, patient_simulations = yaml_converter.generate_scenario_from_yaml()
+            self.scenario, patient_simulations, self.medical_supply_details = \
+                yaml_converter.generate_scenario_from_yaml()
             self.patient_simulator.setup_patients(self.scenario, patient_simulations)
 
         self.time_started = time.time()
@@ -113,3 +124,12 @@ class ITMScenarioSession:
         self.probe_system.scenario = self.scenario
 
         return self.scenario
+    
+    def tag_patient(self, scenario_id: str, patient_id: str, tag: str) -> str:
+        """Get the heart rate of a patient in the scenario."""
+        self.check_scenario_id(scenario_id)
+        patients: List[Patient] = self.scenario.patients
+        for patient in patients:
+            if patient.id == patient_id:
+                patient.tag = tag
+                return f"{patient.id} tagged as {tag}."

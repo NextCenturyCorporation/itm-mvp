@@ -12,18 +12,17 @@ from swagger_server.models.vitals import Vitals  # noqa: E501
 from swagger_server.test import BaseTestCase
 
 
-class TestDefaultController(BaseTestCase):
-    """DefaultController integration test stubs"""
+class TestItmMvpController(BaseTestCase):
+    """ItmMvpController integration test stubs"""
 
     def test_get_patient_heart_rate(self):
         """Test case for get_patient_heart_rate
 
         Retrieve patient heart rate
         """
-        query_string = [('scenario_id', 'scenario_id_example'),
-                        ('patient_id', 'patient_id_example')]
+        query_string = [('scenario_id', 'scenario_id_example')]
         response = self.client.open(
-            '/patient/getHeartRate',
+            '/patient/{patientId}/getHeartRate'.format(patient_id='patient_id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -34,10 +33,9 @@ class TestDefaultController(BaseTestCase):
 
         Retrieve all patient vital signs
         """
-        query_string = [('scenario_id', 'scenario_id_example'),
-                        ('patient_id', 'patient_id_example')]
+        query_string = [('scenario_id', 'scenario_id_example')]
         response = self.client.open(
-            '/patient/getVitals',
+            '/patient/{patientId}/getVitals'.format(patient_id='patient_id_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -61,11 +59,9 @@ class TestDefaultController(BaseTestCase):
 
         Retrieve scenario state
         """
-        query_string = [('scenario_id', 'scenario_id_example')]
         response = self.client.open(
-            '/scenario/getState',
-            method='GET',
-            query_string=query_string)
+            '/scenario/{scenarioId}/getState'.format(scenario_id='scenario_id_example'),
+            method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -93,6 +89,20 @@ class TestDefaultController(BaseTestCase):
         response = self.client.open(
             '/scenario/start',
             method='GET',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_tag_patient(self):
+        """Test case for tag_patient
+
+        Tag a patient with a triage category
+        """
+        query_string = [('scenario_id', 'scenario_id_example'),
+                        ('tag', 'tag_example')]
+        response = self.client.open(
+            '/patient/{patientId}/tag'.format(patient_id='patient_id_example'),
+            method='POST',
             query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))

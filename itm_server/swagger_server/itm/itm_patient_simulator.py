@@ -50,13 +50,18 @@ class ITMPatientSimulator:
 
             patient.patient.vitals = copy.deepcopy(patient.current_vitals)
 
-    def treat_patient(self, patient_id, medical_supply) -> None:
+    def treat_patient(self, patient_id, medical_supply, medical_supply_details) -> float:
         """Treat a patient with a given medical supply."""
         for patient in self.patient_simulations:
             if patient.patient.id == patient_id:
                 patient.is_stable = True
                 patient.treatments_applied.append(medical_supply)
-                break
+                for scenario_medical_supply in self.scenario.medical_supplies:
+                    if scenario_medical_supply.name == medical_supply:
+                        scenario_medical_supply.quantity -= 1
+                time_elapsed_during_treatement = \
+                    medical_supply_details.medical_supply_details[medical_supply].time_to_apply
+                return time_elapsed_during_treatement
 
     def setup_patients(self, scenario: Scenario,
                        patient_simulations: List[PatientSimulation]) -> None:

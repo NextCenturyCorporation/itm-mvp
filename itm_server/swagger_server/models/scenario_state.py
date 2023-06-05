@@ -16,7 +16,7 @@ class ScenarioState(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, elapsed_time: float=None, patients: List[Patient]=None, medical_supplies: List[MedicalSupply]=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, elapsed_time: float=None, scenario_complete: bool=None, patients: List[Patient]=None, medical_supplies: List[MedicalSupply]=None):  # noqa: E501
         """ScenarioState - a model defined in Swagger
 
         :param id: The id of this ScenarioState.  # noqa: E501
@@ -25,6 +25,8 @@ class ScenarioState(Model):
         :type name: str
         :param elapsed_time: The elapsed_time of this ScenarioState.  # noqa: E501
         :type elapsed_time: float
+        :param scenario_complete: The scenario_complete of this ScenarioState.  # noqa: E501
+        :type scenario_complete: bool
         :param patients: The patients of this ScenarioState.  # noqa: E501
         :type patients: List[Patient]
         :param medical_supplies: The medical_supplies of this ScenarioState.  # noqa: E501
@@ -34,6 +36,7 @@ class ScenarioState(Model):
             'id': str,
             'name': str,
             'elapsed_time': float,
+            'scenario_complete': bool,
             'patients': List[Patient],
             'medical_supplies': List[MedicalSupply]
         }
@@ -42,12 +45,14 @@ class ScenarioState(Model):
             'id': 'id',
             'name': 'name',
             'elapsed_time': 'elapsedTime',
+            'scenario_complete': 'scenario_complete',
             'patients': 'patients',
             'medical_supplies': 'medical_supplies'
         }
         self._id = id
         self._name = name
         self._elapsed_time = elapsed_time
+        self._scenario_complete = scenario_complete
         self._patients = patients
         self._medical_supplies = medical_supplies
 
@@ -130,6 +135,29 @@ class ScenarioState(Model):
         """
 
         self._elapsed_time = elapsed_time
+
+    @property
+    def scenario_complete(self) -> bool:
+        """Gets the scenario_complete of this ScenarioState.
+
+        set to true if the scenario is complete; subsequent calls to /scenario/probe will return an error code  # noqa: E501
+
+        :return: The scenario_complete of this ScenarioState.
+        :rtype: bool
+        """
+        return self._scenario_complete
+
+    @scenario_complete.setter
+    def scenario_complete(self, scenario_complete: bool):
+        """Sets the scenario_complete of this ScenarioState.
+
+        set to true if the scenario is complete; subsequent calls to /scenario/probe will return an error code  # noqa: E501
+
+        :param scenario_complete: The scenario_complete of this ScenarioState.
+        :type scenario_complete: bool
+        """
+
+        self._scenario_complete = scenario_complete
 
     @property
     def patients(self) -> List[Patient]:

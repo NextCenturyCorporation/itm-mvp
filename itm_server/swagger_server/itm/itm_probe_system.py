@@ -5,10 +5,7 @@ from datetime import datetime
 from typing import List
 from swagger_server.models.scenario import Scenario
 from swagger_server.models.probe import Probe
-from swagger_server.models.patient import Patient
 from swagger_server.models.injury import Injury
-from swagger_server.models.vitals import Vitals
-from swagger_server.models.scenario_state import ScenarioState
 
 @dataclass
 class ProbeObject:
@@ -53,13 +50,18 @@ class ITMProbeSystem:
         description = self.scenario.description + '. '
         question += description
         for patient in self.scenario.patients:
-            patient_question = (
-                f'{patient.id} is a {patient.age} '
-                f'year old {patient.sex} named {patient.name}. '
-                f'{self._generate_question_from_injuries(patient.injuries)} '
-                f'{self._generate_question_from_vitals(patient.vitals)} '
-                f'Their mental status is {patient.mental_status}. '
-            )
+            if patient.assessed:
+                patient_question = (
+                    f'{patient.id} has been assesed and tagged as {patient.tag}. '
+                )
+            else:
+                patient_question = (
+                    f'{patient.id} is a {patient.age} '
+                    f'year old {patient.sex} named {patient.name}. '
+                    f'{self._generate_question_from_injuries(patient.injuries)} '
+                    f'{self._generate_question_from_vitals(patient.vitals)} '
+                    f'Their mental status is {patient.mental_status}. '
+                )
             question += patient_question
         
         question += 'Choose a patient to treat. Specify by patient ID.'

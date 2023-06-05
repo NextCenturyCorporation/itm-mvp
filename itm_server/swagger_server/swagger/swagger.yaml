@@ -8,13 +8,18 @@ info:
 
     Some objects and operations are not necessarily planned for the MVP, but are currently present for fostering discussion.
 
-    The API is currently in an early/draft state, even for an MVP.
-  version: 0.0.2
+    The API is currently in an draft state, even in the context of an MVP.
+  version: 0.0.3
 servers:
 - url: /
+tags:
+- name: itm-mvp
+  description: Execution of the ITM MVP
 paths:
   /scenario/start:
     get:
+      tags:
+      - itm-mvp
       summary: Start a new scenario
       description: "Start a new scenario with the specified username, returning a\
         \ Scenario object and unique id"
@@ -49,19 +54,21 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.default_controller
-  /scenario/getState:
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
+  /scenario/{scenarioId}/getState:
     get:
+      tags:
+      - itm-mvp
       summary: Retrieve scenario state
       description: Retrieve state of the scenario with the specified id
       operationId: get_scenario_state
       parameters:
-      - name: scenario_id
-        in: query
+      - name: scenarioId
+        in: path
         description: The ID of the scenario for which to retrieve status
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: string
       responses:
@@ -80,9 +87,11 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
   /scenario/probe:
     get:
+      tags:
+      - itm-mvp
       summary: Request the next probe
       description: Request the next probe of the scenario with the specified id
       operationId: get_probe
@@ -111,8 +120,10 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
     post:
+      tags:
+      - itm-mvp
       summary: Respond to a probe
       description: Respond to the specified probe with the specified patient_id (decision)
         and optional explanation
@@ -160,9 +171,11 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.default_controller
-  /patient/getVitals:
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
+  /patient/{patientId}/getVitals:
     get:
+      tags:
+      - itm-mvp
       summary: Retrieve all patient vital signs
       description: Retrieve all vital signs of the specified patient in the specified
         scenario.  May not need this for MVP.
@@ -176,12 +189,12 @@ paths:
         explode: true
         schema:
           type: string
-      - name: patient_id
-        in: query
+      - name: patientId
+        in: path
         description: The ID of the patient to query
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: string
       responses:
@@ -202,9 +215,11 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.default_controller
-  /patient/getHeartRate:
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
+  /patient/{patientId}/getHeartRate:
     get:
+      tags:
+      - itm-mvp
       summary: Retrieve patient heart rate
       description: "This is just here to discuss whether we will someday have/need\
         \ this level of granularity, probably not for MVP"
@@ -218,12 +233,12 @@ paths:
         explode: true
         schema:
           type: string
-      - name: patient_id
-        in: query
+      - name: patientId
+        in: path
         description: The ID of the patient to for which to request heart rate
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: string
       responses:
@@ -246,7 +261,62 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.default_controller
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
+  /patient/{patientId}/tag:
+    post:
+      tags:
+      - itm-mvp
+      summary: Tag a patient with a triage category
+      description: Apply a triage tag to the specified patient with the specified
+        tag
+      operationId: tag_patient
+      parameters:
+      - name: scenario_id
+        in: query
+        description: The ID of the scenario containing the specified patient
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: patientId
+        in: path
+        description: The ID of the patient to tag
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: tag
+        in: query
+        description: "The tag to apply to the patient, chosen from triage categories"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: delayed
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "[patient_1234] tagged 'immediate'"
+                x-content-type: text/plain
+        "400":
+          description: Invalid scenario ID supplied
+        "404":
+          description: Patient not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_mvp_controller
 components:
   schemas:
     Scenario:
@@ -339,11 +409,11 @@ components:
             \ covering, and securing a variety of wounds"
         triage_categories:
         - criteria: criteria
-          color_tag: minimal
           description: description
+          tagLabel: minimal
         - criteria: criteria
-          color_tag: minimal
           description: description
+          tagLabel: minimal
     Environment:
       type: object
       properties:
@@ -398,6 +468,11 @@ components:
           type: number
           description: the elapsed time (in minutes) since the scenario started
           example: 5.2
+        scenario_complete:
+          type: boolean
+          description: set to true if the scenario is complete; subsequent calls to
+            /scenario/probe will return an error code
+          example: false
         patients:
           type: array
           description: the list of patients in the scenario
@@ -446,6 +521,7 @@ components:
           mental_status: calm
         name: MVP small unit triage
         id: id
+        scenario_complete: false
         elapsedTime: 5.2
         medical_supplies:
         - quantity: 4
@@ -600,7 +676,7 @@ components:
     TriageCategory:
       type: object
       properties:
-        color_tag:
+        tagLabel:
           type: string
           example: minimal
           enum:
@@ -611,15 +687,15 @@ components:
           - deceased
         description:
           type: string
-          description: a one-line description of the color_tag category
+          description: a one-line description of the tagLabel category
         criteria:
           type: string
-          description: detailed criteria for the color_tag category
+          description: detailed criteria for the tagLabel category
       description: The type of supported triage categories for this scenario
       example:
         criteria: criteria
-        color_tag: minimal
         description: description
+        tagLabel: minimal
     MedicalSupply:
       type: object
       properties:
