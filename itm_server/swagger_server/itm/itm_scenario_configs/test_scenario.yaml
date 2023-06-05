@@ -34,6 +34,8 @@ patients:
       oxygen_level_change: -6
     treatements_needed:
       - gauze
+    deceased_after_minutes:
+      10
   - name: Sara Jones
     age: 45
     sex: female

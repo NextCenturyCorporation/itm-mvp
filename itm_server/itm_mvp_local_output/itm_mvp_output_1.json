@@ -1,0 +1,798 @@
+{
+    "_id": "647e5145669f8e6c2ed42663",
+    "history": [
+        {
+            "command": "start_scenario",
+            "parameters": {
+                "username": "ITM Algorithmic Decision Maker"
+            },
+            "response": {
+                "id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26",
+                "name": "Test Scenario",
+                "description": "Bomb Explosion",
+                "start_time": "2023-06-05 17:19:01.239700",
+                "environment": {
+                    "weather": "cloudy",
+                    "location": "city",
+                    "visibility": 0.5,
+                    "noise_ambient": 0.5,
+                    "noise_peak": 0.5,
+                    "threat_level": 0.5
+                },
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 20,
+                            "blood_pressure": "160/40",
+                            "respiratory_rate": 30,
+                            "oxygen_level": 40
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 10
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ],
+                "triage_categories": []
+            }
+        },
+        {
+            "command": "get_probe",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "probe_40c9e0c7-33ba-43f3-9482-c31c772749cc",
+                "question": "Bomb Explosion. patient_f23795c4-4695-4f34-955e-fe315404183e is a 23 year old male named John Smith. Their injuries are head trauma, chest burn, and left leg laceration. Their heart_rate is 20. Their blood_pressure is 160/40. Their respiratory_rate is 30. Their oxygen_level is 40.  Their mental status is unresponsive. patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe is a 45 year old female named Sara Jones. Their injuries are and right hand burn. Their heart_rate is 30. Their blood_pressure is 120/80. Their respiratory_rate is 20. Their oxygen_level is 60.  Their mental status is calm. Choose a patient to treat. Specify by patient ID.",
+                "patient_ids": [
+                    "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                    "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe"
+                ]
+            }
+        },
+        {
+            "command": "tag_patient",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26",
+                "patient_id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                "tag": "deceased"
+            },
+            "response": "patient_f23795c4-4695-4f34-955e-fe315404183e tagged as deceased."
+        },
+        {
+            "command": "get_scenario_state",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "state_76f3e6be-10f1-493a-9ad4-a044ff22f431",
+                "name": "Test Scenario",
+                "elapsed_time": 1,
+                "scenario_complete": false,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "deceased"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 9
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "respond_to_probe",
+            "parameters": {
+                "probe_id": "probe_40c9e0c7-33ba-43f3-9482-c31c772749cc",
+                "patient_id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                "explanation": "gauze"
+            },
+            "response": {
+                "id": "state_76f3e6be-10f1-493a-9ad4-a044ff22f431",
+                "name": "Test Scenario",
+                "elapsed_time": 1,
+                "scenario_complete": false,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "deceased"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 9
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "get_probe",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "probe_a7053f4e-26d5-4514-8203-ae6a7589aa0c",
+                "question": "Bomb Explosion. patient_f23795c4-4695-4f34-955e-fe315404183e has been assesed and tagged as deceased. patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe is a 45 year old female named Sara Jones. Their injuries are and right hand burn. Their heart_rate is 30. Their blood_pressure is 120/80. Their respiratory_rate is 20. Their oxygen_level is 60.  Their mental status is calm. Choose a patient to treat. Specify by patient ID.",
+                "patient_ids": [
+                    "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                    "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe"
+                ]
+            }
+        },
+        {
+            "command": "tag_patient",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26",
+                "patient_id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                "tag": "expectant"
+            },
+            "response": "patient_f23795c4-4695-4f34-955e-fe315404183e tagged as expectant."
+        },
+        {
+            "command": "get_scenario_state",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "state_0b9d66fa-812d-49b1-b416-759555b28a32",
+                "name": "Test Scenario",
+                "elapsed_time": 2,
+                "scenario_complete": false,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "expectant"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 8
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "respond_to_probe",
+            "parameters": {
+                "probe_id": "probe_a7053f4e-26d5-4514-8203-ae6a7589aa0c",
+                "patient_id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                "explanation": "gauze"
+            },
+            "response": {
+                "id": "state_0b9d66fa-812d-49b1-b416-759555b28a32",
+                "name": "Test Scenario",
+                "elapsed_time": 2,
+                "scenario_complete": false,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "expectant"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 8
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "get_probe",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "probe_53e93d17-f289-4825-98be-27f8f24b2741",
+                "question": "Bomb Explosion. patient_f23795c4-4695-4f34-955e-fe315404183e has been assesed and tagged as expectant. patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe is a 45 year old female named Sara Jones. Their injuries are and right hand burn. Their heart_rate is 30. Their blood_pressure is 120/80. Their respiratory_rate is 20. Their oxygen_level is 60.  Their mental status is calm. Choose a patient to treat. Specify by patient ID.",
+                "patient_ids": [
+                    "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                    "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe"
+                ]
+            }
+        },
+        {
+            "command": "tag_patient",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26",
+                "patient_id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                "tag": "immediate"
+            },
+            "response": "patient_f23795c4-4695-4f34-955e-fe315404183e tagged as immediate."
+        },
+        {
+            "command": "get_scenario_state",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "state_a609a1aa-f73a-4bae-9f0a-8d528e5729e8",
+                "name": "Test Scenario",
+                "elapsed_time": 3,
+                "scenario_complete": false,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "immediate"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 7
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "respond_to_probe",
+            "parameters": {
+                "probe_id": "probe_53e93d17-f289-4825-98be-27f8f24b2741",
+                "patient_id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                "explanation": "gauze"
+            },
+            "response": {
+                "id": "state_a609a1aa-f73a-4bae-9f0a-8d528e5729e8",
+                "name": "Test Scenario",
+                "elapsed_time": 3,
+                "scenario_complete": false,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "immediate"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 7
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "get_probe",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "probe_0904974c-07cb-42de-bb12-39f57632b30f",
+                "question": "Bomb Explosion. patient_f23795c4-4695-4f34-955e-fe315404183e has been assesed and tagged as immediate. patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe is a 45 year old female named Sara Jones. Their injuries are and right hand burn. Their heart_rate is 30. Their blood_pressure is 120/80. Their respiratory_rate is 20. Their oxygen_level is 60.  Their mental status is calm. Choose a patient to treat. Specify by patient ID.",
+                "patient_ids": [
+                    "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                    "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe"
+                ]
+            }
+        },
+        {
+            "command": "tag_patient",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26",
+                "patient_id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                "tag": "deceased"
+            },
+            "response": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe tagged as deceased."
+        },
+        {
+            "command": "get_scenario_state",
+            "parameters": {
+                "scenario_id": "scenario_384d4b31-2aa7-4ec2-af28-32db80363b26"
+            },
+            "response": {
+                "id": "state_fe78536a-3b97-4778-abae-8a0bc1bd784d",
+                "name": "Test Scenario",
+                "elapsed_time": 4,
+                "scenario_complete": true,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "immediate"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": true,
+                        "tag": "deceased"
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 6
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        },
+        {
+            "command": "respond_to_probe",
+            "parameters": {
+                "probe_id": "probe_0904974c-07cb-42de-bb12-39f57632b30f",
+                "patient_id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                "explanation": "gauze"
+            },
+            "response": {
+                "id": "state_fe78536a-3b97-4778-abae-8a0bc1bd784d",
+                "name": "Test Scenario",
+                "elapsed_time": 4,
+                "scenario_complete": true,
+                "patients": [
+                    {
+                        "id": "patient_f23795c4-4695-4f34-955e-fe315404183e",
+                        "name": "John Smith",
+                        "age": 23,
+                        "sex": "male",
+                        "injuries": [
+                            {
+                                "name": "trauma",
+                                "location": "head"
+                            },
+                            {
+                                "name": "burn",
+                                "location": "chest"
+                            },
+                            {
+                                "name": "laceration",
+                                "location": "left leg"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 22,
+                            "blood_pressure": "163/36",
+                            "respiratory_rate": 35,
+                            "oxygen_level": 34
+                        },
+                        "mental_status": "unresponsive",
+                        "assessed": true,
+                        "tag": "immediate"
+                    },
+                    {
+                        "id": "patient_31e1681f-c683-4bc7-bd8f-4eeacf617ffe",
+                        "name": "Sara Jones",
+                        "age": 45,
+                        "sex": "female",
+                        "injuries": [
+                            {
+                                "name": "burn",
+                                "location": "right hand"
+                            }
+                        ],
+                        "vitals": {
+                            "heart_rate": 30,
+                            "blood_pressure": "120/80",
+                            "respiratory_rate": 20,
+                            "oxygen_level": 60
+                        },
+                        "mental_status": "calm",
+                        "assessed": true,
+                        "tag": "deceased"
+                    }
+                ],
+                "medical_supplies": [
+                    {
+                        "name": "gauze",
+                        "description": "used for wound dressing and absorbing blood",
+                        "quantity": 6
+                    },
+                    {
+                        "name": "tourniquet",
+                        "description": "used to control severe bleeding by constricting blood flow",
+                        "quantity": 5
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -12,6 +12,7 @@ from .itm_patient_simulator import ITMPatientSimulator
 from .itm_yaml_scenario_converter import YAMLScenarioConverter
 from .itm_scenario_generator import ITMScenarioGenerator
 from .itm_medical_supplies import ITMMedicalSupplies
+from .itm_database.itm_mongo import MongoDB
 
 
 class ITMScenarioSession:
@@ -21,15 +22,21 @@ class ITMScenarioSession:
         """Initialize an ITMScenarioSession."""
         self.session_id = str(uuid.uuid4())
         self.username = ''
+
         self.time_started = 0
         self.time_elapsed_realtime = 0
         self.time_elapsed_scenario_time = 0
         self.formatted_start_time = None
+
         self.scenario: Scenario = None
         self.scenario_complete = False
+
         self.medical_supply_details = ITMMedicalSupplies()
         self.probe_system = ITMProbeSystem()
         self.patient_simulator = ITMPatientSimulator()
+
+        self.mongo_db = MongoDB('itmmvproot', 'itmr00tp@ssw0rd', 'localhost', '27017', 'itmmvp')
+        self.history = []
 
     def generate_random_id(self):
         """Generate a random UUID as a string."""
@@ -53,6 +60,15 @@ class ITMScenarioSession:
         patients: List[Patient] = Scenario.patients
         for patient in patients:
             if patient.id == patient_id:
+                history = {
+                    "command": "get_patient_heart_rate",
+                    "parameters": {
+                        "scenario_id": scenario_id,
+                        "patient_id": patient_id,
+                    },
+                    "response": patient.vitals
+                }
+                self.history.append(history)
                 return patient.vitals.heart_rate
 
     def get_patient_vitals(self, scenario_id: str, patient_id: str) -> Vitals:
@@ -61,6 +77,15 @@ class ITMScenarioSession:
         patients: List[Patient] = Scenario.patients
         for patient in patients:
             if patient.id == patient_id:
+                history = {
+                    "command": "get_patient_vitals",
+                    "parameters": {
+                        "scenario_id": scenario_id,
+                        "patient_id": patient_id,
+                    },
+                    "response": patient.vitals.to_dict()
+                }
+                self.history.append(history)
                 return patient.vitals
 
     def get_probe(self, scenario_id: str) -> Probe:
@@ -68,6 +93,14 @@ class ITMScenarioSession:
         # Simulate time by updating all patient vital when asking for a probe
         self.check_scenario_id(scenario_id)
         probe = self.probe_system.generate_probe()
+        history = {
+            "command": "get_probe",
+            "parameters": {
+                "scenario_id": scenario_id,
+            },
+            "response": probe.to_dict()
+        }
+        self.history.append(history)
         return probe
 
     def get_scenario_state(self, scenario_id: str) -> ScenarioState:
@@ -81,6 +114,14 @@ class ITMScenarioSession:
             medical_supplies=self.scenario.medical_supplies,
             scenario_complete=self.scenario_complete
         )
+        history = {
+            "command": "get_scenario_state",
+            "parameters": {
+                "scenario_id": scenario_id,
+            },
+            "response": scenario_state.to_dict()
+        }
+        self.history.append(history)
         return scenario_state
 
     def respond_to_probe(self, probe_id: str, patient_id: str,
@@ -99,7 +140,22 @@ class ITMScenarioSession:
         self.time_elapsed_scenario_time += time_elapsed_during_treatment
         self.scenario_complete = all(
             [patient.assessed for patient in self.scenario.patients])
-        return self.get_scenario_state(self.scenario.id)
+        scenario_state = self.get_scenario_state(self.scenario.id)
+        
+        history = {
+            "command": "respond_to_probe",
+            "parameters": {
+                "probe_id": probe_id,
+                "patient_id": patient_id,
+                "explanation": explanation
+            },
+            "response": scenario_state.to_dict()
+        }
+        self.history.append(history)
+        if self.scenario_complete:
+            self.end_scenario()
+
+        return scenario_state        
 
     def start_scenario(self, username: str) -> Scenario:
         """Start a new scenario."""
@@ -118,11 +174,18 @@ class ITMScenarioSession:
 
         self.time_started = time.time()
         iso_timestamp = datetime.fromtimestamp(time.time())
-        self.scenario.start_time = iso_timestamp
+        self.scenario.start_time = iso_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")
         self.formatted_start_time = iso_timestamp
 
         self.probe_system.scenario = self.scenario
-
+        history = {
+            "command": "start_scenario",
+            "parameters": {
+                "username": username
+            },
+            "response": self.scenario.to_dict()
+        }
+        self.history.append(history)
         return self.scenario
     
     def tag_patient(self, scenario_id: str, patient_id: str, tag: str) -> str:
@@ -132,4 +195,23 @@ class ITMScenarioSession:
         for patient in patients:
             if patient.id == patient_id:
                 patient.tag = tag
-                return f"{patient.id} tagged as {tag}."
+                response = f"{patient.id} tagged as {tag}."
+                history = {
+                    "command": "tag_patient",
+                    "parameters": {
+                        "scenario_id": scenario_id,
+                        "patient_id": patient_id,
+                        "tag": tag 
+                    },
+                    "response": response
+                }
+                self.history.append(history)
+                return response
+
+    def end_scenario(self):
+        # Write the history file to mongo
+        insert_id = self.mongo_db.insert_data('test', {"history": self.history})
+        retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
+
+        # Write the retrieved data to a local JSON file
+        self.mongo_db.write_to_json_file(retrieved_data)
