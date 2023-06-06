@@ -19,7 +19,7 @@ class TagTypes(Enum):
     DELAYED = "delayed (d)"
     IMMEDIATE = "immediate (i)"
     EXPECTANT = "expectant (e)"
-    DECEASED = "deceased (d)"
+    DECEASED = "deceased (x)"
 
 
 class ITMHumanScenarioRunner(ScenarioRunner):

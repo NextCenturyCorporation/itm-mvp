@@ -27,15 +27,16 @@ patients:
       oxygen_level: 40
     # TODO make these an int or a list that can be different values over time: [1, 5, 15, 30]
     vitals_changes_over_time:
-      heart_rate_change: 2
-      blood_pressure_change_systolic: 3
-      blood_pressure_change_diastolic: -4
-      respiratory_rate_change: 5
-      oxygen_level_change: -6
+      heart_rate_change: [5, 10, 15]
+      blood_pressure_change_systolic: [2, 4, 6, 8]
+      blood_pressure_change_diastolic: [-1, -3, -5]
+      respiratory_rate_change: 1
+      oxygen_level_change: -2
     treatements_needed:
       - gauze
-    deceased_after_minutes:
-      10
+    stable: False
+    deceased: True
+    deceased_after_minutes: 0
   - name: Sara Jones
     age: 45
     sex: female
@@ -58,6 +59,10 @@ patients:
       oxygen_level_change: 0
     treatements_needed:
       - gauze
+    stable: False
+    deceased: False
+    # A value less than 0 (ex. -1) ensures the patient does not die
+    deceased_after_minutes: -1
 medical_supplies:
   - name: gauze
     description: used for wound dressing and absorbing blood

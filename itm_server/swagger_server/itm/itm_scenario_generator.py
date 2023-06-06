@@ -90,11 +90,8 @@ class ITMScenarioGenerator:
     def __init__(self):
         self.scenario_id = None
 
-    def generate_random_id(self):
-        return str(uuid.uuid4())
-
     def generate_scenario(self, total_patients=2) -> Scenario:
-        self.scenario_id = "scenario_" + self.generate_random_id()
+        self.scenario_id = "scenario_" + str(uuid.uuid4())
         return Scenario(
             id=self.scenario_id,
             name="Triage Scenario 1",
@@ -114,7 +111,7 @@ class ITMScenarioGenerator:
         age = random.randint(18, 80)
         injuries = self._generate_injuries()
         vitals = self._generate_vitals()
-        patient_id = "patient_" + self.generate_random_id()
+        patient_id = "patient_" + str(uuid.uuid4())
         name = f"{first_name} {last_name}"
         mental_status = random.choice(MENTAL_STATUS)
         patient = Patient(
