@@ -1,0 +1,25 @@
+{
+  "name": "node-graphql",
+  "version": "0.0.1",
+  "author": "Brian Pippin",
+  "dependencies": {
+    "@accounts/graphql-api": "^0.33.1",
+    "@accounts/magic-link": "^0.1.1",
+    "@accounts/mongo": "^0.29.0",
+    "@accounts/password": "^0.32.1",
+    "@accounts/server": "^0.33.1",
+    "@graphql-modules/core": "^0.7.17",
+    "@graphql-tools/merge": "^8.2.1",
+    "@graphql-tools/schema": "^8.3.1",
+    "apollo-server": "^3.6.2",
+    "aws-sdk": "^2.1066.0",
+    "express": "^4.17.2",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.3.0",
+    "lodash": "^4.17.21",
+    "mongodb": "^3.7.3",
+    "mongoose": "^5.13.14",
+    "nodemailer": "^6.4.16",
+    "url-exist": "^2.0.0"
+  }
+}

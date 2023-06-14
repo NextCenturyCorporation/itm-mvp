@@ -91,16 +91,14 @@ class ITMProbeSystem:
         question += description
         for patient in self.scenario.patients:
             this_patients_simulation = self._find_this_patients_simulation(patient, patient_simulations)
-            if this_patients_simulation.deceased:
-                patient_question = f'{patient.id} is deceased. '
-                if patient.assessed:
-                    patient_question = patient_question.replace('. ', ' ')
-                    patient_question += f'and has been assessed and tagged as {patient.tag}. '
+            if patient.assessed:
+                if this_patients_simulation.deceased:
+                    patient_question = f'{patient.id} is deceased and has been assesed and tagged as {patient.tag}. '
 
-            elif patient.assessed:
-                patient_question = (
-                    f'{patient.id} has been assesed and tagged as {patient.tag}. '
-                )
+                else:
+                    patient_question = (
+                        f'{patient.id} has been assesed and tagged as {patient.tag}. '
+                    )
             else:
                 patient_question = (
                     f'{patient.id} is a {patient.age} '

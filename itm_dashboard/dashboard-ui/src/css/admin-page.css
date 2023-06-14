@@ -1,0 +1,30 @@
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 25px 0 25px;
+}
+
+.admin-container * {
+    margin-bottom: 5px;
+}
+
+.admin-description {
+    margin-bottom: 15px;
+}
+
+.modify-admins-header {
+    margin: 15px 0 5px 0;
+}
+
+.dual-input-container {
+    display: flex;
+}
+
+.dual-input-container .rdl-control-container {
+    width: 400px;
+    height: 250px;
+}
+
+.dual-input-container .rdl-move-all {
+    visibility: hidden;
+}
