@@ -13,7 +13,7 @@ docker-compose up -d
 
 # Helpful Script to Rebuild UI
 
-To rebuild the just the dashboard-ui after making edits from the `itm_dashboard` directory run
+To rebuild only the dashboard-ui after making edits in that directory, from the base `itm_dashboard` directory run:
 ```
 bash dahsboard_ui.sh
 ```
