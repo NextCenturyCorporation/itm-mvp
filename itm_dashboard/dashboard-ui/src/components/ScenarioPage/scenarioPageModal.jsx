@@ -14,6 +14,9 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
     paper: {
       maxWidth: '800px',
+    },
+    scenarioButton: {
+        margin: theme.spacing(0.5)
     }
   }));
 
@@ -72,8 +75,8 @@ const ScenarioPageModal = ({ data, checkedItems, setCheckedItems }) => {
                                     ))
                                 }
                             </Select>
-                        <Button className='scenario-button' variant="contained" color="primary" onClick={handleSelectAll}>Select All</Button>
-                        <Button className='scenario-button' variant="contained" color="secondary" onClick={handleClear}>Clear Selection</Button>
+                        <Button className={classes.scenarioButton} variant="contained" color="primary" onClick={handleSelectAll}>Select All</Button>
+                        <Button className={classes.scenarioButton} variant="contained" color="secondary" onClick={handleClear}>Clear Selection</Button>
                     </FormControl>
                 </DialogContent>
             </Dialog>
