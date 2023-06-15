@@ -1,0 +1,46 @@
+version: '3'
+
+networks:
+  dashboard-net:
+
+services:
+  dashboard-ui:
+    container_name: dashboard-ui
+    image: dashboard-ui
+    volumes:
+      - ../dashboard-ui/public/configs/prod/config.js:/usr/src/app/src/services/config.js
+    ports: 
+      - 3000:3000
+    depends_on:
+      - dashboard-server
+    networks:
+      - dashboard-net
+  dashboard-server:
+    container_name: dashboard-graphql
+    image: dashboard-graphql
+    volumes:
+      - ../dashboard-ui/public/configs/prod/graphql-config.js:/usr/src/app/config.js
+      - $HOME/.aws/:/root/.aws/:ro
+    ports: 
+      - 9100:9100
+    expose:
+      - 9100
+    depends_on:
+      - dashboard-mongo
+    networks:
+      - dashboard-net
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=16384"
+  dashboard-mongo: 
+    image: 'mongo'
+    container_name: dashboard-mongo
+    networks:
+      dashboard-net:
+    environment:
+      - MONGO_INITDB_DATABASE=dashboard
+      - MONGO_INITDB_ROOT_USERNAME=dashroot
+      - MONGO_INITDB_ROOT_PASSWORD=dashr00tp@ssw0rd
+    volumes:
+      - ./resources/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - '27017:27017'

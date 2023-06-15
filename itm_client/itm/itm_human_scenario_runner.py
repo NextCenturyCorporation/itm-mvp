@@ -23,9 +23,9 @@ class TagTypes(Enum):
 
 
 class ITMHumanScenarioRunner(ScenarioRunner):
-    def __init__(self):
+    def __init__(self, save_to_db, scene_type):
         super().__init__()
-        self.username = "ITM Human Decision Maker"
+        self.username = scene_type + "ITM Human" + save_to_db
         self.scenario_complete = False
         self.scenario_id = None
         self.patients = {}
@@ -140,24 +140,18 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         return response
 
     def run(self):
-        temp_username = self.username
-        scene_type = input(
-            f"Use a randomly generated or pre-made yaml scene (r/y): "
-        )
-        if scene_type == 'r':
-            temp_username += "_random"
         while not self.scenario_complete:
             command_1 = input(
                 f"Enter a Command from the following options "
                 f"{[command_option.value for command_option in CommandOption]}: "
             ).lower()
             response = None
-            self.perform_operations(command_1, response, temp_username)
+            self.perform_operations(command_1, response)
         print("ITM Scenario Ended")
 
-    def perform_operations(self, command_1, response, temp_username):
+    def perform_operations(self, command_1, response):
         if command_1 in self.get_full_string_and_shortcut(CommandOption.START):
-            response = self.start_scenario_operation(temp_username)
+            response = self.start_scenario_operation(self.username)
         elif command_1 in self.get_full_string_and_shortcut(CommandOption.PROBE):
             response = self.probe_scenario_operation()
         elif command_1 in self.get_full_string_and_shortcut(CommandOption.RESPOND):
@@ -173,7 +167,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         print(response)
 
         if command_1 in self.get_full_string_and_shortcut(CommandOption.END):
-            self.scenario_complete = False
+            self.scenario_complete = True
             print("Ending Session...")
         if isinstance(response, ScenarioState):
             if response.scenario_complete:

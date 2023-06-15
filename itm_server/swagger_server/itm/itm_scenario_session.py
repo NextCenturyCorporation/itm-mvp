@@ -1,5 +1,6 @@
 import time
 import uuid
+import signal
 from datetime import datetime
 from typing import List, Union
 
@@ -32,8 +33,11 @@ class ITMScenarioSession:
         self.medical_supply_details = ITMMedicalSupplies()
         self.probe_system = ITMProbeSystem()
         self.patient_simulator = ITMPatientSimulator()
-        self.mongo_db = MongoDB('itmmvproot', 'itmr00tp@ssw0rd',
-                                'localhost', '27017', 'itmmvp')
+        self.save_to_database = False
+
+        # This calls the dashboard's MongoDB
+        self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
+                                'localhost', '27017', 'dashboard')
         self.history = []
 
     def get_realtime_elapsed_time(self) -> float:
@@ -202,8 +206,14 @@ class ITMScenarioSession:
         """
         self.username = username
 
-        # Generate or read scenario based on username
-        if username.endswith("_random"):
+        # Save to database based on username. This needs to be changed!
+        if self.username.endswith("_db_"):
+            self.username = self.username.removesuffix("_db_")
+            self.save_to_database = True
+        # Generate or read scenario based on username.
+        # This needs to be changed too!
+        if self.username.startswith("_random_"):
+            self.username = self.username.removeprefix("_random_")
             self.scenario = ITMScenarioGenerator().generate_scenario()
         else:
             yaml_path = "swagger_server/itm/itm_scenario_configs/"
@@ -220,7 +230,7 @@ class ITMScenarioSession:
 
         self.probe_system.scenario = self.scenario
         self.add_history("start_scenario", {
-            "username": username
+            "username": self.username
         }, self.scenario.to_dict())
         return self.scenario
 
@@ -273,8 +283,10 @@ class ITMScenarioSession:
         """
         End the current scenario and store history to mongo and json file.
         """
+        if not self.save_to_database:
+            return
+        self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
         insert_id = self.mongo_db.insert_data('test', {"history": self.history})
         retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
-
         # Write the retrieved data to a local JSON file
         self.mongo_db.write_to_json_file(retrieved_data)

@@ -64,9 +64,9 @@ class ADMKnowledge:
 
 class ADMScenarioRunner(ScenarioRunner):
 
-    def __init__(self):
+    def __init__(self, save_to_db, scene_type):
         super().__init__()
-        self.username = "ITM Algorithmic Decision Maker"
+        self.username = scene_type + "ITM ADM" + save_to_db
         self.adm_knowledge: ADMKnowledge = ADMKnowledge()
 
     def run(self):

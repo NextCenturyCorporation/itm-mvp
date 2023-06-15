@@ -1,0 +1,31 @@
+.my-account-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 25px 0 25px;
+}
+
+.my-account-container * {
+    margin-bottom: 5px;
+}
+
+.my-account-description {
+    margin-bottom: 15px;
+}
+
+.my-account-container input {
+    width: 200px;
+}
+
+.my-account-update-password {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.my-account-update-password * {
+    margin-right: 5px;
+}
+
+.pre-line {
+    white-space: pre-line;
+}
