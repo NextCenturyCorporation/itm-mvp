@@ -285,6 +285,7 @@ class ITMScenarioSession:
         """
         if not self.save_to_database:
             return
+        self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
         insert_id = self.mongo_db.insert_data('test', {"history": self.history})
         retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
         # Write the retrieved data to a local JSON file

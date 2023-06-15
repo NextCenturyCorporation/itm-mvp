@@ -2,6 +2,7 @@ import React from 'react';
 import queryString from 'query-string';
 import HomePage from '../Home/home';
 import ScoreChart from '../ScoreChart/scoreChart';
+import ScenarioPage from '../ScenarioPage/scenarioPage';
 import {Router, Switch, Route, Link} from 'react-router-dom';
 import LoginApp from '../Account/login';
 import ResetPassPage from '../Account/resetPassword';
@@ -34,12 +35,12 @@ function Home({newState}) {
     return <HomePage/>;
 }
 
-function Scores({newState}) {
-    if(newState.currentUser == null) {
-        history.push('/login');
-    }
-
+function Scores() {
     return <ScoreChart/>;
+}
+
+function Scenarios() {
+    return <ScenarioPage/>;
 }
 
 function Login({newState, userLoginHandler, updateHandler}) {
@@ -130,6 +131,9 @@ export class App extends React.Component {
                                 <li className="nav-item">
                                     <Link className="nav-link-home" to="/scores">Scores</Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link-home" to="/scenarios">Scenarios</Link>
+                                </li>
                             </ul>
                             <ul className="navbar-nav ml-auto">
                                 <li className="login-user">
@@ -164,7 +168,10 @@ export class App extends React.Component {
                             <Home newState={this.state}/>
                         </Route>
                         <Route exact path="/scores">
-                            <Scores newState={this.state}/>
+                            <Scores/>
+                        </Route>
+                        <Route exact path="/scenarios">
+                            <Scenarios/>
                         </Route>
                         <Route path="/login">
                             <Login newState={this.state} userLoginHandler={this.userLoginHandler}/>

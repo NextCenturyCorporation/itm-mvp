@@ -27,11 +27,12 @@ const typeDefs = gql`
     name: String
     description: String
     startTime: String
-    environment: JSON
+    environment: Environment
     patients: [Patient]
     medical_supplies: [MedicalSupply]
     triage_categories: [TriageCategory]
   }
+
 
   type ScenarioState {
     id: ID
@@ -46,6 +47,15 @@ const typeDefs = gql`
     id: ID
     question: String
     patient_ids: [String]
+  }
+
+  type Environment {
+    weather: String
+    location: String
+    visibility: Float
+    noise_ambient: Float
+    noise_peak: Float
+    threat_level: Float
   }
 
   type Patient {
@@ -112,7 +122,7 @@ const typeDefs = gql`
     getHistory(id: ID): JSON
     getAllHistory(id: ID): [JSON]
     getScenario(id: ID): Scenario
-    getAllScenarios: [Scenario]
+    getAllScenarios(id: ID): [Scenario]
     getScenarioState(id: ID): ScenarioState
     getAllScenarioStates: [ScenarioState]
     getProbe(id: ID): Probe
