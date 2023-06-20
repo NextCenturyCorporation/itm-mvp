@@ -8,6 +8,8 @@ const GET_ALL_ITM_SIMULATIONS = gql`
         getAllHistory(id: $id)
     }`;
 
+// This is all just using age from demographics to make a testing score and proving that we can access the database
+// Actual scoring needs to change!
 const ScoreChart = () => {
     const [alignmentScoreTotal, setAlignmentScoreTotal] = useState({});
     const { loading, error, data } = useQuery(GET_ALL_ITM_SIMULATIONS, { variables: { "id": "Testing_12345" } });
@@ -21,14 +23,15 @@ const ScoreChart = () => {
     const mapData = (data) => {
         let newScores = {...alignmentScoreTotal};
         data.map((item) => {
-            const performer = item.history[0].parameters.username;
-            const prevPerformerData = newScores[performer] || { total: 0, count: 0 };
-            newScores[performer] = {
-                total: prevPerformerData.total + item.history[0].response.patients[Math.round(Math.random())].age,
-                count: prevPerformerData.count + 1,
-            };
+            if (item.history[0].response.hasOwnProperty("state")) {
+                const performer = item.history[0].parameters["adm_name"];
+                const prevPerformerData = newScores[performer] || { total: 0, count: 0 };
+                newScores[performer] = {
+                    total: prevPerformerData.total + item.history[0]["response"]["state"]["casualties"][0]["demographics"]["age"],
+                    count: prevPerformerData.count + 1,
+                };
+            }
         });
-        console.log(newScores)
         setAlignmentScoreTotal(newScores);
     }
 
@@ -39,8 +42,6 @@ const ScoreChart = () => {
 
     if (loading) return <div>Loading ...</div>
     if (error) return <div>Error</div>
-
-    console.log(mappedArray)
 
     return (
         <div className="score-chart-container">

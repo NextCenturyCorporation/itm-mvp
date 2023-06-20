@@ -2,13 +2,16 @@ import uuid
 import random
 from typing import List
 
-from swagger_server.models.scenario import Scenario
-from swagger_server.models.environment import Environment
-from swagger_server.models.patient import Patient
-from swagger_server.models.vitals import Vitals
-from swagger_server.models.injury import Injury
-from swagger_server.models.medical_supply import MedicalSupply
-from swagger_server.models.triage_category import TriageCategory
+from swagger_server.models import (
+    Scenario,
+    Environment,
+    Casualty,
+    Vitals,
+    Injury,
+    Supplies,
+    TriageCategory
+)
+
 
 DESCRIPTIONS = [
     'Bomb blast at a concert venue causing chaos and injuries',
@@ -63,8 +66,8 @@ LOCATIONS = [
 MEDICAL_SUPPLIES = [
     ('Chest Seal', 'Used to treat open chest wounds and prevent lung collapse'),
     ('Gauze', 'Used for wound dressing and absorbing blood'),
-    ('Nasopharyngeal Airway', 'Used to maintain an open airway in unconscious patients'),
-    ('Oxygen Mask', 'Used to deliver supplemental oxygen to patients with breathing difficulties'),
+    ('Nasopharyngeal Airway', 'Used to maintain an open airway in unconscious casualtys'),
+    ('Oxygen Mask', 'Used to deliver supplemental oxygen to casualtys with breathing difficulties'),
     ('Splint', 'Used to immobilize and support fractured bones or injured limbs'),
     ('Tourniquet', 'Used to control severe bleeding by constricting blood flow')
 ]
@@ -78,7 +81,7 @@ TRIAGE_CATEGORIES = [
     ("delayed", "yellow", "Patients with injuries requiring medical attention but not immediately life-threatening."),
     ("immediate", "red", "Patients with severe injuries requiring immediate medical attention."),
     ("expectant", "grey", "Patients with injuries or medical conditions where survival is unlikely."),
-    ("deceased", "black", "Deceased patients.")
+    ("deceased", "black", "Deceased casualtys.")
 ]
 
 WEATHER_TYPES = [
@@ -90,7 +93,7 @@ class ITMScenarioGenerator:
     def __init__(self):
         self.scenario_id = None
 
-    def generate_scenario(self, total_patients=2) -> Scenario:
+    def generate_scenario(self, total_casualtys=2) -> Scenario:
         self.scenario_id = "scenario_" + str(uuid.uuid4())
         return Scenario(
             id=self.scenario_id,
@@ -98,12 +101,12 @@ class ITMScenarioGenerator:
             description=random.choice(DESCRIPTIONS),
             start_time=0,
             environment=None,
-            patients=[self._generate_patient() for _ in range(total_patients)],
-            medical_supplies=self._generate_medical_supplies(),
+            casualtys=[self._generate_casualty() for _ in range(total_casualtys)],
+            supplies=self._generate_supplies(),
             triage_categories=self._generate_triage_categories()
         )
 
-    def _generate_patient(self) -> Patient:
+    def _generate_casualty(self) -> Casualty:
         sex = random.choice(SEX)
         first_name = random.choice(MALE_FIRST_NAMES) if sex == 'male' else \
                      random.choice(FEMALE_FIRST_NAMES)
@@ -111,11 +114,11 @@ class ITMScenarioGenerator:
         age = random.randint(18, 80)
         injuries = self._generate_injuries()
         vitals = self._generate_vitals()
-        patient_id = "patient_" + str(uuid.uuid4())
+        casualty_id = "casualty_" + str(uuid.uuid4())
         name = f"{first_name} {last_name}"
         mental_status = random.choice(MENTAL_STATUS)
-        patient = Patient(
-            id=patient_id,
+        casualty = Casualty(
+            id=casualty_id,
             name=name,
             age=age,
             sex=sex,
@@ -125,7 +128,7 @@ class ITMScenarioGenerator:
             assessed=False,
             tag='none'
         )
-        return patient
+        return casualty
 
     def _generate_injuries(self) -> List[Injury]:
         num_injuries = random.randint(1, 5)
@@ -155,12 +158,12 @@ class ITMScenarioGenerator:
         )
         return vitals
 
-    def _generate_medical_supplies(self) -> List[MedicalSupply]:
+    def _generate_supplies(self) -> List[Supplies]:
         number_of_supplies = random.randint(1, len(MEDICAL_SUPPLIES))
-        medical_supplies = random.sample(MEDICAL_SUPPLIES, number_of_supplies)
+        supplies = random.sample(MEDICAL_SUPPLIES, number_of_supplies)
         inventory = [
-            MedicalSupply(name=supply[0], description=supply[1], quantity=random.randint(1, 10))
-            for supply in medical_supplies
+            Supplies(name=supply[0], description=supply[1], quantity=random.randint(1, 10))
+            for supply in supplies
         ]
         return inventory
     

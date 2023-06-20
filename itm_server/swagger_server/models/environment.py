@@ -14,9 +14,13 @@ class Environment(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, weather: str=None, location: str=None, visibility: float=None, noise_ambient: float=None, noise_peak: float=None, threat_level: float=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, aid_delay: float=None, weather: str=None, location: str=None, visibility: float=None, noise_ambient: float=None, noise_peak: float=None):  # noqa: E501
         """Environment - a model defined in Swagger
 
+        :param unstructured: The unstructured of this Environment.  # noqa: E501
+        :type unstructured: str
+        :param aid_delay: The aid_delay of this Environment.  # noqa: E501
+        :type aid_delay: float
         :param weather: The weather of this Environment.  # noqa: E501
         :type weather: str
         :param location: The location of this Environment.  # noqa: E501
@@ -27,32 +31,33 @@ class Environment(Model):
         :type noise_ambient: float
         :param noise_peak: The noise_peak of this Environment.  # noqa: E501
         :type noise_peak: float
-        :param threat_level: The threat_level of this Environment.  # noqa: E501
-        :type threat_level: float
         """
         self.swagger_types = {
+            'unstructured': str,
+            'aid_delay': float,
             'weather': str,
             'location': str,
             'visibility': float,
             'noise_ambient': float,
-            'noise_peak': float,
-            'threat_level': float
+            'noise_peak': float
         }
 
         self.attribute_map = {
+            'unstructured': 'unstructured',
+            'aid_delay': 'aidDelay',
             'weather': 'weather',
             'location': 'location',
             'visibility': 'visibility',
             'noise_ambient': 'noise_ambient',
-            'noise_peak': 'noise_peak',
-            'threat_level': 'threat_level'
+            'noise_peak': 'noise_peak'
         }
+        self._unstructured = unstructured
+        self._aid_delay = aid_delay
         self._weather = weather
         self._location = location
         self._visibility = visibility
         self._noise_ambient = noise_ambient
         self._noise_peak = noise_peak
-        self._threat_level = threat_level
 
     @classmethod
     def from_dict(cls, dikt) -> 'Environment':
@@ -64,6 +69,54 @@ class Environment(Model):
         :rtype: Environment
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def unstructured(self) -> str:
+        """Gets the unstructured of this Environment.
+
+        text description of environment  # noqa: E501
+
+        :return: The unstructured of this Environment.
+        :rtype: str
+        """
+        return self._unstructured
+
+    @unstructured.setter
+    def unstructured(self, unstructured: str):
+        """Sets the unstructured of this Environment.
+
+        text description of environment  # noqa: E501
+
+        :param unstructured: The unstructured of this Environment.
+        :type unstructured: str
+        """
+        if unstructured is None:
+            raise ValueError("Invalid value for `unstructured`, must not be `None`")  # noqa: E501
+
+        self._unstructured = unstructured
+
+    @property
+    def aid_delay(self) -> float:
+        """Gets the aid_delay of this Environment.
+
+        time until evac, reinforcements, extra supply delivery, etc.  # noqa: E501
+
+        :return: The aid_delay of this Environment.
+        :rtype: float
+        """
+        return self._aid_delay
+
+    @aid_delay.setter
+    def aid_delay(self, aid_delay: float):
+        """Sets the aid_delay of this Environment.
+
+        time until evac, reinforcements, extra supply delivery, etc.  # noqa: E501
+
+        :param aid_delay: The aid_delay of this Environment.
+        :type aid_delay: float
+        """
+
+        self._aid_delay = aid_delay
 
     @property
     def weather(self) -> str:
@@ -179,26 +232,3 @@ class Environment(Model):
         """
 
         self._noise_peak = noise_peak
-
-    @property
-    def threat_level(self) -> float:
-        """Gets the threat_level of this Environment.
-
-        an numeric indicator (0-1) of enemy threat level at the scenario location; higher is more dangerous  # noqa: E501
-
-        :return: The threat_level of this Environment.
-        :rtype: float
-        """
-        return self._threat_level
-
-    @threat_level.setter
-    def threat_level(self, threat_level: float):
-        """Sets the threat_level of this Environment.
-
-        an numeric indicator (0-1) of enemy threat level at the scenario location; higher is more dangerous  # noqa: E501
-
-        :param threat_level: The threat_level of this Environment.
-        :type threat_level: float
-        """
-
-        self._threat_level = threat_level

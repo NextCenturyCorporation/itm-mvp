@@ -17,34 +17,49 @@ const GET_ALL_ITM_SCENARIOS = gql`
         getAllScenarios(id: $id) {
             name
             id
-            description
-            environment {
-                weather
-                location
-                visibility
-                noise_ambient
-                noise_peak
-                threat_level
-            }
-            medical_supplies {
-                description
-                name
-                quantity
-            }
-            patients {
-                age
-                injuries {
-                    location
-                    name
+            state {
+                mission {
+                    unstructured
+                    mission_type
                 }
-                mental_status
-                name
-                sex
-                vitals {
-                    blood_pressure
-                    heart_rate
-                    oxygen_level
-                    respiratory_rate
+                environment {
+                    unstructured
+                    aidDelay
+                    weather
+                    location
+                    visibility
+                    noise_ambient
+                    noise_peak
+                }
+                threat_state {
+                    unstructured
+                    threats
+                }
+                supplies {
+                    type
+                    quantity
+                }
+                casualties {
+                    name
+                    unstructured
+                    injuries {
+                        location
+                        name
+                        severity
+                    }
+                    mental_status
+                    demographics {
+                        age
+                        sex
+                        rank
+                    }
+                    vitals {
+                        hrpmin
+                        mm_hg
+                        rr
+                        sp_o2
+                        pain
+                    }
                 }
             }
         }

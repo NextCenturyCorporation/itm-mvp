@@ -1,5 +1,5 @@
 from enum import Enum
-from swagger_client.models import Scenario, ScenarioState
+from swagger_client.models import Scenario, State
 from .itm_scenario_runner import ScenarioRunner
 
 
@@ -169,7 +169,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         if command_1 in self.get_full_string_and_shortcut(CommandOption.END):
             self.scenario_complete = True
             print("Ending Session...")
-        if isinstance(response, ScenarioState):
+        if isinstance(response, State):
             if response.scenario_complete:
                 self.scenario_complete = True
                 print("Scenario Complete: Ending Session...")

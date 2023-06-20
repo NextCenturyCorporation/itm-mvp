@@ -9,6 +9,8 @@ const typeDefs = gql`
 
   scalar StringOrFloat
 
+  scalar ThreatsDict
+
   extend input CreateUserInput {
     admin: Boolean
   }
@@ -25,22 +27,41 @@ const typeDefs = gql`
   type Scenario {
     id: ID
     name: String
-    description: String
     startTime: String
-    environment: Environment
-    patients: [Patient]
-    medical_supplies: [MedicalSupply]
+    state: State
     triage_categories: [TriageCategory]
   }
 
 
-  type ScenarioState {
-    id: ID
-    name: String
+  type State {
+    unstructured: String
     elapsedTime: Float
     scenario_complete: Boolean
-    patients: [Patient]
-    medical_supplies: [MedicalSupply]
+    mission: Mission
+    environment: Environment
+    threat_state: ThreatState
+    supplies: [Supplies]
+    casualties: [Casualty]
+  }
+
+  type Mission {
+    unstructured: String
+    mission_type: MissionType
+  }
+
+  type Environment {
+    unstructured: String
+    aidDelay: Float
+    weather: String
+    location: String
+    visibility: Float
+    noise_ambient: Float
+    noise_peak: Float
+  }
+
+  type ThreatState {
+    unstructured: String
+    threats: ThreatsDict
   }
 
   type Probe {
@@ -49,20 +70,11 @@ const typeDefs = gql`
     patient_ids: [String]
   }
 
-  type Environment {
-    weather: String
-    location: String
-    visibility: Float
-    noise_ambient: Float
-    noise_peak: Float
-    threat_level: Float
-  }
-
-  type Patient {
+  type Casualty {
     id: ID
+    unstructured: String
     name: String
-    age: Int
-    sex: Sex
+    demographics: Demographics
     injuries: [Injury]
     vitals: Vitals
     mental_status: MentalStatus
@@ -70,16 +82,24 @@ const typeDefs = gql`
     tag: TriageTag
   }
 
+  type Demographics {
+    age: Int
+    sex: Sex
+    rank: Rank
+  }
+
   type Injury {
     name: String
     location: String
+    severity: Float
   }
 
   type Vitals {
-    heart_rate: Int
-    blood_pressure: String
-    respiratory_rate: Int
-    oxygen_level: Int
+    hrpmin: Int
+    mm_hg: Int
+    rr: Int
+    sp_o2: Int
+    pain: Int
   }
 
   type TriageCategory {
@@ -88,9 +108,8 @@ const typeDefs = gql`
     criteria: String
   }
 
-  type MedicalSupply {
-    name: String
-    description: String
+  type Supplies {
+    type: String
     quantity: Int
   }
 
@@ -98,6 +117,13 @@ const typeDefs = gql`
     male
     female
     unknown
+  }
+
+  enum Rank {
+    Military
+    Enemy
+    Civilian
+    VIP
   }
 
   enum MentalStatus {
@@ -117,26 +143,32 @@ const typeDefs = gql`
     deceased
   }
 
+  enum MissionType {
+    ProtectVIP
+    DeliverCargo
+    DefendBase
+  }
+
   type Query {
     getUsers: JSON
     getHistory(id: ID): JSON
     getAllHistory(id: ID): [JSON]
     getScenario(id: ID): Scenario
     getAllScenarios(id: ID): [Scenario]
-    getScenarioState(id: ID): ScenarioState
-    getAllScenarioStates: [ScenarioState]
+    getScenarioState(id: ID): State
+    getAllScenarioStates: [State]
     getProbe(id: ID): Probe
     getAllProbes: [Probe]
-    getPatient(id: ID): Patient
-    getAllPatients: [Patient]
+    getPatient(id: ID): Casualty
+    getAllPatients: [Casualty]
     getInjury(id: ID): Injury
     getAllInjuries: [Injury]
     getVitals(id: ID): Vitals
     getAllVitals: [Vitals]
     getTriageCategory(id: ID): TriageCategory
     getAllTriageCategories: [TriageCategory]
-    getMedicalSupply(id: ID): MedicalSupply
-    getAllMedicalSupplies: [MedicalSupply]
+    getSupply(id: ID): Supplies
+    getAllSupplies: [Supplies]
   }
 
   type Mutation {
@@ -194,10 +226,10 @@ const resolvers = {
       getAllTriageCategories: async (obj, args, context, infow) => {
           return await dashboardDB.db.collection('triageCategories').find().toArray().then(result => { return result; });
       },
-      getMedicalSupply: async (obj, args, context, infow) => {
+      getSupply: async (obj, args, context, infow) => {
           return await dashboardDB.db.collection('medicalSupplies').findOne(args).then(result => { return result; });
       },
-      getAllMedicalSupplies: async (obj, args, context, infow) => {
+      getAllSupplies: async (obj, args, context, infow) => {
           return await dashboardDB.db.collection('medicalSupplies').find().toArray().then(result => { return result; });
       }
     },

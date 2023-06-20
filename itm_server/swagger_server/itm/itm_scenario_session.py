@@ -1,16 +1,25 @@
+from datetime import datetime
 import time
 import uuid
-import signal
-from datetime import datetime
 from typing import List, Union
 
-from swagger_server.models import Probe, Vitals, Patient, Scenario, ScenarioState
-from .itm_probe_system import ITMProbeSystem
-from .itm_patient_simulator import ITMPatientSimulator
-from .itm_yaml_scenario_converter import YAMLScenarioConverter
-from .itm_scenario_generator import ITMScenarioGenerator
-from .itm_medical_supplies import ITMMedicalSupplies
+from swagger_server.models import (
+    AlignmentTarget,
+    AlignmentTargetKdmaValues,
+    Casualty,
+    Probe,
+    ProbeResponse,
+    Scenario,
+    State,
+    Vitals,
+)
+from .itm_casualty_simulator import ITMCasualtySimulator
 from .itm_database.itm_mongo import MongoDB
+from .itm_probe_system import ITMProbeSystem
+from .itm_scenario_generator import ITMScenarioGenerator
+from .itm_supplies import ITMSupplies
+from .itm_yaml_scenario_converter import YAMLScenarioConverter
+
 
 
 class ITMScenarioSession:
@@ -23,16 +32,17 @@ class ITMScenarioSession:
         Initialize an ITMScenarioSession.
         """
         self.session_id = str(uuid.uuid4())
-        self.username = ''
+        self.adm_name = ''
         self.time_started = 0
         self.time_elapsed_realtime = 0
         self.time_elapsed_scenario_time = 0
         self.formatted_start_time = None
-        self.scenario = None
-        self.scenario_complete = False
-        self.medical_supply_details = ITMMedicalSupplies()
+        self.scenario: Scenario = None
+        self.supplies_details = ITMSupplies()
         self.probe_system = ITMProbeSystem()
-        self.patient_simulator = ITMPatientSimulator()
+        self.casualty_simulator = ITMCasualtySimulator()
+        self.alignment_target = AlignmentTarget()
+        self.probe_count = 0
         self.save_to_database = False
 
         # This calls the dashboard's MongoDB
@@ -64,51 +74,30 @@ class ITMScenarioSession:
         if not scenario_id == self.scenario.id:
             raise Exception('Invalid Scenario ID')
 
-    def get_patient_heart_rate(self, scenario_id: str, patient_id: str) -> int:
+    def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
+        self.check_scenario_id(scenario_id)
+        return self.alignment_target
+
+    def get_heart_rate(self, casualty_id: str) -> int:
         """
-        Get the heart rate of a patient in the scenario.
+        Get the heart rate of a casualty_id in the scenario.
 
         Args:
             scenario_id: The ID of the scenario.
-            patient_id: The ID of the patient.
+            casualty_id_id: The ID of the casualty_id.
 
         Returns:
-            The heart rate of the patient as an integer.
+            The heart rate of the casualty_id as an integer.
         """
-        self.check_scenario_id(scenario_id)
-        patients: List[Patient] = Scenario.patients
-        for patient in patients:
-            if patient.id == patient_id:
-                response = patient.vitals.heart_rate
+        casualties: List[Casualty] = self.scenario.state.casualties
+        for casualty in casualties:
+            if casualty.id == casualty_id:
+                response = casualty.vitals.heart_rate
                 self.add_history(
-                    "get_patient_heart_rate", {
-                        "scenario_id": scenario_id,
-                        "patient_id": patient_id,
+                    "Get Heart Rate", {
+                        "Casualty ID": casualty_id,
                     }, response)
                 return response
-
-    def get_patient_vitals(self, scenario_id: str, patient_id: str) -> Vitals:
-        """
-        Get the vitals of a patient in the scenario.
-
-        Args:
-            scenario_id: The ID of the scenario.
-            patient_id: The ID of the patient.
-
-        Returns:
-            The vitals of the patient as a Vitals object.
-        """
-        self.check_scenario_id(scenario_id)
-        patients: List[Patient] = Scenario.patients
-        for patient in patients:
-            if patient.id == patient_id:
-                response = patient.vitals.to_dict()
-                self.add_history(
-                    "get_patient_vitals", {
-                        "scenario_id": scenario_id,
-                        "patient_id": patient_id,
-                    }, response)
-                return patient.vitals
 
     def get_probe(self, scenario_id: str) -> Probe:
         """
@@ -122,14 +111,14 @@ class ITMScenarioSession:
         """
         self.check_scenario_id(scenario_id)
         probe = self.probe_system.generate_probe(
-            self.patient_simulator.patient_simulations)
+            self.casualty_simulator.casualty_simulations)
         self.add_history(
-            "get_probe", {
-                "scenario_id": scenario_id,
+            "Get Probe", {
+                "Scenario ID": scenario_id,
             }, probe.to_dict())
         return probe
 
-    def get_scenario_state(self, scenario_id: str) -> ScenarioState:
+    def get_scenario_state(self, scenario_id: str) -> State:
         """
         Get the current state of the scenario.
 
@@ -140,88 +129,101 @@ class ITMScenarioSession:
             The current state of the scenario as a ScenarioState object.
         """
         self.check_scenario_id(scenario_id)
-        scenario_state = ScenarioState(
-            id="state_" + str(uuid.uuid4()),
-            name=self.scenario.name,
-            elapsed_time=self.time_elapsed_scenario_time,
-            patients=self.scenario.patients,
-            medical_supplies=self.scenario.medical_supplies,
-            scenario_complete=self.scenario_complete
-        )
         self.add_history(
-            "get_scenario_state", {
-                "scenario_id": scenario_id,
-            }, scenario_state.to_dict())
-        return scenario_state
+            "Get Scenario State", {
+                "Scenario ID": scenario_id,
+            },  self.scenario.state.to_dict())
+        return self.scenario.state
+    
+    def get_vitals(self, casualty_id: str) -> Vitals:
+        """
+        Get the vitals of a casualty in the scenario.
 
-    def respond_to_probe(self, probe_id: str, patient_id: str,
-                         explanation: str = None) -> ScenarioState:
+        Args:
+            scenario_id: The ID of the scenario.
+            casualty_id_id: The ID of the casualty.
+
+        Returns:
+            The vitals of the casualty as a Vitals object.
+        """
+        casualties: List[Casualty] = self.scenario.state.casualties
+        for casualty in casualties:
+            if casualty.id == casualty_id:
+                response = casualty.vitals.to_dict()
+                self.add_history(
+                    "Get Vitals", {
+                        "Casualty ID": casualty_id,
+                    }, response)
+                return casualty.vitals
+
+    def respond_to_probe(self, body: ProbeResponse) -> State:
         """
         Respond to a probe from the probe system.
 
         Args:
-            probe_id: The ID of the probe.
-            patient_id: The ID of the patient.
-            explanation: An explanation for the response (optional).
+            body: The probe response body as a dict.
 
         Returns:
             The updated scenario state as a ScenarioState object.
         """
         self.probe_system.respond_to_probe(
-            probe_id=probe_id, patient_id=patient_id, explanation=explanation)
-
-        time_elapsed_during_treatment = self.patient_simulator.treat_patient(
-            patient_id=patient_id,
-            medical_supply=explanation,
-            medical_supply_details=self.medical_supply_details.medical_supply_details
+            probe_id=body.probe_id,
+            choice=body.choice,
+            justification=body.justification
+        )
+        time_elapsed_during_treatment = self.casualty_simulator.treat_casualty(
+            casualty_id=body.choice,
+            supply=body.justification,
+            supply_details=self.supplies_details
         )
         self.time_elapsed_scenario_time += time_elapsed_during_treatment
-        self.patient_simulator.update_vitals(time_elapsed_during_treatment)
+        self.casualty_simulator.update_vitals(time_elapsed_during_treatment)
 
-        self.scenario_complete = all(
-            [patient.assessed for patient in self.scenario.patients])
-        scenario_state = self.get_scenario_state(self.scenario.id)
-
+        # self.scenario.state.scenario_complete = all(
+        #     [casualty.assessed for casualty in self.scenario.state.casualties])
+        self.probe_count -= 1
+        self.scenario.state.scenario_complete = self.probe_count <= 0
         self.add_history(
-            "respond_to_probe", {
-                "probe_id": probe_id,
-                "patient_id": patient_id,
-                "explanation": explanation
-            }, scenario_state.to_dict())
-
-        if self.scenario_complete:
+            "Respond to Probe", {
+                "Scenario ID": body.scenario_id,
+                "Probe ID": body.probe_id,
+                "Choice": body.choice,
+                "Justification": body.justification
+            }, self.scenario.state.to_dict())
+        if self.scenario.state.scenario_complete:
             self.end_scenario()
+        return self.scenario.state
 
-        return scenario_state
-
-    def start_scenario(self, username: str) -> Scenario:
+    def start_scenario(self, adm_name: str) -> Scenario:
         """
         Start a new scenario.
 
         Args:
-            username: The username associated with the scenario.
+            adm_name: The adm name associated with the scenario.
 
         Returns:
             The started scenario as a Scenario object.
         """
-        self.username = username
+        self.adm_name = adm_name
 
-        # Save to database based on username. This needs to be changed!
-        if self.username.endswith("_db_"):
-            self.username = self.username.removesuffix("_db_")
+        # Save to database based on adm_name. This needs to be changed!
+        if self.adm_name.endswith("_db_"):
+            self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
-        # Generate or read scenario based on username.
+        # Generate or read scenario based on adm_name.
         # This needs to be changed too!
-        if self.username.startswith("_random_"):
-            self.username = self.username.removeprefix("_random_")
+        if self.adm_name.startswith("_random_"):
+            self.adm_name = self.adm_name.removeprefix("_random_")
             self.scenario = ITMScenarioGenerator().generate_scenario()
         else:
             yaml_path = "swagger_server/itm/itm_scenario_configs/"
             yaml_file = "test_scenario.yaml"
             yaml_converter = YAMLScenarioConverter(yaml_path + yaml_file)
-            self.scenario, patient_simulations, self.medical_supply_details = \
+            ( self.scenario, casualty_simulations,
+              self.supplies_details, self.alignment_target,
+               self.probe_count ) = \
                 yaml_converter.generate_scenario_from_yaml()
-            self.patient_simulator.setup_patients(self.scenario, patient_simulations)
+            self.casualty_simulator.setup_casualties(self.scenario, casualty_simulations)
 
         self.time_started = time.time()
         iso_timestamp = datetime.fromtimestamp(time.time())
@@ -229,33 +231,31 @@ class ITMScenarioSession:
         self.formatted_start_time = iso_timestamp
 
         self.probe_system.scenario = self.scenario
-        self.add_history("start_scenario", {
-            "username": self.username
+        self.add_history("Start Scenario", {
+            "ADM Name": self.adm_name
         }, self.scenario.to_dict())
         return self.scenario
 
-    def tag_patient(self, scenario_id: str, patient_id: str, tag: str) -> str:
+    def tag_casualty(self, casualty_id: str, tag: str) -> str:
         """
-        Tag a patient in the scenario.
+        Tag a casualty in the scenario.
 
         Args:
             scenario_id: The ID of the scenario.
-            patient_id: The ID of the patient.
-            tag: The tag to assign to the patient.
+            casualty_id: The ID of the casualty.
+            tag: The tag to assign to the casualty.
 
         Returns:
-            A message confirming the tagging of the patient.
+            A message confirming the tagging of the casualty.
         """
-        self.check_scenario_id(scenario_id)
-        for patient in self.scenario.patients:
-            if patient.id == patient_id:
-                patient.tag = tag
-                response = f"{patient.id} tagged as {tag}."
+        for casualty in self.scenario.state.casualties:
+            if casualty.id == casualty_id:
+                casualty.tag = tag
+                response = f"{casualty.id} tagged as {tag}."
                 self.add_history(
-                    "tag_patient", {
-                        "scenario_id": scenario_id,
-                        "patient_id": patient_id,
-                        "tag": tag
+                    "Tag Casualty", {
+                        "Casualty ID": casualty_id,
+                        "Tag": tag
                     }, response)
                 return response
 

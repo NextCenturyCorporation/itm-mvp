@@ -14,25 +14,30 @@ class Injury(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: str=None, location: str=None):  # noqa: E501
+    def __init__(self, name: str=None, location: str=None, severity: float=None):  # noqa: E501
         """Injury - a model defined in Swagger
 
         :param name: The name of this Injury.  # noqa: E501
         :type name: str
         :param location: The location of this Injury.  # noqa: E501
         :type location: str
+        :param severity: The severity of this Injury.  # noqa: E501
+        :type severity: float
         """
         self.swagger_types = {
             'name': str,
-            'location': str
+            'location': str,
+            'severity': float
         }
 
         self.attribute_map = {
             'name': 'name',
-            'location': 'location'
+            'location': 'location',
+            'severity': 'severity'
         }
         self._name = name
         self._location = location
+        self._severity = severity
 
     @classmethod
     def from_dict(cls, dikt) -> 'Injury':
@@ -72,7 +77,7 @@ class Injury(Model):
     def location(self) -> str:
         """Gets the location of this Injury.
 
-        the injury location on the patient's body  # noqa: E501
+        the injury location on the casualty's body  # noqa: E501
 
         :return: The location of this Injury.
         :rtype: str
@@ -83,10 +88,33 @@ class Injury(Model):
     def location(self, location: str):
         """Sets the location of this Injury.
 
-        the injury location on the patient's body  # noqa: E501
+        the injury location on the casualty's body  # noqa: E501
 
         :param location: The location of this Injury.
         :type location: str
         """
 
         self._location = location
+
+    @property
+    def severity(self) -> float:
+        """Gets the severity of this Injury.
+
+        the apparent severity of the injury from 0 (low) to 1.0 (high)  # noqa: E501
+
+        :return: The severity of this Injury.
+        :rtype: float
+        """
+        return self._severity
+
+    @severity.setter
+    def severity(self, severity: float):
+        """Sets the severity of this Injury.
+
+        the apparent severity of the injury from 0 (low) to 1.0 (high)  # noqa: E501
+
+        :param severity: The severity of this Injury.
+        :type severity: float
+        """
+
+        self._severity = severity

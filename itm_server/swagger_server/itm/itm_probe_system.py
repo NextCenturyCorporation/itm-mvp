@@ -1,20 +1,21 @@
-import time
 import uuid
 from dataclasses import dataclass
-from datetime import datetime
 from typing import List
-from swagger_server.models.scenario import Scenario
-from swagger_server.models.probe import Probe
-from swagger_server.models.patient import Patient
-from swagger_server.models.injury import Injury
-from .itm_patient_simulator import PatientSimulation
+from swagger_server.models import (
+    Scenario,
+    Probe,
+    ProbeOption,
+    Casualty,
+    Injury
+)
+from .itm_casualty_simulator import CasualtySimulation
 
 @dataclass
 class ProbeObject:
     """Class to represent a probe object."""
     probe: Probe
-    patient_id_chosen: str
-    explanation: str
+    choice: str
+    justification: str
     probe_number: int
 
 class ITMProbeSystem:
@@ -28,150 +29,161 @@ class ITMProbeSystem:
         self.probe_count = 0
         self.probes = {}
 
-    def generate_probe(self, patient_simulations: List[PatientSimulation]) -> Probe:
+    def generate_probe(self, casualty_simulations: List[CasualtySimulation]) -> Probe:
         """
         Generate a probe.
 
         Args:
-            patient_simulations: A list of Patient Simulation objects representing the patients attributes over time.
+            casualty_simulations: A list of casualty simulation objects representing the casualties attributes over time.
 
         Returns:
             A Probe object representing the generated probe.
         """
         id = "probe_" + str(uuid.uuid4())
-        question = self._generate_question(patient_simulations)
-        patient_ids = [patient.id for patient in self.scenario.patients]
+        prompt = self._generate_prompt(casualty_simulations)
+        casualty_ids = [casualty.id for casualty in self.scenario.state.casualties]
+
+        probe_options = [
+            ProbeOption(
+                id="probe_option_" + str(uuid.uuid4()),
+                value=casualty_id,
+                kdma_association={}
+            ) for casualty_id in casualty_ids
+        ]
         probe = Probe(
             id=id,
-            question=question,
-            patient_ids=patient_ids
+            scenario_id=self.scenario.id,
+            type="MultipleChoice",
+            prompt=prompt,
+            state=self.scenario.state,
+            options=probe_options
         )
         self.probes[id] = ProbeObject(
             probe=probe,
-            patient_id_chosen='',
-            explanation='',
+            choice='',
+            justification='',
             probe_number=self.probe_count
         )
         self.probe_count += 1
+
         return probe
 
-    def _find_this_patients_simulation(self, patient: Patient, patient_simulations: List[PatientSimulation],):
+    def _find_this_casualties_simulation(self, casualty: Casualty, casualty_simulations: List[CasualtySimulation],):
         """
-        Find the patient simulation object for a specific patient.
+        Find the casualty simulation object for a specific casualty.
 
         Args:
-            patient (Patient): The patient object to find its matching simulation.
-            patient_simulations (list): List of patient simulation objects.
+            casualty (casualty): The casualty object to find its matching simulation.
+            casualty_simulations (list): List of casualty simulation objects.
 
         Returns:
-            PatientSimulation or None: The simulation object for the specified patient, or None if no simulation is found.
+            CasualtySimulation or None: The simulation object for the specified casualty, or None if no simulation is found.
         """
 
-        this_patients_simulation = None
-        for patient_simulation in patient_simulations:
-            if patient_simulation.patient.id == patient.id:
-                this_patients_simulation = patient_simulation
+        this_casualties_simulation = None
+        for casualty_simulation in casualty_simulations:
+            if casualty_simulation.casualty.id == casualty.id:
+                this_casualties_simulation = casualty_simulation
                 break
-        return this_patients_simulation
+        return this_casualties_simulation
 
 
 
-    def _generate_question(self, patient_simulations: List[PatientSimulation]) -> str:
+    def _generate_prompt(self, casualty_simulations: List[CasualtySimulation]) -> str:
         """
-        Generate a question for the probe.
+        Generate a prompt for the probe.
 
         Args:
-            patient_simulations: A list of Patient Simulation objects representing the patients attributes over time.
+            casualty_simulations: A list of casualty Simulation objects representing the casualtys attributes over time.
 
         Returns:
-            A string representing the generated question.
+            A string representing the generated prompt.
         """
-        question = ''
-        description = self.scenario.description + '. '
-        question += description
-        for patient in self.scenario.patients:
-            this_patients_simulation = self._find_this_patients_simulation(patient, patient_simulations)
-            if patient.assessed:
-                if this_patients_simulation.deceased:
-                    patient_question = f'{patient.id} is deceased and has been assesed and tagged as {patient.tag}. '
+        prompt = ''
+        description = self.scenario.state.mission.unstructured + ' '
+        prompt += description
+        for casualty in self.scenario.state.casualties:
+            this_casualtys_simulation = self._find_this_casualties_simulation(casualty, casualty_simulations)
+            if casualty.assessed:
+                if this_casualtys_simulation.deceased:
+                    casualty_prompt = f'{casualty.id} is deceased and has been assesed and tagged as {casualty.tag}. '
 
                 else:
-                    patient_question = (
-                        f'{patient.id} has been assesed and tagged as {patient.tag}. '
+                    casualty_prompt = (
+                        f'{casualty.id} has been assesed and tagged as {casualty.tag}. '
                     )
             else:
-                patient_question = (
-                    f'{patient.id} is a {patient.age} '
-                    f'year old {patient.sex} named {patient.name}. '
-                    f'{self._generate_question_from_injuries(patient.injuries)} '
-                    f'{self._generate_question_from_vitals(patient.vitals.to_dict())} '
-                    f'Their mental status is {patient.mental_status}. '
+                casualty_prompt = (
+                    f'{casualty.id} is a {casualty.demographics.age} '
+                    f'year old {casualty.demographics.sex} {casualty.demographics.rank} named {casualty.name}. '
+                    f'{self._generate_prompt_from_injuries(casualty.injuries)} '
+                    f'{self._generate_prompt_from_vitals(casualty.vitals.to_dict())} '
+                    f'Their mental status is {casualty.mental_status}. '
                 )
-            question += patient_question
+            prompt += casualty_prompt
         
-        question += 'Choose a patient to treat. Specify by patient ID.'
-        return question
+        prompt += 'Choose a casualty to treat. Specify by Probe Option ID.'
+        return prompt
 
-    def _generate_question_from_injuries(self, injuries: List[Injury]) -> str:
+    def _generate_prompt_from_injuries(self, injuries: List[Injury]) -> str:
         """
-        Generate a question from the injuries of a patient.
+        Generate a prompt from the injuries of a casualty.
 
         Args:
-            injuries: A list of Injury objects representing the patient's injuries.
+            injuries: A list of Injury objects representing the casualty's injuries.
 
         Returns:
-            A string representing the generated question from the injuries.
+            A string representing the generated prompt from the injuries.
         """
-        question = 'Their injuries are '
+        prompt = 'Their injuries are '
         for i, injury in enumerate(injuries):
             if i == len(injuries) - 1:
-                question += (
-                    f"and {injury.location} {injury.name}."
+                prompt += (
+                    f"and {injury.location} {injury.name} with severity {injury.severity}."
                 )
             else:
-                question += (
-                    f"{injury.location} {injury.name}, "
+                prompt += (
+                    f"{injury.location} {injury.name} with severity {injury.severity}, "
                 )
-        return question
+        return prompt
 
-    def _generate_question_from_vitals(self, vitals: dict) -> str:
+    def _generate_prompt_from_vitals(self, vitals: dict) -> str:
         """
-        Generate a question from the vitals of a patient.
+        Generate a prompt from the vitals of a casualty.
 
         Args:
-            vitals: A dictionary representing the patient's vitals.
+            vitals: A dictionary representing the casualty's vitals.
 
         Returns:
-            A string representing the generated question from the vitals.
+            A string representing the generated prompt from the vitals.
         """
         vitals_items = vitals.items()
-        question = ''
+        prompt = ''
         for key, value in vitals_items:
-            question += f"Their {key} is {value}. "
-        return question
+            prompt += f"Their {key} is {value}. "
+        return prompt
     
     def respond_to_probe(
             self,
             probe_id: str,
-            patient_id: str,
-            explanation: str = None
+            choice: str,
+            justification: str = None
         ) -> None:
         """
         Respond to a probe from the probe system.
 
         Args:
             probe_id: The ID of the probe.
-            patient_id: The ID of the patient chosen to respond to the probe.
+            casualty_id: The ID of the casualty chosen to respond to the probe.
             explanation: An explanation for the response (optional).
 
         Returns:
             None.
         """
         probe: ProbeObject = self.probes[probe_id]
-        probe.patient_id_chosen = patient_id
-        probe.explanation = explanation
-
-        for p in self.scenario.patients:
-            if p.id == patient_id:
-                p.assessed = True
-                break
+        probe.choice = choice
+        probe.justification = justification
+        # for p in self.scenario.state.casualties:
+        #     if p.id == choice:
+        #         p.assessed = True
+        #         break
