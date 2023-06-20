@@ -42,10 +42,14 @@ class ITMScenarioSession:
         self.probe_system = ITMProbeSystem()
         self.casualty_simulator = ITMCasualtySimulator()
         self.alignment_target = AlignmentTarget()
-        self.probe_count = 0
-        self.save_to_database = False
+
+
+        self.probes_answers_required_to_complete_scenario = 0
+        self.responded_to_last_probe = True
+        self.last_probe = Probe()
 
         # This calls the dashboard's MongoDB
+        self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
                                 'localhost', '27017', 'dashboard')
         self.history = []
@@ -94,9 +98,7 @@ class ITMScenarioSession:
             if casualty.id == casualty_id:
                 response = casualty.vitals.heart_rate
                 self.add_history(
-                    "Get Heart Rate", {
-                        "Casualty ID": casualty_id,
-                    }, response)
+                    "Get Heart Rate", {"Casualty ID": casualty_id,}, response)
                 return response
 
     def get_probe(self, scenario_id: str) -> Probe:
@@ -110,12 +112,15 @@ class ITMScenarioSession:
             A Probe object representing the generated probe.
         """
         self.check_scenario_id(scenario_id)
-        probe = self.probe_system.generate_probe(
-            self.casualty_simulator.casualty_simulations)
-        self.add_history(
-            "Get Probe", {
-                "Scenario ID": scenario_id,
-            }, probe.to_dict())
+        if self.responded_to_last_probe:
+            probe = self.probe_system.generate_probe(
+                self.casualty_simulator.casualty_simulations)
+            self.last_probe = probe
+        else:
+            probe = self.last_probe
+
+        self.responded_to_last_probe = False
+        self.add_history("Get Probe", {"Scenario ID": scenario_id}, probe)
         return probe
 
     def get_scenario_state(self, scenario_id: str) -> State:
@@ -130,9 +135,9 @@ class ITMScenarioSession:
         """
         self.check_scenario_id(scenario_id)
         self.add_history(
-            "Get Scenario State", {
-                "Scenario ID": scenario_id,
-            },  self.scenario.state.to_dict())
+            "Get Scenario State",
+            {"Scenario ID": scenario_id},
+            self.scenario.state.to_dict())
         return self.scenario.state
     
     def get_vitals(self, casualty_id: str) -> Vitals:
@@ -151,9 +156,7 @@ class ITMScenarioSession:
             if casualty.id == casualty_id:
                 response = casualty.vitals.to_dict()
                 self.add_history(
-                    "Get Vitals", {
-                        "Casualty ID": casualty_id,
-                    }, response)
+                    "Get Vitals", {"Casualty ID": casualty_id}, response)
                 return casualty.vitals
 
     def respond_to_probe(self, body: ProbeResponse) -> State:
@@ -166,6 +169,7 @@ class ITMScenarioSession:
         Returns:
             The updated scenario state as a ScenarioState object.
         """
+        self.responded_to_last_probe = True
         self.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
@@ -179,17 +183,14 @@ class ITMScenarioSession:
         self.time_elapsed_scenario_time += time_elapsed_during_treatment
         self.casualty_simulator.update_vitals(time_elapsed_during_treatment)
 
-        # self.scenario.state.scenario_complete = all(
-        #     [casualty.assessed for casualty in self.scenario.state.casualties])
-        self.probe_count -= 1
-        self.scenario.state.scenario_complete = self.probe_count <= 0
+        self.probes_answers_required_to_complete_scenario -= 1
+        self.scenario.state.scenario_complete = \
+            self.probes_answers_required_to_complete_scenario <= 0
         self.add_history(
-            "Respond to Probe", {
-                "Scenario ID": body.scenario_id,
-                "Probe ID": body.probe_id,
-                "Choice": body.choice,
-                "Justification": body.justification
-            }, self.scenario.state.to_dict())
+            "Respond to Probe",
+            {"Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
+            "Choice": body.choice, "Justification": body.justification}, 
+            self.scenario.state.to_dict())
         if self.scenario.state.scenario_complete:
             self.end_scenario()
         return self.scenario.state
@@ -221,7 +222,7 @@ class ITMScenarioSession:
             yaml_converter = YAMLScenarioConverter(yaml_path + yaml_file)
             ( self.scenario, casualty_simulations,
               self.supplies_details, self.alignment_target,
-               self.probe_count ) = \
+               self.probes_answers_required_to_complete_scenario ) = \
                 yaml_converter.generate_scenario_from_yaml()
             self.casualty_simulator.setup_casualties(self.scenario, casualty_simulations)
 
@@ -231,9 +232,10 @@ class ITMScenarioSession:
         self.formatted_start_time = iso_timestamp
 
         self.probe_system.scenario = self.scenario
-        self.add_history("Start Scenario", {
-            "ADM Name": self.adm_name
-        }, self.scenario.to_dict())
+        self.add_history(
+            "Start Scenario",
+            {"ADM Name": self.adm_name},
+            self.scenario.to_dict())
         return self.scenario
 
     def tag_casualty(self, casualty_id: str, tag: str) -> str:
@@ -253,10 +255,9 @@ class ITMScenarioSession:
                 casualty.tag = tag
                 response = f"{casualty.id} tagged as {tag}."
                 self.add_history(
-                    "Tag Casualty", {
-                        "Casualty ID": casualty_id,
-                        "Tag": tag
-                    }, response)
+                    "Tag Casualty",
+                    {"Casualty ID": casualty_id, "Tag": tag},
+                    response)
                 return response
 
     def add_history(self,
