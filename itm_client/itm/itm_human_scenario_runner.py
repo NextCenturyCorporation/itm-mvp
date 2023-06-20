@@ -1,10 +1,11 @@
 from enum import Enum
-from swagger_client.models import Scenario, State
+from swagger_client.models import Scenario, State, ProbeResponse
 from .itm_scenario_runner import ScenarioRunner
 
 
 class CommandOption(Enum):
     START = "start (s)"
+    ALIGNMENT_TARGETS = "alignment targets (a)"
     PROBE = "probe (p)"
     STATUS = "status (u)"
     VITALS = "vitals (v)"
@@ -43,8 +44,8 @@ class ITMHumanScenarioRunner(ScenarioRunner):
 
     def get_probe_option_id(self):
         probe_option_id = input(
-            f"Enter Probe option Number or ID from the list:\n"
-            f"{[f'({i + 1}, {option.id})' for i, option in enumerate(self.current_probe_options.options)]}: "
+            f"Enter Probe option Number from the list:\n"
+            f"{[f'({i + 1}, {option.id})' for i, option in enumerate(self.current_probe_options)]}: "
         )
         try:
             probe_option_index = int(probe_option_id) - 1
@@ -57,7 +58,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
 
     def get_patient_id(self):
         patient_id = input(
-            f"Enter Casualty Number or ID from the list:\n"
+            f"Enter Casualty Number from the list:\n"
             f"{[f'({i + 1}, {patient.id})' for i, patient in enumerate(self.patients)]}: "
         )
         try:
@@ -78,10 +79,14 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             medical_supply_index = int(medical_supply) - 1
             medical_supply = self.medical_supplies[medical_supply_index].type
         except ValueError:
-            return self.get_medical_supplies()
-        except IndexError:
-            return self.get_medical_supplies()
+            pass
         return medical_supply
+
+    def get_justification(self):
+        justification = input(
+            f"Enter optional justification, or <Enter> to skip: "
+        )
+        return justification
 
     def start_scenario_operation(self, temp_username):
         response: Scenario = self.itm.start_scenario(temp_username)
@@ -90,6 +95,13 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         state: State = response.state
         self.patients = state.casualties
         self.medical_supplies = response.state.supplies
+        return response
+
+    def alignment_targets_operation(self):
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        else:
+            response = self.itm.get_alignment_target(self.scenario_id)
         return response
 
     def probe_scenario_operation(self):
@@ -114,64 +126,74 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             if command_2 == 'p':
                 command_2 = self.current_probe_id
             command_3 = self.get_probe_option_id()
-            command_4 = self.get_medical_supplies()
-            try:
-                probe_option_index = int(command_3) - 1
-                probe_option_id = self.current_probe_options[probe_option_index].id
-            except ValueError:
-                probe_option_id = command_3
-            response = self.itm.respond_to_probe(
-                self.scenario_id, command_2, probe_option_id,command_4
+            command_4 = self.get_justification()
+            body=ProbeResponse(
+                scenario_id=self.scenario_id,
+                probe_id=command_2,
+                choice=command_3
             )
+            if len(command_4) > 0:
+                body.justification = command_4
+            print(body)
+            response = self.itm.respond_to_probe(body)
         return response
 
     def status_scenario_operation(self):
-        response = self.itm.get_scenario_state(scenario_id=self.scenario_id)
-        self.medical_supplies = response.supplies
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        else:
+            response = self.itm.get_scenario_state(scenario_id=self.scenario_id)
+            self.medical_supplies = response.supplies
         return response
 
     def vitals_scenario_operation(self):
-        return "Not implemented in MVP."
-
         if self.scenario_id == None:
             response = "No active scenario; please start a scenario first."
         else:
             command_2 = self.get_patient_id()
             response = self.itm.get_vitals(
-                casualtyId=command_2
+                casualty_id=command_2
             )
-        print(response)
         return response
 
     def heart_rate_scenario_operation(self):
-        return "Not implemented in MVP."
-
         if self.scenario_id == None:
             response = "No active scenario; please start a scenario first."
         else:
             command_2 = self.get_patient_id()
             response = self.itm.get_heart_rate(
-                casualtyId=command_2
+                casualty_id=command_2
             )
         return response
+
+    def get_tagType(self):
+        command_3 = input(
+            f"Enter tag from following options "
+            f"{[tag.value for tag in TagTypes]}: "
+        ).lower()
+        if len(command_3) == 1:
+            found = False
+            for tag in [tag.value for tag in TagTypes]:
+                tag_type = self.get_full_string_and_shortcut(tag)
+                if command_3 == tag_type[1]:
+                    command_3 = tag_type[0]
+                    found = True
+                    break
+            if found:
+                return command_3
+            else:
+                return self.get_tagType()
+        else:
+            return self.get_tagType()
 
     def tag_scenario_operation(self):
         if self.scenario_id == None:
             response = "No active scenario; please start a scenario first."
         else:
             command_2 = self.get_patient_id()
-            command_3 = input(
-                f"Enter tag from following options "
-                f"{[tag.value for tag in TagTypes]}: "
-            )
-            if len(command_3) == 1:
-                for tag in [tag.value for tag in TagTypes]:
-                    tag_type = self.get_full_string_and_shortcut(tag)
-                    if command_3 == tag_type[1]:
-                        command_3 = tag_type[0]
-                        break
+            command_3 = self.get_tagType()
             response = self.itm.tag_patient(
-                casualtyId=command_2,
+                casualty_id=command_2,
                 tag=command_3
             )
         return response
@@ -189,6 +211,8 @@ class ITMHumanScenarioRunner(ScenarioRunner):
     def perform_operations(self, command_1, response):
         if command_1 in self.get_full_string_and_shortcut(CommandOption.START):
             response = self.start_scenario_operation(self.username)
+        elif command_1 in self.get_full_string_and_shortcut(CommandOption.ALIGNMENT_TARGETS):
+            response = self.alignment_targets_operation()
         elif command_1 in self.get_full_string_and_shortcut(CommandOption.PROBE):
             response = self.probe_scenario_operation()
         elif command_1 in self.get_full_string_and_shortcut(CommandOption.RESPOND):
@@ -201,7 +225,8 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             response = self.heart_rate_scenario_operation()
         elif command_1 in self.get_full_string_and_shortcut(CommandOption.TAG):
             response = self.tag_scenario_operation()
-        print(response)
+        if response != None:
+            print(response)
 
         if command_1 in self.get_full_string_and_shortcut(CommandOption.END):
             self.scenario_complete = True
