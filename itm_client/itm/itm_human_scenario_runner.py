@@ -31,6 +31,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         self.patients = {}
         self.medical_supplies = {}
         self.current_probe_id = ''
+        self.current_probe_options = {}
 
     def get_full_string_and_shortcut(self, parts):
         if isinstance(parts, CommandOption):
@@ -40,103 +41,139 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         shortcut = [parts[1][1]]
         return [full] + shortcut
 
+    def get_probe_option_id(self):
+        probe_option_id = input(
+            f"Enter Probe option Number or ID from the list:\n"
+            f"{[f'({i + 1}, {option.id})' for i, option in enumerate(self.current_probe_options.options)]}: "
+        )
+        try:
+            probe_option_index = int(probe_option_id) - 1
+            probe_option_id = self.current_probe_options[probe_option_index].id
+        except ValueError:
+            return self.get_probe_option_id()
+        except IndexError:
+            return self.get_probe_option_id()
+        return probe_option_id
+
     def get_patient_id(self):
         patient_id = input(
-            f"Enter Patient Number or ID from the list:\n"
+            f"Enter Casualty Number or ID from the list:\n"
             f"{[f'({i + 1}, {patient.id})' for i, patient in enumerate(self.patients)]}: "
         )
         try:
             patient_index = int(patient_id) - 1
             patient_id = self.patients[patient_index].id
         except ValueError:
-            pass
+            return self.get_patient_id()
+        except IndexError:
+            return self.get_patient_id()
         return patient_id
     
     def get_medical_supplies(self):
         medical_supply = input(
             f"Enter Medical Supply Number or Name from the list:\n"
-            f"{[f'({i + 1}, {medical_supply.name})' for i, medical_supply in enumerate(self.medical_supplies)]}: "
+            f"{[f'({i + 1}, {medical_supply.type})' for i, medical_supply in enumerate(self.medical_supplies)]}: "
         )
         try:
             medical_supply_index = int(medical_supply) - 1
-            medical_supply = self.medical_supplies[medical_supply_index].name
+            medical_supply = self.medical_supplies[medical_supply_index].type
         except ValueError:
-            pass
+            return self.get_medical_supplies()
+        except IndexError:
+            return self.get_medical_supplies()
         return medical_supply
 
     def start_scenario_operation(self, temp_username):
         response: Scenario = self.itm.start_scenario(temp_username)
         self.scenario_id = response.id
         self.scenario = response
-        self.patients = response.patients
-        self.medical_supplies = response.medical_supplies
+        state: State = response.state
+        self.patients = state.casualties
+        self.medical_supplies = response.state.supplies
         return response
 
     def probe_scenario_operation(self):
-        response = self.itm.get_probe(scenario_id=self.scenario_id)
-        self.current_probe_id = response.id
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        else:
+            response = self.itm.get_probe(scenario_id=self.scenario_id)
+            self.current_probe_id = response.id
+            self.current_probe_options = response.options
         return response
 
     def respond_probe_operation(self):
-        command_2 = input(
-            f"Enter a Probe ID. To use the last received Probe ID "
-            f"{self.current_probe_id}, enter 'p': "
-        )
-        command_3 = self.get_patient_id()
-        command_4 = self.get_medical_supplies()
-        if command_2 == 'p':
-            command_2 = self.current_probe_id
-        try:
-            patient_index = int(command_3) - 1
-            patient_id = self.patients[patient_index].id
-        except ValueError:
-            patient_id = command_3
-        response = self.itm.respond_to_probe(
-            probe_id=command_2,
-            patient_id=patient_id,
-            explanation=command_4
-        )
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        elif self.current_probe_id == '':
+            response = "No active probe; please request a probe first."
+        else:
+            command_2 = input(
+                f"Enter a Probe ID. To use the last received Probe ID "
+                f"{self.current_probe_id}, enter 'p': "
+            )
+            if command_2 == 'p':
+                command_2 = self.current_probe_id
+            command_3 = self.get_probe_option_id()
+            command_4 = self.get_medical_supplies()
+            try:
+                probe_option_index = int(command_3) - 1
+                probe_option_id = self.current_probe_options[probe_option_index].id
+            except ValueError:
+                probe_option_id = command_3
+            response = self.itm.respond_to_probe(
+                self.scenario_id, command_2, probe_option_id,command_4
+            )
         return response
 
     def status_scenario_operation(self):
         response = self.itm.get_scenario_state(scenario_id=self.scenario_id)
-        self.medical_supplies = response.medical_supplies
+        self.medical_supplies = response.supplies
         return response
 
     def vitals_scenario_operation(self):
-        command_2 = self.get_patient_id()
-        response = self.itm.get_patient_vitals(
-            scenario_id=self.scenario_id,
-            patient_id=command_2
-        )
+        return "Not implemented in MVP."
+
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        else:
+            command_2 = self.get_patient_id()
+            response = self.itm.get_vitals(
+                casualtyId=command_2
+            )
         print(response)
         return response
 
     def heart_rate_scenario_operation(self):
-        command_2 = self.get_patient_id()
-        response = self.itm.get_patient_heart_rate(
-            scenario_id=self.scenario_id,
-            patient_id=command_2
-        )
+        return "Not implemented in MVP."
+
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        else:
+            command_2 = self.get_patient_id()
+            response = self.itm.get_heart_rate(
+                casualtyId=command_2
+            )
         return response
 
     def tag_scenario_operation(self):
-        command_2 = self.get_patient_id()
-        command_3 = input(
-            f"Enter tag from following options "
-            f"{[tag.value for tag in TagTypes]}: "
-        )
-        if len(command_3) == 1:
-            for tag in [tag.value for tag in TagTypes]:
-                tag_type = self.get_full_string_and_shortcut(tag)
-                if command_3 == tag_type[1]:
-                    command_3 = tag_type[0]
-                    break
-        response = self.itm.tag_patient(
-            scenario_id=self.scenario_id,
-            patient_id=command_2,
-            tag=command_3
-        )
+        if self.scenario_id == None:
+            response = "No active scenario; please start a scenario first."
+        else:
+            command_2 = self.get_patient_id()
+            command_3 = input(
+                f"Enter tag from following options "
+                f"{[tag.value for tag in TagTypes]}: "
+            )
+            if len(command_3) == 1:
+                for tag in [tag.value for tag in TagTypes]:
+                    tag_type = self.get_full_string_and_shortcut(tag)
+                    if command_3 == tag_type[1]:
+                        command_3 = tag_type[0]
+                        break
+            response = self.itm.tag_patient(
+                casualtyId=command_2,
+                tag=command_3
+            )
         return response
 
     def run(self):
