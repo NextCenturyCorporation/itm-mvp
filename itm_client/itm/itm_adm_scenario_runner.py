@@ -120,9 +120,10 @@ class ADMScenarioRunner(ScenarioRunner):
 
     def answer_probe(self):
         self.adm_knowledge.probes_answered += 1
-        probe_choice = random.choice([p for p in self.adm_knowledge.probe_options])
+        casualty_choice = random.choice([p for p in self.adm_knowledge.all_casualty_ids])
         self.itm.tag_casualty(
-            casualty_id=probe_choice.value, tag=self.assess_casualty_priority())
+            casualty_id=casualty_choice, tag=self.assess_casualty_priority())
+        probe_choice = random.choice([p for p in self.adm_knowledge.probe_options])
         body = ProbeResponse(
             scenario_id=self.adm_knowledge.scenario_id,
             probe_id=self.adm_knowledge.current_probe.id,

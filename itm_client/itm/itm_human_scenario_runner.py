@@ -32,6 +32,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         self.patients = {}
         self.medical_supplies = {}
         self.current_probe_id = ''
+        self.current_probe_text = ''
         self.current_probe_options = {}
 
     def get_full_string_and_shortcut(self, parts):
@@ -45,7 +46,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
     def get_probe_option_id(self):
         probe_option_id = input(
             f"Enter Probe option Number from the list:\n"
-            f"{[f'({i + 1}, {option.id})' for i, option in enumerate(self.current_probe_options)]}: "
+            f"{[f'({i + 1}, {option.value})' for i, option in enumerate(self.current_probe_options)]}: "
         )
         try:
             probe_option_index = int(probe_option_id) - 1
@@ -89,12 +90,15 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         return justification
 
     def start_scenario_operation(self, temp_username):
-        response: Scenario = self.itm.start_scenario(temp_username)
-        self.scenario_id = response.id
-        self.scenario = response
-        state: State = response.state
-        self.patients = state.casualties
-        self.medical_supplies = response.state.supplies
+        if self.scenario_id == None:
+            response: Scenario = self.itm.start_scenario(temp_username)
+            self.scenario_id = response.id
+            self.scenario = response
+            state: State = response.state
+            self.patients = state.casualties
+            self.medical_supplies = response.state.supplies
+        else:
+            response = "Scenario is already started."
         return response
 
     def alignment_targets_operation(self):
@@ -110,6 +114,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         else:
             response = self.itm.get_probe(scenario_id=self.scenario_id)
             self.current_probe_id = response.id
+            self.current_probe_text = response.prompt
             self.current_probe_options = response.options
         return response
 
@@ -119,22 +124,17 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         elif self.current_probe_id == '':
             response = "No active probe; please request a probe first."
         else:
-            command_2 = input(
-                f"Enter a Probe ID. To use the last received Probe ID "
-                f"{self.current_probe_id}, enter 'p': "
-            )
-            if command_2 == 'p':
-                command_2 = self.current_probe_id
+            print("Probe prompt: \"", self.current_probe_text, "\"")
             command_3 = self.get_probe_option_id()
             command_4 = self.get_justification()
             body=ProbeResponse(
                 scenario_id=self.scenario_id,
-                probe_id=command_2,
+                probe_id=self.current_probe_id,
                 choice=command_3
             )
             if len(command_4) > 0:
                 body.justification = command_4
-            response = self.itm.respond_to_probe(body)
+            response = self.itm.respond_to_probe(body=body)
         return response
 
     def status_scenario_operation(self):
@@ -150,7 +150,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             response = "No active scenario; please start a scenario first."
         else:
             command_2 = self.get_patient_id()
-            response = self.itm.get_vitals(
+            response = self.itm.check_vitals(
                 casualty_id=command_2
             )
         return response
@@ -191,7 +191,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         else:
             command_2 = self.get_patient_id()
             command_3 = self.get_tagType()
-            response = self.itm.tag_patient(
+            response = self.itm.tag_casualty(
                 casualty_id=command_2,
                 tag=command_3
             )
