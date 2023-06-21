@@ -8,6 +8,7 @@ from swagger_server.models import (
     AlignmentTargetKdmaValues,
     Casualty,
     Probe,
+    ProbeOption,
     ProbeResponse,
     Scenario,
     State,
@@ -15,10 +16,12 @@ from swagger_server.models import (
 )
 from .itm_casualty_simulator import ITMCasualtySimulator
 from .itm_database.itm_mongo import MongoDB
-from .itm_probe_system import ITMProbeSystem
+from .itm_probe_generator import ITMProbeGenerator
+from .itm_probe_reader import ITMProbeReader
 from .itm_scenario_generator import ITMScenarioGenerator
 from .itm_supplies import ITMSupplies
-from .itm_yaml_scenario_converter import YAMLScenarioConverter
+from .itm_scenario_reader import ITMScenarioReader
+from .itm_alignment_target_reader import ITMAlignmentTargetReader
 
 
 
@@ -38,15 +41,18 @@ class ITMScenarioSession:
         self.time_elapsed_scenario_time = 0
         self.formatted_start_time = None
         self.scenario: Scenario = None
+
         self.supplies_details = ITMSupplies()
-        self.probe_system = ITMProbeSystem()
         self.casualty_simulator = ITMCasualtySimulator()
-        self.alignment_target = AlignmentTarget()
 
+        self.alignment_target_reader: ITMAlignmentTargetReader = None
 
-        self.probes_answers_required_to_complete_scenario = 0
+        # ITMProbeGenerator or ITMProbeReader
+        self.probe_system = None
+
+        self.last_probe = None
         self.responded_to_last_probe = True
-        self.last_probe = Probe()
+        self.probes_answers_required_to_complete_scenario = 0
 
         # This calls the dashboard's MongoDB
         self.save_to_database = False
@@ -80,7 +86,7 @@ class ITMScenarioSession:
 
     def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
         self.check_scenario_id(scenario_id)
-        return self.alignment_target
+        return self.alignment_target_reader.alignment_target
 
     def get_heart_rate(self, casualty_id: str) -> int:
         """
@@ -88,17 +94,17 @@ class ITMScenarioSession:
 
         Args:
             scenario_id: The ID of the scenario.
-            casualty_id_id: The ID of the casualty_id.
+            casualty_id: The ID of the casualty_id.
 
         Returns:
-            The heart rate of the casualty_id as an integer.
+            The heart rate of the casualty as an integer.
         """
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.vitals.heart_rate
+                response = casualty.vitals.hrpmin
                 self.add_history(
-                    "Get Heart Rate", {"Casualty ID": casualty_id,}, response)
+                    "Get Heart Rate", {"Casualty ID": casualty_id}, response)
                 return response
 
     def get_probe(self, scenario_id: str) -> Probe:
@@ -113,15 +119,26 @@ class ITMScenarioSession:
         """
         self.check_scenario_id(scenario_id)
         if self.responded_to_last_probe:
-            probe = self.probe_system.generate_probe(
-                self.casualty_simulator.casualty_simulations)
+            probe = self.probe_system.generate_probe(self.scenario.state)
             self.last_probe = probe
         else:
             probe = self.last_probe
 
         self.responded_to_last_probe = False
-        self.add_history("Get Probe", {"Scenario ID": scenario_id}, probe)
-        return probe
+        self.add_history("Get Probe", {"Scenario ID": scenario_id}, probe.to_dict())
+        modifed_options = [
+            ProbeOption(
+                id=p.id, value=p.value, kdma_association={}
+            ) for p in probe.options
+        ]
+        return Probe(
+            id=probe.id,
+            scenario_id=scenario_id,
+            type=probe.type,
+            prompt=probe.prompt,
+            state=probe.state,
+            options=modifed_options
+        )
 
     def get_scenario_state(self, scenario_id: str) -> State:
         """
@@ -146,7 +163,7 @@ class ITMScenarioSession:
 
         Args:
             scenario_id: The ID of the scenario.
-            casualty_id_id: The ID of the casualty.
+            casualty_id: The ID of the casualty.
 
         Returns:
             The vitals of the casualty as a Vitals object.
@@ -177,15 +194,16 @@ class ITMScenarioSession:
         )
         time_elapsed_during_treatment = self.casualty_simulator.treat_casualty(
             casualty_id=body.choice,
-            supply=body.justification,
-            supply_details=self.supplies_details
+            supply=body.justification
         )
         self.time_elapsed_scenario_time += time_elapsed_during_treatment
         self.casualty_simulator.update_vitals(time_elapsed_during_treatment)
 
-        self.probes_answers_required_to_complete_scenario -= 1
+        self.probe_system.probe_count -= 1
+        self.probe_system.current_probe_index += 1
+        self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
         self.scenario.state.scenario_complete = \
-            self.probes_answers_required_to_complete_scenario <= 0
+            self.probe_system.probe_count <= 0
         self.add_history(
             "Respond to Probe",
             {"Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
@@ -217,14 +235,19 @@ class ITMScenarioSession:
             self.adm_name = self.adm_name.removeprefix("_random_")
             self.scenario = ITMScenarioGenerator().generate_scenario()
         else:
-            yaml_path = "swagger_server/itm/itm_scenario_configs/"
-            yaml_file = "test_scenario.yaml"
-            yaml_converter = YAMLScenarioConverter(yaml_path + yaml_file)
+            yaml_path = "swagger_server/itm/itm_scenario_configs/scenario_1/"
+            
+            scenario_file = "scenario.yaml"
+            scenario_reader = ITMScenarioReader(yaml_path + scenario_file)
             ( self.scenario, casualty_simulations,
-              self.supplies_details, self.alignment_target,
-               self.probes_answers_required_to_complete_scenario ) = \
-                yaml_converter.generate_scenario_from_yaml()
+              self.supplies_details ) = \
+                scenario_reader.read_scenario_from_yaml()
             self.casualty_simulator.setup_casualties(self.scenario, casualty_simulations)
+            
+            self.probe_system = ITMProbeReader(yaml_path)
+            
+            alignment_target_file = "alignment_target.yaml"
+            self.alignment_target_reader = ITMAlignmentTargetReader(yaml_path + alignment_target_file)
 
         self.time_started = time.time()
         iso_timestamp = datetime.fromtimestamp(time.time())
@@ -233,9 +256,7 @@ class ITMScenarioSession:
 
         self.probe_system.scenario = self.scenario
         self.add_history(
-            "Start Scenario",
-            {"ADM Name": self.adm_name},
-            self.scenario.to_dict())
+            "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
         return self.scenario
 
     def tag_casualty(self, casualty_id: str, tag: str) -> str:

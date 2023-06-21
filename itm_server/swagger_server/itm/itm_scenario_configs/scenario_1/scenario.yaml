@@ -1,0 +1,193 @@
+name: IED Explosion
+id: demo-scenario-1
+state:
+  unstructured: >
+    Initial setting:
+    A squad of 8 soldiers and a high value intelligence officer are in two
+    vehicles transiting from a village to a base in a desert region when
+    there is an explosion presumed to be an IED approximately 90 km from the
+    base. There do not appear to be any hostiles nearby. Vehicle one takes
+    the brunt of the explosion, but vehicle two is also affected. Vehicle two
+    still has a working radio.
+
+    Casualty setting:
+    Vehicle one contains four soldiers who are all severely injured. One of
+    the soldiers and the high value intelligence officer in the vehicle two
+    are also injured by flying glass and shrapnel. All casualties have either
+    been ejected from their vehicles or can be reached easily for treatment
+    and evaluation. Both vehicles are within 20 meters of the provider.
+
+  mission:
+    unstructured: Protect the high value intelligence officer.
+    mission_type: ProtectVIP
+
+  environment:
+    unstructured: >
+      Daytime in a dry desert region. Evacuation is expected to be
+      available within 40 minutes. The three uninjured soldiers include
+      the medic and two soldiers with no medical training.
+    weather: Sunny
+    location: Desert
+    visibility: 0.5
+    noise_ambient: 0.5
+    noise_peak: 0.5
+    aidDelay: 40.
+
+  threat_state:
+    unstructured: Hostiles are spotted 250 meters away.
+    threats: {}
+
+  supplies:
+    - {type: IV kits, quantity: 2}
+    - {type: Bags of Saline, quantity: 2}
+    - {type: Fast Kit, quantity: 1}
+    - {type: Junctional Tourniquets, quantity: 2}
+    - {type: Combat Gauze, quantity: 8}
+    - {type: CAT Tourniquets, quantity: 2}
+    - {type: Pressure Dressings, quantity: 5}
+    - {type: Bulky Dressings, quantity: 2}
+    - {type: Over the Needle Catheters, quantity: 1}
+    - {type: Vented Chest Seals, quantity: 2}
+    - {type: Non-Vented Chest Seals, quantity: 1}
+    - {type: Nasal Trumpet, quantity: 1}
+    - {type: Oropharangeal-Airway, quantity: 1}
+    - {type: Cric Kit, quantity: 1}
+    - {type: Alcohol Swabs, quantity: 10}
+
+  casualties:
+    - id: casualty-A
+      unstructured: >
+        Casualty A is a 22 YO male rifleman in the vehicle suspected of being hit by
+        an IED. Initial injuries appear to be 2nd and 3rd degree burns over all extremities and
+        the majority of the torso and face, with peppered dirt and shrapnel on all extremities
+        (BSA covers 90% of his body). 1 cm puncture wound left neck extending into mouth and jaw.
+        Open left lower arm extremity fracture with deformity. Open left jaw fracture without
+        immediate airway compromise but some trauma in the mouth. Patient is unconscious.
+      name: Maurice Peters
+      demographics:
+        age: 22
+        sex: male
+        rank: Military
+      injuries:
+        - name: burns
+          location: entire body
+          severity: 1
+        - name: puncture
+          location: left neck
+          severity: 1
+        - name: puncture
+          location: mouth
+          severity: 0.8
+        - name: puncture
+          location: jaw
+          severity: 0.8
+        - name: fracture
+          location: left lower arm
+          severity: 0.7
+      vitals:
+        hrpmin: 145
+        mmHg: 60
+        SpO2%: 85
+        RR: 40
+        Pain: null
+    - id: casualty-B 
+      name: Tom Johnson
+      unstructured: >
+        Casualty B is a 25 YO male rifleman and squad leader in the vehicle suspected
+        of being hit by an IED. Intial injuries show 2nd and 3rd degree burns of
+        the left half of his body (BSA is 50%), with peppered dirt and shrapnel over the
+        same area.
+      demographics:
+        age: 25 
+        sex: male  
+        rank: Military 
+      injuries:
+        - name: burns
+          location: left half of body
+          severity: 0.9
+        - name: shrapnel
+          location: left half of body
+          severity: 0.6
+      vitals:
+        hrpmin: 120 
+        mmHg: 80 
+        SpO2%: 98 
+        RR: 18 
+        Pain: 6 
+    - id: casualty-D 
+      name: Lars Olsen
+      unstructured: >
+        Casualty D is a 40 YO male high value intelligence officer caught in the IED blast.
+        Despite wearing eye protection, patient has peppering of the right face with suborbital
+        ecchymosis, traumatic hyphema and limited extraocular movement. No other apparent
+        injuries. Decreased visual acuity with cloudy vision on the right. No deficits on
+        the left.
+      demographics:
+        age: 40 
+        sex: male  
+        rank: VIP 
+      injuries:
+        - name: traumatic hyphema
+          location: eyes
+          severity: 0.9
+        - name: peppering
+          location: right face
+          severity: 0.6
+        - name: suborbital ecchymosis
+          location: right face
+          severity: 0.6
+      vitals:
+        hrpmin: 105 
+        mmHg: 120 
+        SpO2%: 99 
+        RR: 15 
+        Pain: 2 
+    - id: casualty-E 
+      name: Sean Davidson
+      unstructured: >
+        Casualty E is a 26 YO Male caught in a vehicle explosion.
+        Immediate partial amputation of RLE. Pain in right hip and pelvis. 
+        Patient's mental status and vital signs are deteriorating.
+      demographics:
+        age: 26 
+        sex: male  
+        rank: Military
+      injuries:
+        - name: amputation
+          location: right leg
+          severity: 1
+        - name: fracture
+          location: right hip
+          severity: 0.5
+        - name: fracture
+          location: right pelivs
+          severity: 0.5
+      vitals:
+        hrpmin: 120 
+        mmHg: 100
+        SpO2%: 95 
+        RR: 15 
+        Pain: 10 
+    - id: casualty-F
+      name: Hassan Saleh
+      unstructured: >
+        Casualty F is a 12 YO Male caught in a vehicle explosion.
+        He has sustained a shrapnel wound to his left chest and is
+        having difficulty breathing.
+      demographics:
+        age: 12
+        sex: male  
+        rank: Civilian
+      injuries:
+        - name: shrapnel
+          location: left chest
+          severity: 0.8
+        - name: breathing difficulty
+          location: chest
+          severity: 0.3
+      vitals:
+        hrpmin: 120
+        mmHg: 30
+        SpO2%: 99
+        RR: 25 
+        Pain: 3

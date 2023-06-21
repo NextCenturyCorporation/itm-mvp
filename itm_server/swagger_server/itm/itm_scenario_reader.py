@@ -6,8 +6,6 @@ from typing import List, Tuple
 from .itm_casualty_simulator import CasualtySimulation
 from .itm_supplies import ITMSupplies, SupplyDetails
 
-from swagger_server.models.alignment_target import AlignmentTarget
-from swagger_server.models.alignment_target_kdma_values import AlignmentTargetKdmaValues
 from swagger_server.models.casualty import Casualty
 from swagger_server.models.demographics import Demographics
 from swagger_server.models.environment import Environment
@@ -21,7 +19,7 @@ from swagger_server.models.triage_category import TriageCategory
 from swagger_server.models.vitals import Vitals
 
 
-class YAMLScenarioConverter:
+class ITMScenarioReader:
     """Class for converting YAML data to ITM scenarios."""
 
     def __init__(self, yaml_path: str):
@@ -34,8 +32,8 @@ class YAMLScenarioConverter:
         with open(yaml_path, 'r') as file:
             self.yaml_data = yaml.safe_load(file)
 
-    def generate_scenario_from_yaml(self) -> \
-            Tuple[Scenario, List[CasualtySimulation], List[ITMSupplies], SupplyDetails, AlignmentTarget]:
+    def read_scenario_from_yaml(self) -> \
+            Tuple[Scenario, List[CasualtySimulation], List[ITMSupplies], SupplyDetails]:
         """
         Generate a Scenario and casualty simulations from the YAML data.
 
@@ -51,29 +49,22 @@ class YAMLScenarioConverter:
             state=state,
             triage_categories=triage_categories
         )
-        alignment_targets = self.yaml_data['alignment_target']
-        alignment_target = AlignmentTarget(
-            id="alignment_target_" + str(uuid.uuid4()),
-            kdma_values=[
-                AlignmentTargetKdmaValues(kdma=at['kdma'], value=at['value'])
-                for at in alignment_targets]
-        )
-        probe_count = self.yaml_data['probe_count']
-        return (scenario, casualty_simulations, supplies_details, alignment_target, probe_count)
+        return (scenario, casualty_simulations, supplies_details)
     
     def _generate_state(self):
-        unstructured = self.yaml_data['unstructured']
-        mission = self._generate_mission()
-        environment = self._generate_environment()
-        threat_state = self._generate_threat_state()
+        state = self.yaml_data['state']
+        unstructured = state['unstructured']
+        mission = self._generate_mission(state)
+        environment = self._generate_environment(state)
+        threat_state = self._generate_threat_state(state)
         supplies_details = ITMSupplies()
         supplies = [
             self._generate_supplies(supply_data, supplies_details)
-            for supply_data in self.yaml_data['supplies']
+            for supply_data in state['supplies']
         ]
         casualty_simulations = [
             self._generate_casualty_simulations(casualty_data)
-            for casualty_data in self.yaml_data['casualties']
+            for casualty_data in state['casualties']
         ]
         state = State(
             unstructured=unstructured,
@@ -87,24 +78,24 @@ class YAMLScenarioConverter:
         )
         return state, casualty_simulations, supplies_details
 
-    def _generate_mission(self):
-        mission = self.yaml_data['mission']
+    def _generate_mission(self, state):
+        mission = state['mission']
         return Mission(
             unstructured=mission['unstructured'],
             mission_type=mission['mission_type']
         )
     
-    def _generate_environment(self) -> Environment:
+    def _generate_environment(self, state) -> Environment:
         """
         Generate an Environment instance from the YAML data.
 
         Args:
-            environment_data: The YAML data representing an environment.
+            state: The YAML data representing the state.
 
         Returns:
             An Environment object representing the generated environment.
         """
-        environment = self.yaml_data['environment']
+        environment = state['environment']
         return Environment(
             unstructured=environment['unstructured'],
             weather=environment['weather'],
@@ -114,8 +105,8 @@ class YAMLScenarioConverter:
             noise_peak=environment['noise_peak']
         )
     
-    def _generate_threat_state(self):
-        threat_state = self.yaml_data['threat_state']
+    def _generate_threat_state(self, state):
+        threat_state = state['threat_state']
         return ThreatState(
             unstructured=threat_state['unstructured'],
             threats=threat_state['threats']
@@ -127,7 +118,7 @@ class YAMLScenarioConverter:
 
         Args:
             supply_data: The YAML data representing a supply.
-            supply_details: The ITMSupplies object to store a supply details.
+            supply_details: The ITMSupplies object to store supply details.
 
         Returns:
             A Supplies object representing the generated supply.
@@ -136,11 +127,15 @@ class YAMLScenarioConverter:
             type=supply_data['type'],
             quantity=supply_data['quantity']
         )
-        supply_details.get_supplies()[supplies.type] = \
-            SupplyDetails(
-                supply=supplies,
-                time_to_apply=supply_data['hidden_attributes']['time_to_apply_in_minutes']
-            )
+        
+        hidden_attributes = supply_data.get('hidden_attributes', {})
+        time_to_apply = hidden_attributes.get('time_to_apply_in_minutes')
+        
+        supply_details.get_supplies()[supplies.type] = SupplyDetails(
+            supply=supplies,
+            time_to_apply=time_to_apply
+        )
+        
         return supplies
 
     def _generate_casualty(self, casualty_data) -> Casualty:
@@ -173,7 +168,7 @@ class YAMLScenarioConverter:
             mm_hg=vital_data['mmHg'],
             rr=vital_data['RR'],
             sp_o2=vital_data['SpO2%'],
-            pain=vital_data['pain']
+            pain=vital_data['Pain']
         )
         casualty = Casualty(
             id="casualty_" + str(uuid.uuid4()),
@@ -182,7 +177,7 @@ class YAMLScenarioConverter:
             demographics=demograpics,
             injuries=injuries,
             vitals=vitals,
-            mental_status=casualty_data['mental_status'],
+            mental_status=casualty_data.get('mental_status', 'upset'),
             assessed=False,
             tag=None
         )
@@ -199,24 +194,25 @@ class YAMLScenarioConverter:
             A CasualtySimulation object representing the generated casualty simulation.
         """
         casualty = self._generate_casualty(casualty_data=casualty_data)
-        hidden_attributes = casualty_data['hidden_attributes']
-        vitals_changes = hidden_attributes['vitals_changes_over_time']
+        hidden_attributes = casualty_data.get('hidden_attributes', {})
+        vitals_changes = hidden_attributes.get('vitals_changes_over_time', {})
         casualty_simulation = CasualtySimulation(
-            casualty=casualty,
-            correct_tag=hidden_attributes['correct_tag'],
-            start_vitals=copy.deepcopy(casualty.vitals),
-            current_vitals=copy.deepcopy(casualty.vitals),
-            treatments_applied=[],
-            treatments_needed=hidden_attributes['treatements_needed'],
-            hrpmin_change=vitals_changes['hrpmin'],
-            mmhg_change=vitals_changes['mmHg'],
-            rr_change=vitals_changes['RR'],
-            spo2_change=vitals_changes['SpO2%'],
-            stable=hidden_attributes['stable'],
-            deceased=hidden_attributes['deceased'],
-            deceased_after_minutes=hidden_attributes['deceased_after_minutes']
+            casualty=casualty
+            # correct_tag=hidden_attributes.get('correct_tag'),
+            # start_vitals=copy.deepcopy(casualty.vitals),
+            # current_vitals=copy.deepcopy(casualty.vitals),
+            # treatments_applied=[],
+            # treatments_needed=hidden_attributes.get('treatements_needed'),
+            # hrpmin_change=vitals_changes.get('hrpmin'),
+            # mmhg_change=vitals_changes.get('mmHg'),
+            # rr_change=vitals_changes.get('RR'),
+            # spo2_change=vitals_changes.get('SpO2%'),
+            # stable=hidden_attributes.get('stable'),
+            # deceased=hidden_attributes.get('deceased'),
+            # deceased_after_minutes=hidden_attributes.get('deceased_after_minutes')
         )
         return casualty_simulation
+
 
     def _generate_triage_categories(self) -> List[TriageCategory]:
         return [

@@ -1,5 +1,5 @@
 from enum import Enum
-from swagger_client.models import Scenario, State
+from swagger_client.models import Scenario, State, ProbeResponse
 from .itm_scenario_runner import ScenarioRunner
 
 
@@ -44,7 +44,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
     def get_probe_option_id(self):
         probe_option_id = input(
             f"Enter Probe option Number or ID from the list:\n"
-            f"{[f'({i + 1}, {option.id})' for i, option in enumerate(self.current_probe_options.options)]}: "
+            f"{[f'({i + 1}, {option.id})' for i, option in enumerate(self.current_probe_options)]}: "
         )
         try:
             probe_option_index = int(probe_option_id) - 1
@@ -121,7 +121,12 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             except ValueError:
                 probe_option_id = command_3
             response = self.itm.respond_to_probe(
-                self.scenario_id, command_2, probe_option_id,command_4
+                body=ProbeResponse(
+                    scenario_id=self.scenario_id,
+                    probe_id=self.current_probe_id,
+                    choice=command_3,
+                    justification=command_4
+                )
             )
         return response
 
