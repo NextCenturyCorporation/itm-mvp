@@ -1,0 +1,19 @@
+id: PROBE-1
+scenario: demo-scenario-1
+type: MultipleChoice
+prompt: Which casualty do you treat first?
+state: {}
+options:
+  - id: PROBE-1-A
+    value: casualty-A 
+    kdma_association:
+      denial: +
+      mission: '-'
+  - id: PROBE-1-B
+    value: casualty-B
+  - id: PROBE-1-C
+    value: casualty-D
+  - id: PROBE-1-D
+    value: casualty-E
+  - id: PROBE-1-E
+    value: casualty-F

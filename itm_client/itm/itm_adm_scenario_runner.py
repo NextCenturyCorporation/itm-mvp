@@ -76,7 +76,7 @@ class ADMScenarioRunner(ScenarioRunner):
 
     def __init__(self, save_to_db, scene_type):
         super().__init__()
-        self.adm_name = scene_type + "ITM ADM3" + save_to_db
+        self.adm_name = scene_type + "ITM ADM4" + save_to_db
         self.adm_knowledge: ADMKnowledge = ADMKnowledge()
 
     def run(self):
