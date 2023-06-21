@@ -137,7 +137,7 @@ class Probe(Model):
         :param type: The type of this Probe.
         :type type: str
         """
-        allowed_values = ["MultipleChoice", "PatientOrdering"]  # noqa: E501
+        allowed_values = ["MultipleChoice", "FreeResponse", "PatientOrdering"]  # noqa: E501
         if type not in allowed_values:
             raise ValueError(
                 "Invalid value for `type` ({0}), must be one of {1}"

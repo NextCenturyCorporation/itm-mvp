@@ -507,45 +507,45 @@ class ItmTa2EvalApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def respond_to_probe(self, response, **kwargs):  # noqa: E501
+    def respond_to_probe(self, **kwargs):  # noqa: E501
         """Respond to a probe  # noqa: E501
 
         Respond to a probe with a decision chosen from among its options  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.respond_to_probe(response, async_req=True)
+        >>> thread = api.respond_to_probe(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProbeResponse response: object encapsulating the probe response (required)
+        :param ProbeResponse body: the selection by a DM of an option in response to a probe
         :return: State
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.respond_to_probe_with_http_info(response, **kwargs)  # noqa: E501
+            return self.respond_to_probe_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.respond_to_probe_with_http_info(response, **kwargs)  # noqa: E501
+            (data) = self.respond_to_probe_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def respond_to_probe_with_http_info(self, response, **kwargs):  # noqa: E501
+    def respond_to_probe_with_http_info(self, **kwargs):  # noqa: E501
         """Respond to a probe  # noqa: E501
 
         Respond to a probe with a decision chosen from among its options  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.respond_to_probe_with_http_info(response, async_req=True)
+        >>> thread = api.respond_to_probe_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param ProbeResponse response: object encapsulating the probe response (required)
+        :param ProbeResponse body: the selection by a DM of an option in response to a probe
         :return: State
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['response']  # noqa: E501
+        all_params = ['body']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -560,18 +560,12 @@ class ItmTa2EvalApi(object):
                 )
             params[key] = val
         del params['kwargs']
-        # verify the required parameter 'response' is set
-        if ('response' not in params or
-                params['response'] is None):
-            raise ValueError("Missing the required parameter `response` when calling `respond_to_probe`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'response' in params:
-            query_params.append(('response', params['response']))  # noqa: E501
 
         header_params = {}
 
@@ -579,9 +573,15 @@ class ItmTa2EvalApi(object):
         local_var_files = {}
 
         body_params = None
+        if 'body' in params:
+            body_params = params['body']
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept(
             ['application/json', 'text/plain'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501

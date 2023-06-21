@@ -1,7 +1,13 @@
 import connexion
-from swagger_server.models.probe_response import ProbeResponse  # noqa: E501
-from ..itm import ITMScenarioSession
+import six
 
+from swagger_server.models.alignment_target import AlignmentTarget  # noqa: E501
+from swagger_server.models.probe import Probe  # noqa: E501
+from swagger_server.models.probe_response import ProbeResponse  # noqa: E501
+from swagger_server.models.scenario import Scenario  # noqa: E501
+from swagger_server.models.state import State  # noqa: E501
+from swagger_server.models.vitals import Vitals  # noqa: E501
+from swagger_server import util
 
 
 def check_vitals(casualty_id):  # noqa: E501
@@ -14,7 +20,7 @@ def check_vitals(casualty_id):  # noqa: E501
 
     :rtype: Vitals
     """
-    return itm_session.get_vitals(casualty_id=casualty_id)
+    return 'do some magic!'
 
 
 def get_alignment_target(scenario_id):  # noqa: E501
@@ -27,7 +33,7 @@ def get_alignment_target(scenario_id):  # noqa: E501
 
     :rtype: AlignmentTarget
     """
-    return itm_session.get_alignment_target(scenario_id=scenario_id)
+    return 'do some magic!'
 
 
 def get_heart_rate(casualty_id):  # noqa: E501
@@ -40,7 +46,7 @@ def get_heart_rate(casualty_id):  # noqa: E501
 
     :rtype: int
     """
-    return itm_session.get_heart_rate(casualty_id=casualty_id)
+    return 'do some magic!'
 
 
 def get_probe(scenario_id):  # noqa: E501
@@ -53,7 +59,7 @@ def get_probe(scenario_id):  # noqa: E501
 
     :rtype: Probe
     """
-    return itm_session.get_probe(scenario_id=scenario_id)
+    return 'do some magic!'
 
 
 def get_scenario_state(scenario_id):  # noqa: E501
@@ -66,22 +72,22 @@ def get_scenario_state(scenario_id):  # noqa: E501
 
     :rtype: State
     """
-    return itm_session.get_scenario_state(scenario_id=scenario_id)
+    return 'do some magic!'
 
 
-def respond_to_probe(response):  # noqa: E501
+def respond_to_probe(body=None):  # noqa: E501
     """Respond to a probe
 
     Respond to a probe with a decision chosen from among its options # noqa: E501
 
-    :param response: object encapsulating the probe response
-    :type response: dict | bytes
+    :param body: the selection by a DM of an option in response to a probe
+    :type body: dict | bytes
 
     :rtype: State
     """
     if connexion.request.is_json:
-        response = ProbeResponse.from_dict(connexion.request.get_json())  # noqa: E501
-    return itm_session.respond_to_probe(body=response)
+        body = ProbeResponse.from_dict(connexion.request.get_json())  # noqa: E501
+    return 'do some magic!'
 
 
 def start_scenario(adm_name):  # noqa: E501
@@ -94,9 +100,7 @@ def start_scenario(adm_name):  # noqa: E501
 
     :rtype: Scenario
     """
-    global itm_session
-    itm_session = ITMScenarioSession()
-    return itm_session.start_scenario(adm_name=adm_name)
+    return 'do some magic!'
 
 
 def tag_casualty(casualty_id, tag):  # noqa: E501
@@ -111,4 +115,4 @@ def tag_casualty(casualty_id, tag):  # noqa: E501
 
     :rtype: str
     """
-    return itm_session.tag_casualty(casualty_id=casualty_id, tag=tag)
+    return 'do some magic!'

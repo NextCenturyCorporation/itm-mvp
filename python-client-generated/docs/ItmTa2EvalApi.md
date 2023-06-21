@@ -254,7 +254,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **respond_to_probe**
-> State respond_to_probe(response)
+> State respond_to_probe(body=body)
 
 Respond to a probe
 
@@ -270,11 +270,11 @@ from pprint import pprint
 
 # create an instance of the API class
 api_instance = swagger_client.ItmTa2EvalApi()
-response = swagger_client.ProbeResponse() # ProbeResponse | object encapsulating the probe response
+body = swagger_client.ProbeResponse() # ProbeResponse | the selection by a DM of an option in response to a probe (optional)
 
 try:
     # Respond to a probe
-    api_response = api_instance.respond_to_probe(response)
+    api_response = api_instance.respond_to_probe(body=body)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling ItmTa2EvalApi->respond_to_probe: %s\n" % e)
@@ -284,7 +284,7 @@ except ApiException as e:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **response** | [**ProbeResponse**](.md)| object encapsulating the probe response | 
+ **body** | [**ProbeResponse**](ProbeResponse.md)| the selection by a DM of an option in response to a probe | [optional] 
 
 ### Return type
 
@@ -296,7 +296,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json, text/plain
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

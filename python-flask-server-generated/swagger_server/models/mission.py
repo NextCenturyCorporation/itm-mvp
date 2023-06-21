@@ -90,7 +90,7 @@ class Mission(Model):
         :param mission_type: The mission_type of this Mission.
         :type mission_type: str
         """
-        allowed_values = ["ProtectVIP", "DeliverCargo", "DefendBase"]  # noqa: E501
+        allowed_values = ["ProtectVIP", "ProtectCivilians", "DeliverCargo", "DefendBase"]  # noqa: E501
         if mission_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `mission_type` ({0}), must be one of {1}"

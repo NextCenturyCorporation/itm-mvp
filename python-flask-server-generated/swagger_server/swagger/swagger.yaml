@@ -160,15 +160,12 @@ paths:
       summary: Respond to a probe
       description: Respond to a probe with a decision chosen from among its options
       operationId: respond_to_probe
-      parameters:
-      - name: response
-        in: query
-        description: object encapsulating the probe response
-        required: true
-        style: form
-        explode: true
-        schema:
-          $ref: '#/components/schemas/ProbeResponse'
+      requestBody:
+        description: the selection by a DM of an option in response to a probe
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProbeResponse'
       responses:
         "200":
           description: "Successful operation, scenario state returned"
@@ -857,6 +854,7 @@ components:
             for MVP
           enum:
           - ProtectVIP
+          - ProtectCivilians
           - DeliverCargo
           - DefendBase
       description: encapsulates the scenario's strategic mission
@@ -1163,6 +1161,7 @@ components:
             only MultipleChoice is supported for MVP
           enum:
           - MultipleChoice
+          - FreeResponse
           - PatientOrdering
         prompt:
           type: string

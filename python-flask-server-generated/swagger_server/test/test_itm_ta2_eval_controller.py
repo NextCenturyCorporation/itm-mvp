@@ -79,11 +79,12 @@ class TestItmTa2EvalController(BaseTestCase):
 
         Respond to a probe
         """
-        query_string = [('response', ProbeResponse())]
+        body = ProbeResponse()
         response = self.client.open(
             '/ta2/probe',
             method='POST',
-            query_string=query_string)
+            data=json.dumps(body),
+            content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
