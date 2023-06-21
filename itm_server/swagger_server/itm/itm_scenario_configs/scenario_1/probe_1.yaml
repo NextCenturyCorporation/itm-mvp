@@ -4,16 +4,16 @@ type: MultipleChoice
 prompt: Which casualty do you treat first?
 state: {}
 options:
-  - id: PROBE-2-A
+  - id: PROBE-1-A
     value: casualty-A 
     kdma_association:
       denial: +
       mission: '-'
-  - id: PROBE-2-B
+  - id: PROBE-1-B
     value: casualty-B
-  - id: PROBE-2-C
+  - id: PROBE-1-C
     value: casualty-D
-  - id: PROBE-2-D
+  - id: PROBE-1-D
     value: casualty-E
-  - id: PROBE-2-E
+  - id: PROBE-1-E
     value: casualty-F

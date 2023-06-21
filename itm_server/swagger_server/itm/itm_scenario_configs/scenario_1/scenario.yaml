@@ -34,7 +34,7 @@ state:
     aidDelay: 40.
 
   threat_state:
-    unstructured: Hostiles are spotted 250 meters away.
+    unstructured: No additional threats are detected.
     threats: {}
 
   supplies:
@@ -160,7 +160,7 @@ state:
           location: right hip
           severity: 0.5
         - name: fracture
-          location: right pelivs
+          location: right pelvis
           severity: 0.5
       vitals:
         hrpmin: 120 
