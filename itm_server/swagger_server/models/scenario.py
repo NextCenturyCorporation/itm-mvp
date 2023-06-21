@@ -6,9 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.environment import Environment  # noqa: F401,E501
-from swagger_server.models.medical_supply import MedicalSupply  # noqa: F401,E501
-from swagger_server.models.patient import Patient  # noqa: F401,E501
+from swagger_server.models.state import State  # noqa: F401,E501
 from swagger_server.models.triage_category import TriageCategory  # noqa: F401,E501
 from swagger_server import util
 
@@ -18,54 +16,39 @@ class Scenario(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, description: str=None, start_time: str=None, environment: Environment=None, patients: List[Patient]=None, medical_supplies: List[MedicalSupply]=None, triage_categories: List[TriageCategory]=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, start_time: str=None, state: State=None, triage_categories: List[TriageCategory]=None):  # noqa: E501
         """Scenario - a model defined in Swagger
 
         :param id: The id of this Scenario.  # noqa: E501
         :type id: str
         :param name: The name of this Scenario.  # noqa: E501
         :type name: str
-        :param description: The description of this Scenario.  # noqa: E501
-        :type description: str
         :param start_time: The start_time of this Scenario.  # noqa: E501
         :type start_time: str
-        :param environment: The environment of this Scenario.  # noqa: E501
-        :type environment: Environment
-        :param patients: The patients of this Scenario.  # noqa: E501
-        :type patients: List[Patient]
-        :param medical_supplies: The medical_supplies of this Scenario.  # noqa: E501
-        :type medical_supplies: List[MedicalSupply]
+        :param state: The state of this Scenario.  # noqa: E501
+        :type state: State
         :param triage_categories: The triage_categories of this Scenario.  # noqa: E501
         :type triage_categories: List[TriageCategory]
         """
         self.swagger_types = {
             'id': str,
             'name': str,
-            'description': str,
             'start_time': str,
-            'environment': Environment,
-            'patients': List[Patient],
-            'medical_supplies': List[MedicalSupply],
+            'state': State,
             'triage_categories': List[TriageCategory]
         }
 
         self.attribute_map = {
             'id': 'id',
             'name': 'name',
-            'description': 'description',
             'start_time': 'startTime',
-            'environment': 'environment',
-            'patients': 'patients',
-            'medical_supplies': 'medical_supplies',
+            'state': 'state',
             'triage_categories': 'triage_categories'
         }
         self._id = id
         self._name = name
-        self._description = description
         self._start_time = start_time
-        self._environment = environment
-        self._patients = patients
-        self._medical_supplies = medical_supplies
+        self._state = state
         self._triage_categories = triage_categories
 
     @classmethod
@@ -83,7 +66,7 @@ class Scenario(Model):
     def id(self) -> str:
         """Gets the id of this Scenario.
 
-        a unique id for the scenario  # noqa: E501
+        a globally unique id for the scenario  # noqa: E501
 
         :return: The id of this Scenario.
         :rtype: str
@@ -94,11 +77,13 @@ class Scenario(Model):
     def id(self, id: str):
         """Sets the id of this Scenario.
 
-        a unique id for the scenario  # noqa: E501
+        a globally unique id for the scenario  # noqa: E501
 
         :param id: The id of this Scenario.
         :type id: str
         """
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
 
         self._id = id
 
@@ -106,7 +91,7 @@ class Scenario(Model):
     def name(self) -> str:
         """Gets the name of this Scenario.
 
-        the scenario name  # noqa: E501
+        human-readable scenario name, not necessarily unique  # noqa: E501
 
         :return: The name of this Scenario.
         :rtype: str
@@ -117,36 +102,15 @@ class Scenario(Model):
     def name(self, name: str):
         """Sets the name of this Scenario.
 
-        the scenario name  # noqa: E501
+        human-readable scenario name, not necessarily unique  # noqa: E501
 
         :param name: The name of this Scenario.
         :type name: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
-
-    @property
-    def description(self) -> str:
-        """Gets the description of this Scenario.
-
-        a plain text natural language description of the scenario  # noqa: E501
-
-        :return: The description of this Scenario.
-        :rtype: str
-        """
-        return self._description
-
-    @description.setter
-    def description(self, description: str):
-        """Sets the description of this Scenario.
-
-        a plain text natural language description of the scenario  # noqa: E501
-
-        :param description: The description of this Scenario.
-        :type description: str
-        """
-
-        self._description = description
 
     @property
     def start_time(self) -> str:
@@ -172,67 +136,27 @@ class Scenario(Model):
         self._start_time = start_time
 
     @property
-    def environment(self) -> Environment:
-        """Gets the environment of this Scenario.
+    def state(self) -> State:
+        """Gets the state of this Scenario.
 
 
-        :return: The environment of this Scenario.
-        :rtype: Environment
+        :return: The state of this Scenario.
+        :rtype: State
         """
-        return self._environment
+        return self._state
 
-    @environment.setter
-    def environment(self, environment: Environment):
-        """Sets the environment of this Scenario.
+    @state.setter
+    def state(self, state: State):
+        """Sets the state of this Scenario.
 
 
-        :param environment: The environment of this Scenario.
-        :type environment: Environment
+        :param state: The state of this Scenario.
+        :type state: State
         """
+        if state is None:
+            raise ValueError("Invalid value for `state`, must not be `None`")  # noqa: E501
 
-        self._environment = environment
-
-    @property
-    def patients(self) -> List[Patient]:
-        """Gets the patients of this Scenario.
-
-
-        :return: The patients of this Scenario.
-        :rtype: List[Patient]
-        """
-        return self._patients
-
-    @patients.setter
-    def patients(self, patients: List[Patient]):
-        """Sets the patients of this Scenario.
-
-
-        :param patients: The patients of this Scenario.
-        :type patients: List[Patient]
-        """
-
-        self._patients = patients
-
-    @property
-    def medical_supplies(self) -> List[MedicalSupply]:
-        """Gets the medical_supplies of this Scenario.
-
-
-        :return: The medical_supplies of this Scenario.
-        :rtype: List[MedicalSupply]
-        """
-        return self._medical_supplies
-
-    @medical_supplies.setter
-    def medical_supplies(self, medical_supplies: List[MedicalSupply]):
-        """Sets the medical_supplies of this Scenario.
-
-
-        :param medical_supplies: The medical_supplies of this Scenario.
-        :type medical_supplies: List[MedicalSupply]
-        """
-
-        self._medical_supplies = medical_supplies
+        self._state = state
 
     @property
     def triage_categories(self) -> List[TriageCategory]:

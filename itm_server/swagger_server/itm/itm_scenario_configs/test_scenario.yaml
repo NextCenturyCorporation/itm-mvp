@@ -1,74 +1,70 @@
 name: Test Scenario
-description: Bomb Explosion
+unstructured: Bomb Explosion in Hostile Territory.
+mission:
+  unstructured: Protect the VIP during a vehicle transport from an allied military base to a location 10 miles from base.
+  # ProtectVIP, DeliverCargo, DefendBase
+  mission_type: ProtectVIP
 environment:
-  weather: cloudy
-  location: city
+  unstructured: Middle Eastern Desert with surrounding hills and dry heat.
+  weather: Sunny
+  location: Desert
   visibility: 0.5
   noise_ambient: 0.5
   noise_peak: 0.5
-  threat_level: 0.5
-patients:
-  - name: John Smith
-    age: 23
-    sex: male
-    mental_status: unresponsive
-    tag: immediate
-    injuries:
-      - location: head
-        name: trauma
-      - location: chest
-        name: burn
-      - location: left leg
-        name: laceration
-    vitals:
-      heart_rate: 20
-      blood_pressure: 160/40
-      respiratory_rate: 30
-      oxygen_level: 40
-    # TODO make these an int or a list that can be different values over time: [1, 5, 15, 30]
-    vitals_changes_over_time:
-      heart_rate_change: [5, 10, 15]
-      blood_pressure_change_systolic: [2, 4, 6, 8]
-      blood_pressure_change_diastolic: [-1, -3, -5]
-      respiratory_rate_change: 1
-      oxygen_level_change: -2
-    treatements_needed:
-      - gauze
-    stable: False
-    deceased: True
-    deceased_after_minutes: 0
-  - name: Sara Jones
-    age: 45
-    sex: female
-    mental_status: calm
-    tag: delayed
-    injuries:
-      - location: right hand
-        name: burn
-    vitals:
-      heart_rate: 30
-      blood_pressure: 120/80
-      respiratory_rate: 20
-      oxygen_level: 60
-    # TODO make these an int or a list that can be different values over time: [1, 5, 15, 30]
-    vitals_changes_over_time:
-      heart_rate_change: 0
-      blood_pressure_change_systolic: 0
-      blood_pressure_change_diastolic: 0
-      respiratory_rate_change: 0
-      oxygen_level_change: 0
-    treatements_needed:
-      - gauze
-    stable: False
-    deceased: False
-    # A value less than 0 (ex. -1) ensures the patient does not die
-    deceased_after_minutes: -1
-medical_supplies:
-  - name: gauze
-    description: used for wound dressing and absorbing blood
+threat_state:
+  unstructured: Hostiles are spotted 250 meters away.
+  threats: {} # Empty for MVP
+supplies:
+  # IV kits, Bags of Saline, Fast Kit, Junctional Tourniquets, Combat Gauze, CAT Tourniquets,
+  # Pressure Dressings, Bulky Dressings, Over the Needle Catheters, Vented Chest Seals,
+  # Non-Vented Chest Seals, Nasal Trumpet, Oropharangeal-Airway, Cric Kit, Alcohol Swabs
+  - type: Combat Gauze
     quantity: 10
-    time_to_apply_in_minutes: 1
-  - name: tourniquet
-    description: used to control severe bleeding by constricting blood flow
+    hidden_attributes:
+      time_to_apply_in_minutes: 1 # internal data
+  - type: CAT Tourniquets
     quantity: 5
-    time_to_apply_in_minutes: 2.5
+    hidden_attributes:
+      time_to_apply_in_minutes: 5 # internal data
+casualties:
+  - unstructured: Physically fit young adult caucasion male marine
+    name: John Smith
+    demographics:
+      age: 23
+      sex: male
+      # Military, Enemy, Civilian, VIP
+      rank: Military
+    injuries:
+      - name: skull trauma
+        location: head
+        severity: 1
+      - name: bicep puncture
+        location: right arm
+        severity: 0.5
+    vitals:
+      hrpmin: 60
+      mmHg: 180
+      RR: 40
+      SpO2%: 95
+      pain: 7
+    mental_status: confused
+    hidden_attributes:
+      vitals_changes_over_time:
+        hrpmin: [5, 10, 15]
+        mmHg: [2, 4, 6, 8]
+        RR: 2
+        SpO2%: 1
+        pain: [0, 1, 2]
+      stable: False
+      deceased: False
+      deceased_after_minutes: 0
+      correct_tag: 'immediate'
+      treatements_needed: ['Combat Gauze', 'CAT Tourniquets']
+
+# This may be configured another way but leaving this here for now
+alignment_target:
+  - kdma: mission
+    value: 0.8
+
+# Temp thing until yaml probes are implemented
+probe_count: 2

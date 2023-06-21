@@ -1,14 +1,23 @@
 import copy
 import uuid
 import yaml
-from typing import Tuple, List
-from .itm_patient_simulator import PatientSimulation
-from .itm_medical_supplies import ITMMedicalSupplies, MedicalSupplyDetails
+from typing import List, Tuple
+
+from .itm_casualty_simulator import CasualtySimulation
+from .itm_supplies import ITMSupplies, SupplyDetails
+
+from swagger_server.models.alignment_target import AlignmentTarget
+from swagger_server.models.alignment_target_kdma_values import AlignmentTargetKdmaValues
+from swagger_server.models.casualty import Casualty
+from swagger_server.models.demographics import Demographics
 from swagger_server.models.environment import Environment
 from swagger_server.models.injury import Injury
-from swagger_server.models.medical_supply import MedicalSupply
-from swagger_server.models.patient import Patient
+from swagger_server.models.mission import Mission
 from swagger_server.models.scenario import Scenario
+from swagger_server.models.state import State
+from swagger_server.models.supplies import Supplies
+from swagger_server.models.threat_state import ThreatState
+from swagger_server.models.triage_category import TriageCategory
 from swagger_server.models.vitals import Vitals
 
 
@@ -26,128 +35,66 @@ class YAMLScenarioConverter:
             self.yaml_data = yaml.safe_load(file)
 
     def generate_scenario_from_yaml(self) -> \
-            Tuple[Scenario, List[PatientSimulation]]:
+            Tuple[Scenario, List[CasualtySimulation], List[ITMSupplies], SupplyDetails, AlignmentTarget]:
         """
-        Generate a Scenario and patient simulations from the YAML data.
+        Generate a Scenario and casualty simulations from the YAML data.
 
         Returns:
-            A tuple containing the generated Scenario, a list of PatientSimulation objects, and the MedicalSupplyDetails object.
+            A tuple containing the generated Scenario, a list of CasualtySimulation objects, and SupplysDetails objects.
         """
-        patient_simulations = [
-            self._generate_patient_simulations(patient_data)
-            for patient_data in self.yaml_data['patients']
-        ]
-        medical_supply_details = ITMMedicalSupplies()
-        medical_supplies = [
-            self._generate_medical_supply(supply_data, medical_supply_details)
-            for supply_data in self.yaml_data['medical_supplies']
-        ]
-        environment = self._generate_environment(
-            self.yaml_data['environment']
-        )
-
+        state, casualty_simulations, supplies_details = self._generate_state()
+        triage_categories = self._generate_triage_categories()
         scenario = Scenario(
             id="scenario_" + str(uuid.uuid4()),
             name=self.yaml_data['name'],
-            description=self.yaml_data['description'],
-            start_time=0,
-            environment=environment,
-            patients=[patient.patient for patient in patient_simulations],
-            medical_supplies=medical_supplies,
-            triage_categories=[]
+            start_time=str(0),
+            state=state,
+            triage_categories=triage_categories
         )
-
-        return scenario, patient_simulations, medical_supply_details
-
-    def _generate_patient(self, patient_data) -> Patient:
-        """
-        Generate a Patient instance from the YAML data.
-
-        Args:
-            patient_data: The YAML data representing a patient.
-
-        Returns:
-            A Patient object representing the generated patient.
-        """
-        injuries = [
-            Injury(name=injury['name'], location=injury['location'])
-            for injury in patient_data['injuries']
+        alignment_targets = self.yaml_data['alignment_target']
+        alignment_target = AlignmentTarget(
+            id="alignment_target_" + str(uuid.uuid4()),
+            kdma_values=[
+                AlignmentTargetKdmaValues(kdma=at['kdma'], value=at['value'])
+                for at in alignment_targets]
+        )
+        probe_count = self.yaml_data['probe_count']
+        return (scenario, casualty_simulations, supplies_details, alignment_target, probe_count)
+    
+    def _generate_state(self):
+        unstructured = self.yaml_data['unstructured']
+        mission = self._generate_mission()
+        environment = self._generate_environment()
+        threat_state = self._generate_threat_state()
+        supplies_details = ITMSupplies()
+        supplies = [
+            self._generate_supplies(supply_data, supplies_details)
+            for supply_data in self.yaml_data['supplies']
         ]
-        vitals = Vitals(
-            heart_rate=patient_data['vitals']['heart_rate'],
-            blood_pressure=patient_data['vitals']['blood_pressure'],
-            respiratory_rate=patient_data['vitals']['respiratory_rate'],
-            oxygen_level=patient_data['vitals']['oxygen_level']
+        casualty_simulations = [
+            self._generate_casualty_simulations(casualty_data)
+            for casualty_data in self.yaml_data['casualties']
+        ]
+        state = State(
+            unstructured=unstructured,
+            elapsed_time=0,
+            scenario_complete=False,
+            mission=mission,
+            environment=environment,
+            threat_state=threat_state,
+            supplies=supplies,
+            casualties=[casualty.casualty for casualty in casualty_simulations]
         )
-        patient = Patient(
-            id="patient_" + str(uuid.uuid4()),
-            name=patient_data['name'],
-            age=patient_data['age'],
-            sex=patient_data['sex'],
-            injuries=injuries,
-            vitals=vitals,
-            mental_status=patient_data['mental_status'],
-            assessed=False,
-            tag='none'
+        return state, casualty_simulations, supplies_details
+
+    def _generate_mission(self):
+        mission = self.yaml_data['mission']
+        return Mission(
+            unstructured=mission['unstructured'],
+            mission_type=mission['mission_type']
         )
-        return patient
-
-    def _generate_patient_simulations(self, patient_data) -> PatientSimulation:
-        """
-        Generate a PatientSimulation instance from the YAML data.
-
-        Args:
-            patient_data: The YAML data representing a patient simulation.
-
-        Returns:
-            A PatientSimulation object representing the generated patient simulation.
-        """
-        patient = self._generate_patient(patient_data=patient_data)
-        vitals_changes = patient_data['vitals_changes_over_time']
-        patient_simulation = PatientSimulation(
-            patient=patient,
-            correct_tag=patient_data['tag'],
-            start_vitals=copy.deepcopy(patient.vitals),
-            current_vitals=copy.deepcopy(patient.vitals),
-            treatments_applied=[],
-            treatments_needed=patient_data['treatements_needed'],
-            heart_rate_change=vitals_changes['heart_rate_change'],
-            blood_pressure_change_systolic=
-                vitals_changes['blood_pressure_change_systolic'],
-            blood_pressure_change_diastolic=
-                vitals_changes['blood_pressure_change_diastolic'],
-            respiratory_rate_change=vitals_changes['respiratory_rate_change'],
-            oxygen_level_change=vitals_changes['oxygen_level_change'],
-            stable=patient_data['stable'],
-            deceased=patient_data['deceased'],
-            deceased_after_minutes=patient_data['deceased_after_minutes']
-        )
-        return patient_simulation
-
-    def _generate_medical_supply(self, supply_data, supply_details) -> MedicalSupply:
-        """
-        Generate a MedicalSupply instance from the YAML data.
-
-        Args:
-            supply_data: The YAML data representing a medical supply.
-            supply_details: The ITMMedicalSupplies object to store the medical supply details.
-
-        Returns:
-            A MedicalSupply object representing the generated medical supply.
-        """
-        medical_supply = MedicalSupply(
-            name=supply_data['name'],
-            description=supply_data['description'],
-            quantity=supply_data['quantity']
-        )
-        supply_details.medical_supply_details[medical_supply.name] = \
-            MedicalSupplyDetails(
-                medical_supply=medical_supply,
-                time_to_apply=supply_data['time_to_apply_in_minutes']
-            )
-        return medical_supply
-
-    def _generate_environment(self, environment_data) -> Environment:
+    
+    def _generate_environment(self) -> Environment:
         """
         Generate an Environment instance from the YAML data.
 
@@ -157,11 +104,121 @@ class YAMLScenarioConverter:
         Returns:
             An Environment object representing the generated environment.
         """
+        environment = self.yaml_data['environment']
         return Environment(
-            weather=environment_data['weather'],
-            location=environment_data['location'],
-            visibility=environment_data['visibility'],
-            noise_ambient=environment_data['noise_ambient'],
-            noise_peak=environment_data['noise_peak'],
-            threat_level=environment_data['threat_level']
+            unstructured=environment['unstructured'],
+            weather=environment['weather'],
+            location=environment['location'],
+            visibility=environment['visibility'],
+            noise_ambient=environment['noise_ambient'],
+            noise_peak=environment['noise_peak']
         )
+    
+    def _generate_threat_state(self):
+        threat_state = self.yaml_data['threat_state']
+        return ThreatState(
+            unstructured=threat_state['unstructured'],
+            threats=threat_state['threats']
+        )
+
+    def _generate_supplies(self, supply_data, supply_details: ITMSupplies) -> Supplies:
+        """
+        Generate a Supplies instance from the YAML data.
+
+        Args:
+            supply_data: The YAML data representing a supply.
+            supply_details: The ITMSupplies object to store a supply details.
+
+        Returns:
+            A Supplies object representing the generated supply.
+        """
+        supplies = Supplies(
+            type=supply_data['type'],
+            quantity=supply_data['quantity']
+        )
+        supply_details.get_supplies()[supplies.type] = \
+            SupplyDetails(
+                supply=supplies,
+                time_to_apply=supply_data['hidden_attributes']['time_to_apply_in_minutes']
+            )
+        return supplies
+
+    def _generate_casualty(self, casualty_data) -> Casualty:
+        """
+        Generate a casualty instance from the YAML data.
+
+        Args:
+            casualty_data: The YAML data representing a casualty.
+
+        Returns:
+            A casualty object representing the generated casualty.
+        """
+        demograpics_data = casualty_data['demographics']
+        demograpics = Demographics(
+            age=demograpics_data['age'],
+            sex=demograpics_data['sex'],
+            rank=demograpics_data['rank']
+        )
+        injuries = [
+            Injury(
+                name=injury['name'],
+                location=injury['location'],
+                severity=injury['severity']
+            )
+            for injury in casualty_data['injuries']
+        ]
+        vital_data = casualty_data['vitals']
+        vitals = Vitals(
+            hrpmin=vital_data['hrpmin'],
+            mm_hg=vital_data['mmHg'],
+            rr=vital_data['RR'],
+            sp_o2=vital_data['SpO2%'],
+            pain=vital_data['pain']
+        )
+        casualty = Casualty(
+            id="casualty_" + str(uuid.uuid4()),
+            unstructured=casualty_data['unstructured'],
+            name=casualty_data['name'],
+            demographics=demograpics,
+            injuries=injuries,
+            vitals=vitals,
+            mental_status=casualty_data['mental_status'],
+            assessed=False,
+            tag=None
+        )
+        return casualty
+
+    def _generate_casualty_simulations(self, casualty_data) -> CasualtySimulation:
+        """
+        Generate a CasualtySimulation instance from the YAML data.
+
+        Args:
+            casualty_data: The YAML data representing a casualty simulation.
+
+        Returns:
+            A CasualtySimulation object representing the generated casualty simulation.
+        """
+        casualty = self._generate_casualty(casualty_data=casualty_data)
+        hidden_attributes = casualty_data['hidden_attributes']
+        vitals_changes = hidden_attributes['vitals_changes_over_time']
+        casualty_simulation = CasualtySimulation(
+            casualty=casualty,
+            correct_tag=hidden_attributes['correct_tag'],
+            start_vitals=copy.deepcopy(casualty.vitals),
+            current_vitals=copy.deepcopy(casualty.vitals),
+            treatments_applied=[],
+            treatments_needed=hidden_attributes['treatements_needed'],
+            hrpmin_change=vitals_changes['hrpmin'],
+            mmhg_change=vitals_changes['mmHg'],
+            rr_change=vitals_changes['RR'],
+            spo2_change=vitals_changes['SpO2%'],
+            stable=hidden_attributes['stable'],
+            deceased=hidden_attributes['deceased'],
+            deceased_after_minutes=hidden_attributes['deceased_after_minutes']
+        )
+        return casualty_simulation
+
+    def _generate_triage_categories(self) -> List[TriageCategory]:
+        return [
+            TriageCategory("minimal", "", "")
+        ]

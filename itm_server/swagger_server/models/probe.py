@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.probe_option import ProbeOption  # noqa: F401,E501
+from swagger_server.models.state import State  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,30 +16,45 @@ class Probe(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, question: str=None, patient_ids: List[str]=None):  # noqa: E501
+    def __init__(self, id: str=None, scenario_id: str=None, type: str=None, prompt: str=None, state: State=None, options: List[ProbeOption]=None):  # noqa: E501
         """Probe - a model defined in Swagger
 
         :param id: The id of this Probe.  # noqa: E501
         :type id: str
-        :param question: The question of this Probe.  # noqa: E501
-        :type question: str
-        :param patient_ids: The patient_ids of this Probe.  # noqa: E501
-        :type patient_ids: List[str]
+        :param scenario_id: The scenario_id of this Probe.  # noqa: E501
+        :type scenario_id: str
+        :param type: The type of this Probe.  # noqa: E501
+        :type type: str
+        :param prompt: The prompt of this Probe.  # noqa: E501
+        :type prompt: str
+        :param state: The state of this Probe.  # noqa: E501
+        :type state: State
+        :param options: The options of this Probe.  # noqa: E501
+        :type options: List[ProbeOption]
         """
         self.swagger_types = {
             'id': str,
-            'question': str,
-            'patient_ids': List[str]
+            'scenario_id': str,
+            'type': str,
+            'prompt': str,
+            'state': State,
+            'options': List[ProbeOption]
         }
 
         self.attribute_map = {
             'id': 'id',
-            'question': 'question',
-            'patient_ids': 'patient_ids'
+            'scenario_id': 'scenario_id',
+            'type': 'type',
+            'prompt': 'prompt',
+            'state': 'state',
+            'options': 'options'
         }
         self._id = id
-        self._question = question
-        self._patient_ids = patient_ids
+        self._scenario_id = scenario_id
+        self._type = type
+        self._prompt = prompt
+        self._state = state
+        self._options = options
 
     @classmethod
     def from_dict(cls, dikt) -> 'Probe':
@@ -54,7 +71,7 @@ class Probe(Model):
     def id(self) -> str:
         """Gets the id of this Probe.
 
-        an id for the probe, unique within the scenario  # noqa: E501
+        globally unique probe ID  # noqa: E501
 
         :return: The id of this Probe.
         :rtype: str
@@ -65,56 +82,135 @@ class Probe(Model):
     def id(self, id: str):
         """Sets the id of this Probe.
 
-        an id for the probe, unique within the scenario  # noqa: E501
+        globally unique probe ID  # noqa: E501
 
         :param id: The id of this Probe.
         :type id: str
         """
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
 
         self._id = id
 
     @property
-    def question(self) -> str:
-        """Gets the question of this Probe.
+    def scenario_id(self) -> str:
+        """Gets the scenario_id of this Probe.
 
-        a plain text natural language question for the decision-maker  # noqa: E501
+        scenario ID this probe is for  # noqa: E501
 
-        :return: The question of this Probe.
+        :return: The scenario_id of this Probe.
         :rtype: str
         """
-        return self._question
+        return self._scenario_id
 
-    @question.setter
-    def question(self, question: str):
-        """Sets the question of this Probe.
+    @scenario_id.setter
+    def scenario_id(self, scenario_id: str):
+        """Sets the scenario_id of this Probe.
 
-        a plain text natural language question for the decision-maker  # noqa: E501
+        scenario ID this probe is for  # noqa: E501
 
-        :param question: The question of this Probe.
-        :type question: str
+        :param scenario_id: The scenario_id of this Probe.
+        :type scenario_id: str
         """
+        if scenario_id is None:
+            raise ValueError("Invalid value for `scenario_id`, must not be `None`")  # noqa: E501
 
-        self._question = question
+        self._scenario_id = scenario_id
 
     @property
-    def patient_ids(self) -> List[str]:
-        """Gets the patient_ids of this Probe.
+    def type(self) -> str:
+        """Gets the type of this Probe.
 
-        the list of valid patient ids for the decision-maker to choose among  # noqa: E501
+        TAs will need to agree on the types of questions being asked; only MultipleChoice is supported for MVP  # noqa: E501
 
-        :return: The patient_ids of this Probe.
-        :rtype: List[str]
+        :return: The type of this Probe.
+        :rtype: str
         """
-        return self._patient_ids
+        return self._type
 
-    @patient_ids.setter
-    def patient_ids(self, patient_ids: List[str]):
-        """Sets the patient_ids of this Probe.
+    @type.setter
+    def type(self, type: str):
+        """Sets the type of this Probe.
 
-        the list of valid patient ids for the decision-maker to choose among  # noqa: E501
+        TAs will need to agree on the types of questions being asked; only MultipleChoice is supported for MVP  # noqa: E501
 
-        :param patient_ids: The patient_ids of this Probe.
-        :type patient_ids: List[str]
+        :param type: The type of this Probe.
+        :type type: str
+        """
+        allowed_values = ["MultipleChoice", "PatientOrdering"]  # noqa: E501
+        if type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `type` ({0}), must be one of {1}"
+                .format(type, allowed_values)
+            )
+
+        self._type = type
+
+    @property
+    def prompt(self) -> str:
+        """Gets the prompt of this Probe.
+
+        a plain text natural language question for the DM  # noqa: E501
+
+        :return: The prompt of this Probe.
+        :rtype: str
+        """
+        return self._prompt
+
+    @prompt.setter
+    def prompt(self, prompt: str):
+        """Sets the prompt of this Probe.
+
+        a plain text natural language question for the DM  # noqa: E501
+
+        :param prompt: The prompt of this Probe.
+        :type prompt: str
+        """
+        if prompt is None:
+            raise ValueError("Invalid value for `prompt`, must not be `None`")  # noqa: E501
+
+        self._prompt = prompt
+
+    @property
+    def state(self) -> State:
+        """Gets the state of this Probe.
+
+
+        :return: The state of this Probe.
+        :rtype: State
+        """
+        return self._state
+
+    @state.setter
+    def state(self, state: State):
+        """Sets the state of this Probe.
+
+
+        :param state: The state of this Probe.
+        :type state: State
         """
 
-        self._patient_ids = patient_ids
+        self._state = state
+
+    @property
+    def options(self) -> List[ProbeOption]:
+        """Gets the options of this Probe.
+
+        the list of valid choices for the DM to choose among  # noqa: E501
+
+        :return: The options of this Probe.
+        :rtype: List[ProbeOption]
+        """
+        return self._options
+
+    @options.setter
+    def options(self, options: List[ProbeOption]):
+        """Sets the options of this Probe.
+
+        the list of valid choices for the DM to choose among  # noqa: E501
+
+        :param options: The options of this Probe.
+        :type options: List[ProbeOption]
+        """
+
+        self._options = options

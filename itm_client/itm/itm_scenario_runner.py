@@ -15,7 +15,7 @@ class ScenarioRunner(ABC):
         config = Configuration()
         config.host = "http://127.0.0.1:8080"
         api_client = ApiClient(configuration=config)
-        return swagger_client.ItmMvpApi(api_client=api_client)
+        return swagger_client.ItmTa2EvalApi(api_client=api_client)
 
 
     @abstractmethod

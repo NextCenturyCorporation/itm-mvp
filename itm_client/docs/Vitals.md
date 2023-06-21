@@ -3,10 +3,11 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**heart_rate** | **int** | heart rate in beats per minute | [optional] 
-**blood_pressure** | **str** | blood pressure in systolic over diastolic, in mmHg | [optional] 
-**respiratory_rate** | **int** | respiratory rate in breaths/minute | [optional] 
-**oxygen_level** | **int** | Oxygen saturation level (Sp02%) | [optional] 
+**hrpmin** | **int** | heart rate in beats per minute | [optional] 
+**mm_hg** | **int** | blood pressure in mmHg | [optional] 
+**rr** | **int** | respiratory rate in breaths/minute | [optional] 
+**sp_o2** | **int** | Oxygen saturation level, expressed as a percentage | [optional] 
+**pain** | **int** | 1-10 scale, omit if unknown or unconscious | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

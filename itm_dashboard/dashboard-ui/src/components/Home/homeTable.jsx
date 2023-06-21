@@ -19,6 +19,12 @@ const GET_ALL_ITM_SIMULATIONS = gql`
     }`;
 
 
+const snakeCaseToNormalCase = (string) => {
+    return string
+        .replace(/_/g, ' ')
+        .replace(/(^\w|\s\w)/g, m => m.toUpperCase());
+}
+
 const HomeTable = () => {
     const isObject = (item) => {
         return (typeof item === 'object' && !Array.isArray(item) && item !== null);
@@ -43,7 +49,9 @@ const HomeTable = () => {
             <TableBody>
                 {Object.entries(data).map(([key, value], i) => (
                     <TableRow key={i}>
-                        <TableCell className="tableCell">{key}</TableCell>
+                        <TableCell className="tableCell">
+                            <strong>{snakeCaseToNormalCase(key)}</strong>
+                        </TableCell>
                         <TableCell className="tableCell">{renderNestedItems(value)}</TableCell>
                     </TableRow>
                 ))}
@@ -53,10 +61,10 @@ const HomeTable = () => {
     
     const MainTable = () => {
         const [selectedId, setSelectedId] = useState("");
-        const [selectedUsername, setSelectedUsername] = useState("");
+        const [selectedADMName, setSelectedADMName] = useState("");
 
-        const handleUsernameChange = (event) => {
-            setSelectedUsername(event.target.value);
+        const handleADMNameChange = (event) => {
+            setSelectedADMName(event.target.value);
             setSelectedId("");
         };
 
@@ -79,15 +87,15 @@ const HomeTable = () => {
                                 <div className='center-div'>
                                     <ScenarioSelectionModal 
                                         data={data}
-                                        selectedUsername={selectedUsername}
+                                        selectedADMName={selectedADMName}
                                         selectedId={selectedId}
-                                        handleUsernameChange={handleUsernameChange}
+                                        handleADMNameChange={handleADMNameChange}
                                         handleIdChange={handleIdChange}
                                     />
                                 </div>
                                 {selectedItem &&
                                     <div>
-                                        <AlignmentScoreBox performer={selectedUsername}/>
+                                        <AlignmentScoreBox performer={selectedADMName}/>
                                         <Paper className='paper-container'>
                                             <TableContainer style={{ maxHeight: '70vh' }}>
                                                 <Table stickyHeader aria-label="simple table">

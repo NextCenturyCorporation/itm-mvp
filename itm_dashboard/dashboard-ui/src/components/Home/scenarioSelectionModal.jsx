@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const HomeChartModal = ({ data, selectedUsername, selectedId, handleUsernameChange, handleIdChange }) => {
+const HomeChartModal = ({ data, selectedADMName, selectedId, handleADMNameChange, handleIdChange }) => {
     const [open, setOpen] = useState(false);
     const handleClickOpen = () => {
         setOpen(true);
@@ -34,18 +34,18 @@ const HomeChartModal = ({ data, selectedUsername, selectedId, handleUsernameChan
                 <DialogTitle id="form-dialog-title">Select ITM Simulation History</DialogTitle>
                 <DialogContent>
                     <FormControl className="home-table">
-                        <InputLabel id="username-select-label" shrink>Select Username</InputLabel>
+                        <InputLabel id="ADMName-select-label" shrink>Select ADMName</InputLabel>
                         <Select
-                            labelId="username-select-label"
-                            id="username-select"
-                            value={selectedUsername}
-                            onChange={handleUsernameChange}
+                            labelId="ADMName-select-label"
+                            id="ADMName-select"
+                            value={selectedADMName}
+                            onChange={handleADMNameChange}
                             displayEmpty
                         >
                             <MenuItem value="">None</MenuItem>
                             {
-                                Array.from(new Set(data.map(item => item.history[0].parameters.username))).map((username, index) => (
-                                    <MenuItem value={username} key={index}>{username}</MenuItem>
+                                Array.from(new Set(data.map(item => item.history[0].parameters["ADM Name"]))).map((ADMName, index) => (
+                                    <MenuItem value={ADMName} key={index}>{ADMName}</MenuItem>
                                 ))
                             }
                         </Select>
@@ -61,7 +61,7 @@ const HomeChartModal = ({ data, selectedUsername, selectedId, handleUsernameChan
                         >
                             <MenuItem value="">None</MenuItem>
                             {
-                                data.filter(item => item.history[0].parameters.username === selectedUsername).map((item, index) => (
+                                data.filter(item => item.history[0].parameters["ADM Name"] === selectedADMName).map((item, index) => (
                                     <MenuItem value={item.history[0].response.id} key={index}>{item.history[0].response.id}</MenuItem>
                                 ))
                             }
