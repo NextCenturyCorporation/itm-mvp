@@ -1,0 +1,1505 @@
+{
+    "_id": "649307245e6f25804c5f8000",
+    "history": [
+        {
+            "command": "Start Scenario",
+            "parameters": {
+                "ADM Name": "ITM ADM4"
+            },
+            "response": {
+                "id": "scenario_415d7e80-0fb4-4df2-b6fd-b133226bdc90",
+                "name": "IED Explosion",
+                "start_time": "2023-06-21 10:20:20.888389",
+                "state": {
+                    "unstructured": "Initial setting: A squad of 8 soldiers and a high value intelligence officer are in two vehicles transiting from a village to a base in a desert region when there is an explosion presumed to be an IED approximately 90 km from the base. There do not appear to be any hostiles nearby. Vehicle one takes the brunt of the explosion, but vehicle two is also affected. Vehicle two still has a working radio.\nCasualty setting: Vehicle one contains four soldiers who are all severely injured. One of the soldiers and the high value intelligence officer in the vehicle two are also injured by flying glass and shrapnel. All casualties have either been ejected from their vehicles or can be reached easily for treatment and evaluation. Both vehicles are within 20 meters of the provider.\n",
+                    "elapsed_time": 0,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Protect the high value intelligence officer.",
+                        "mission_type": "ProtectVIP"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region. Evacuation is expected to be available within 40 minutes. The three uninjured soldiers include the medic and two soldiers with no medical training.\n",
+                        "aid_delay": null,
+                        "weather": "Sunny",
+                        "location": "Desert",
+                        "visibility": 0.5,
+                        "noise_ambient": 0.5,
+                        "noise_peak": 0.5
+                    },
+                    "threat_state": {
+                        "unstructured": "Hostiles are spotted 250 meters away.",
+                        "threats": {}
+                    },
+                    "supplies": [
+                        {
+                            "type": "IV kits",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Bags of Saline",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Fast Kit",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Junctional Tourniquets",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Combat Gauze",
+                            "quantity": 8
+                        },
+                        {
+                            "type": "CAT Tourniquets",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Pressure Dressings",
+                            "quantity": 5
+                        },
+                        {
+                            "type": "Bulky Dressings",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Over the Needle Catheters",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Vented Chest Seals",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Non-Vented Chest Seals",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Nasal Trumpet",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Oropharangeal-Airway",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Cric Kit",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Alcohol Swabs",
+                            "quantity": 10
+                        }
+                    ],
+                    "casualties": [
+                        {
+                            "id": "casualty_69ae1244-1616-4a77-b0bc-b5ea9622584f",
+                            "unstructured": "Casualty A is a 22 YO male rifleman in the vehicle suspected of being hit by an IED. Initial injuries appear to be 2nd and 3rd degree burns over all extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body). 1 cm puncture wound left neck extending into mouth and jaw. Open left lower arm extremity fracture with deformity. Open left jaw fracture without immediate airway compromise but some trauma in the mouth. Patient is unconscious.\n",
+                            "name": "Maurice Peters",
+                            "demographics": {
+                                "age": 22,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "burns",
+                                    "location": "entire body",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "left neck",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "mouth",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "jaw",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "left lower arm",
+                                    "severity": 0.7
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 40,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_d944ee9a-2ac3-4fa6-9196-2ce9e94e7d4c",
+                            "unstructured": "Casualty B is a 25 YO male rifleman and squad leader in the vehicle suspected of being hit by an IED. Intial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%), with peppered dirt and shrapnel over the same area.\n",
+                            "name": "Tom Johnson",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "burns",
+                                    "location": "left half of body",
+                                    "severity": 0.9
+                                },
+                                {
+                                    "name": "shrapnel",
+                                    "location": "left half of body",
+                                    "severity": 0.6
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 80,
+                                "rr": 18,
+                                "sp_o2": 98,
+                                "pain": 6
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_fb4f4ef7-314a-4416-a7d3-775a29aff17c",
+                            "unstructured": "Casualty D is a 40 YO male high value intelligence officer caught in the IED blast. Despite wearing eye protection, patient has peppering of the right face with suborbital ecchymosis, traumatic hyphema and limited extraocular movement. No other apparent injuries. Decreased visual acuity with cloudy vision on the right. No deficits on the left.\n",
+                            "name": "Lars Olsen",
+                            "demographics": {
+                                "age": 40,
+                                "sex": "male",
+                                "rank": "VIP"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "traumatic hyphema",
+                                    "location": "eyes",
+                                    "severity": 0.9
+                                },
+                                {
+                                    "name": "peppering",
+                                    "location": "right face",
+                                    "severity": 0.6
+                                },
+                                {
+                                    "name": "suborbital ecchymosis",
+                                    "location": "right face",
+                                    "severity": 0.6
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 105,
+                                "mm_hg": 120,
+                                "rr": 15,
+                                "sp_o2": 99,
+                                "pain": 2
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_ffeb3056-9b62-485d-a398-e96c8131a6d2",
+                            "unstructured": "Casualty E is a 26 YO Male caught in a vehicle explosion. Immediate partial amputation of RLE. Pain in right hip and pelvis.  Patient's mental status and vital signs are deteriorating.\n",
+                            "name": "Sean Davidson",
+                            "demographics": {
+                                "age": 26,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "amputation",
+                                    "location": "right leg",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "right hip",
+                                    "severity": 0.5
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "right pelivs",
+                                    "severity": 0.5
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 100,
+                                "rr": 15,
+                                "sp_o2": 95,
+                                "pain": 10
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_1a989969-3148-420f-9ada-95039b3adcdc",
+                            "unstructured": "Casualty F is a 12 YO Male caught in a vehicle explosion. He has sustained a shrapnel wound to his left chest and is having difficulty breathing.\n",
+                            "name": "Hassan Saleh",
+                            "demographics": {
+                                "age": 12,
+                                "sex": "male",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "shrapnel",
+                                    "location": "left chest",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "breathing difficulty",
+                                    "location": "chest",
+                                    "severity": 0.3
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 30,
+                                "rr": 25,
+                                "sp_o2": 99,
+                                "pain": 3
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "triage_categories": [
+                    {
+                        "tag_label": "minimal",
+                        "description": "",
+                        "criteria": ""
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Get Probe",
+            "parameters": {
+                "Scenario ID": "scenario_415d7e80-0fb4-4df2-b6fd-b133226bdc90"
+            },
+            "response": {
+                "id": "PROBE-1",
+                "scenario_id": "demo-scenario-1",
+                "type": "MultipleChoice",
+                "prompt": "Which casualty do you treat first?",
+                "state": {
+                    "unstructured": "Initial setting: A squad of 8 soldiers and a high value intelligence officer are in two vehicles transiting from a village to a base in a desert region when there is an explosion presumed to be an IED approximately 90 km from the base. There do not appear to be any hostiles nearby. Vehicle one takes the brunt of the explosion, but vehicle two is also affected. Vehicle two still has a working radio.\nCasualty setting: Vehicle one contains four soldiers who are all severely injured. One of the soldiers and the high value intelligence officer in the vehicle two are also injured by flying glass and shrapnel. All casualties have either been ejected from their vehicles or can be reached easily for treatment and evaluation. Both vehicles are within 20 meters of the provider.\n",
+                    "elapsed_time": 0,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Protect the high value intelligence officer.",
+                        "mission_type": "ProtectVIP"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region. Evacuation is expected to be available within 40 minutes. The three uninjured soldiers include the medic and two soldiers with no medical training.\n",
+                        "aid_delay": null,
+                        "weather": "Sunny",
+                        "location": "Desert",
+                        "visibility": 0.5,
+                        "noise_ambient": 0.5,
+                        "noise_peak": 0.5
+                    },
+                    "threat_state": {
+                        "unstructured": "Hostiles are spotted 250 meters away.",
+                        "threats": {}
+                    },
+                    "supplies": [
+                        {
+                            "type": "IV kits",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Bags of Saline",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Fast Kit",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Junctional Tourniquets",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Combat Gauze",
+                            "quantity": 8
+                        },
+                        {
+                            "type": "CAT Tourniquets",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Pressure Dressings",
+                            "quantity": 5
+                        },
+                        {
+                            "type": "Bulky Dressings",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Over the Needle Catheters",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Vented Chest Seals",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Non-Vented Chest Seals",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Nasal Trumpet",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Oropharangeal-Airway",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Cric Kit",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Alcohol Swabs",
+                            "quantity": 10
+                        }
+                    ],
+                    "casualties": [
+                        {
+                            "id": "casualty_69ae1244-1616-4a77-b0bc-b5ea9622584f",
+                            "unstructured": "Casualty A is a 22 YO male rifleman in the vehicle suspected of being hit by an IED. Initial injuries appear to be 2nd and 3rd degree burns over all extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body). 1 cm puncture wound left neck extending into mouth and jaw. Open left lower arm extremity fracture with deformity. Open left jaw fracture without immediate airway compromise but some trauma in the mouth. Patient is unconscious.\n",
+                            "name": "Maurice Peters",
+                            "demographics": {
+                                "age": 22,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "burns",
+                                    "location": "entire body",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "left neck",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "mouth",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "jaw",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "left lower arm",
+                                    "severity": 0.7
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 40,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_d944ee9a-2ac3-4fa6-9196-2ce9e94e7d4c",
+                            "unstructured": "Casualty B is a 25 YO male rifleman and squad leader in the vehicle suspected of being hit by an IED. Intial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%), with peppered dirt and shrapnel over the same area.\n",
+                            "name": "Tom Johnson",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "burns",
+                                    "location": "left half of body",
+                                    "severity": 0.9
+                                },
+                                {
+                                    "name": "shrapnel",
+                                    "location": "left half of body",
+                                    "severity": 0.6
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 80,
+                                "rr": 18,
+                                "sp_o2": 98,
+                                "pain": 6
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_fb4f4ef7-314a-4416-a7d3-775a29aff17c",
+                            "unstructured": "Casualty D is a 40 YO male high value intelligence officer caught in the IED blast. Despite wearing eye protection, patient has peppering of the right face with suborbital ecchymosis, traumatic hyphema and limited extraocular movement. No other apparent injuries. Decreased visual acuity with cloudy vision on the right. No deficits on the left.\n",
+                            "name": "Lars Olsen",
+                            "demographics": {
+                                "age": 40,
+                                "sex": "male",
+                                "rank": "VIP"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "traumatic hyphema",
+                                    "location": "eyes",
+                                    "severity": 0.9
+                                },
+                                {
+                                    "name": "peppering",
+                                    "location": "right face",
+                                    "severity": 0.6
+                                },
+                                {
+                                    "name": "suborbital ecchymosis",
+                                    "location": "right face",
+                                    "severity": 0.6
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 105,
+                                "mm_hg": 120,
+                                "rr": 15,
+                                "sp_o2": 99,
+                                "pain": 2
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_ffeb3056-9b62-485d-a398-e96c8131a6d2",
+                            "unstructured": "Casualty E is a 26 YO Male caught in a vehicle explosion. Immediate partial amputation of RLE. Pain in right hip and pelvis.  Patient's mental status and vital signs are deteriorating.\n",
+                            "name": "Sean Davidson",
+                            "demographics": {
+                                "age": 26,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "amputation",
+                                    "location": "right leg",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "right hip",
+                                    "severity": 0.5
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "right pelivs",
+                                    "severity": 0.5
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 100,
+                                "rr": 15,
+                                "sp_o2": 95,
+                                "pain": 10
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_1a989969-3148-420f-9ada-95039b3adcdc",
+                            "unstructured": "Casualty F is a 12 YO Male caught in a vehicle explosion. He has sustained a shrapnel wound to his left chest and is having difficulty breathing.\n",
+                            "name": "Hassan Saleh",
+                            "demographics": {
+                                "age": 12,
+                                "sex": "male",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "shrapnel",
+                                    "location": "left chest",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "breathing difficulty",
+                                    "location": "chest",
+                                    "severity": 0.3
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 30,
+                                "rr": 25,
+                                "sp_o2": 99,
+                                "pain": 3
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "options": [
+                    {
+                        "id": "PROBE-2-A",
+                        "value": "casualty-A",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": "+",
+                            "mission": "-"
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-B",
+                        "value": "casualty-B",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-C",
+                        "value": "casualty-D",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-D",
+                        "value": "casualty-E",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-E",
+                        "value": "casualty-F",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Respond to Probe",
+            "parameters": {
+                "Scenario ID": "scenario_415d7e80-0fb4-4df2-b6fd-b133226bdc90",
+                "Probe ID": "PROBE-1",
+                "Choice": "PROBE-2-A",
+                "Justification": "Justifcation 504"
+            },
+            "response": {
+                "unstructured": "Initial setting: A squad of 8 soldiers and a high value intelligence officer are in two vehicles transiting from a village to a base in a desert region when there is an explosion presumed to be an IED approximately 90 km from the base. There do not appear to be any hostiles nearby. Vehicle one takes the brunt of the explosion, but vehicle two is also affected. Vehicle two still has a working radio.\nCasualty setting: Vehicle one contains four soldiers who are all severely injured. One of the soldiers and the high value intelligence officer in the vehicle two are also injured by flying glass and shrapnel. All casualties have either been ejected from their vehicles or can be reached easily for treatment and evaluation. Both vehicles are within 20 meters of the provider.\n",
+                "elapsed_time": 1.06,
+                "scenario_complete": false,
+                "mission": {
+                    "unstructured": "Protect the high value intelligence officer.",
+                    "mission_type": "ProtectVIP"
+                },
+                "environment": {
+                    "unstructured": "Daytime in a dry desert region. Evacuation is expected to be available within 40 minutes. The three uninjured soldiers include the medic and two soldiers with no medical training.\n",
+                    "aid_delay": null,
+                    "weather": "Sunny",
+                    "location": "Desert",
+                    "visibility": 0.5,
+                    "noise_ambient": 0.5,
+                    "noise_peak": 0.5
+                },
+                "threat_state": {
+                    "unstructured": "Hostiles are spotted 250 meters away.",
+                    "threats": {}
+                },
+                "supplies": [
+                    {
+                        "type": "IV kits",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Bags of Saline",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Fast Kit",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Junctional Tourniquets",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Combat Gauze",
+                        "quantity": 8
+                    },
+                    {
+                        "type": "CAT Tourniquets",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Pressure Dressings",
+                        "quantity": 5
+                    },
+                    {
+                        "type": "Bulky Dressings",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Over the Needle Catheters",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Vented Chest Seals",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Non-Vented Chest Seals",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Nasal Trumpet",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Oropharangeal-Airway",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Cric Kit",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Alcohol Swabs",
+                        "quantity": 10
+                    }
+                ],
+                "casualties": [
+                    {
+                        "id": "casualty_69ae1244-1616-4a77-b0bc-b5ea9622584f",
+                        "unstructured": "Casualty A is a 22 YO male rifleman in the vehicle suspected of being hit by an IED. Initial injuries appear to be 2nd and 3rd degree burns over all extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body). 1 cm puncture wound left neck extending into mouth and jaw. Open left lower arm extremity fracture with deformity. Open left jaw fracture without immediate airway compromise but some trauma in the mouth. Patient is unconscious.\n",
+                        "name": "Maurice Peters",
+                        "demographics": {
+                            "age": 22,
+                            "sex": "male",
+                            "rank": "Military"
+                        },
+                        "injuries": [
+                            {
+                                "name": "burns",
+                                "location": "entire body",
+                                "severity": 1
+                            },
+                            {
+                                "name": "puncture",
+                                "location": "left neck",
+                                "severity": 1
+                            },
+                            {
+                                "name": "puncture",
+                                "location": "mouth",
+                                "severity": 0.8
+                            },
+                            {
+                                "name": "puncture",
+                                "location": "jaw",
+                                "severity": 0.8
+                            },
+                            {
+                                "name": "fracture",
+                                "location": "left lower arm",
+                                "severity": 0.7
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 145,
+                            "mm_hg": 60,
+                            "rr": 40,
+                            "sp_o2": 85,
+                            "pain": null
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_d944ee9a-2ac3-4fa6-9196-2ce9e94e7d4c",
+                        "unstructured": "Casualty B is a 25 YO male rifleman and squad leader in the vehicle suspected of being hit by an IED. Intial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%), with peppered dirt and shrapnel over the same area.\n",
+                        "name": "Tom Johnson",
+                        "demographics": {
+                            "age": 25,
+                            "sex": "male",
+                            "rank": "Military"
+                        },
+                        "injuries": [
+                            {
+                                "name": "burns",
+                                "location": "left half of body",
+                                "severity": 0.9
+                            },
+                            {
+                                "name": "shrapnel",
+                                "location": "left half of body",
+                                "severity": 0.6
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 120,
+                            "mm_hg": 80,
+                            "rr": 18,
+                            "sp_o2": 98,
+                            "pain": 6
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_fb4f4ef7-314a-4416-a7d3-775a29aff17c",
+                        "unstructured": "Casualty D is a 40 YO male high value intelligence officer caught in the IED blast. Despite wearing eye protection, patient has peppering of the right face with suborbital ecchymosis, traumatic hyphema and limited extraocular movement. No other apparent injuries. Decreased visual acuity with cloudy vision on the right. No deficits on the left.\n",
+                        "name": "Lars Olsen",
+                        "demographics": {
+                            "age": 40,
+                            "sex": "male",
+                            "rank": "VIP"
+                        },
+                        "injuries": [
+                            {
+                                "name": "traumatic hyphema",
+                                "location": "eyes",
+                                "severity": 0.9
+                            },
+                            {
+                                "name": "peppering",
+                                "location": "right face",
+                                "severity": 0.6
+                            },
+                            {
+                                "name": "suborbital ecchymosis",
+                                "location": "right face",
+                                "severity": 0.6
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 105,
+                            "mm_hg": 120,
+                            "rr": 15,
+                            "sp_o2": 99,
+                            "pain": 2
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_ffeb3056-9b62-485d-a398-e96c8131a6d2",
+                        "unstructured": "Casualty E is a 26 YO Male caught in a vehicle explosion. Immediate partial amputation of RLE. Pain in right hip and pelvis.  Patient's mental status and vital signs are deteriorating.\n",
+                        "name": "Sean Davidson",
+                        "demographics": {
+                            "age": 26,
+                            "sex": "male",
+                            "rank": "Military"
+                        },
+                        "injuries": [
+                            {
+                                "name": "amputation",
+                                "location": "right leg",
+                                "severity": 1
+                            },
+                            {
+                                "name": "fracture",
+                                "location": "right hip",
+                                "severity": 0.5
+                            },
+                            {
+                                "name": "fracture",
+                                "location": "right pelivs",
+                                "severity": 0.5
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 120,
+                            "mm_hg": 100,
+                            "rr": 15,
+                            "sp_o2": 95,
+                            "pain": 10
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_1a989969-3148-420f-9ada-95039b3adcdc",
+                        "unstructured": "Casualty F is a 12 YO Male caught in a vehicle explosion. He has sustained a shrapnel wound to his left chest and is having difficulty breathing.\n",
+                        "name": "Hassan Saleh",
+                        "demographics": {
+                            "age": 12,
+                            "sex": "male",
+                            "rank": "Civilian"
+                        },
+                        "injuries": [
+                            {
+                                "name": "shrapnel",
+                                "location": "left chest",
+                                "severity": 0.8
+                            },
+                            {
+                                "name": "breathing difficulty",
+                                "location": "chest",
+                                "severity": 0.3
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 120,
+                            "mm_hg": 30,
+                            "rr": 25,
+                            "sp_o2": 99,
+                            "pain": 3
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Get Probe",
+            "parameters": {
+                "Scenario ID": "scenario_415d7e80-0fb4-4df2-b6fd-b133226bdc90"
+            },
+            "response": {
+                "id": "PROBE-2",
+                "scenario_id": "demo-scenario-1",
+                "type": "MultipleChoice",
+                "prompt": "What would you use to treat the casualty-A?",
+                "state": {
+                    "unstructured": "Initial setting: A squad of 8 soldiers and a high value intelligence officer are in two vehicles transiting from a village to a base in a desert region when there is an explosion presumed to be an IED approximately 90 km from the base. There do not appear to be any hostiles nearby. Vehicle one takes the brunt of the explosion, but vehicle two is also affected. Vehicle two still has a working radio.\nCasualty setting: Vehicle one contains four soldiers who are all severely injured. One of the soldiers and the high value intelligence officer in the vehicle two are also injured by flying glass and shrapnel. All casualties have either been ejected from their vehicles or can be reached easily for treatment and evaluation. Both vehicles are within 20 meters of the provider.\n",
+                    "elapsed_time": 1.06,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Protect the high value intelligence officer.",
+                        "mission_type": "ProtectVIP"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region. Evacuation is expected to be available within 40 minutes. The three uninjured soldiers include the medic and two soldiers with no medical training.\n",
+                        "aid_delay": null,
+                        "weather": "Sunny",
+                        "location": "Desert",
+                        "visibility": 0.5,
+                        "noise_ambient": 0.5,
+                        "noise_peak": 0.5
+                    },
+                    "threat_state": {
+                        "unstructured": "Hostiles are spotted 250 meters away.",
+                        "threats": {}
+                    },
+                    "supplies": [
+                        {
+                            "type": "IV kits",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Bags of Saline",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Fast Kit",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Junctional Tourniquets",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Combat Gauze",
+                            "quantity": 8
+                        },
+                        {
+                            "type": "CAT Tourniquets",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Pressure Dressings",
+                            "quantity": 5
+                        },
+                        {
+                            "type": "Bulky Dressings",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Over the Needle Catheters",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Vented Chest Seals",
+                            "quantity": 2
+                        },
+                        {
+                            "type": "Non-Vented Chest Seals",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Nasal Trumpet",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Oropharangeal-Airway",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Cric Kit",
+                            "quantity": 1
+                        },
+                        {
+                            "type": "Alcohol Swabs",
+                            "quantity": 10
+                        }
+                    ],
+                    "casualties": [
+                        {
+                            "id": "casualty_69ae1244-1616-4a77-b0bc-b5ea9622584f",
+                            "unstructured": "Casualty A is a 22 YO male rifleman in the vehicle suspected of being hit by an IED. Initial injuries appear to be 2nd and 3rd degree burns over all extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body). 1 cm puncture wound left neck extending into mouth and jaw. Open left lower arm extremity fracture with deformity. Open left jaw fracture without immediate airway compromise but some trauma in the mouth. Patient is unconscious.\n",
+                            "name": "Maurice Peters",
+                            "demographics": {
+                                "age": 22,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "burns",
+                                    "location": "entire body",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "left neck",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "mouth",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "puncture",
+                                    "location": "jaw",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "left lower arm",
+                                    "severity": 0.7
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 40,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_d944ee9a-2ac3-4fa6-9196-2ce9e94e7d4c",
+                            "unstructured": "Casualty B is a 25 YO male rifleman and squad leader in the vehicle suspected of being hit by an IED. Intial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%), with peppered dirt and shrapnel over the same area.\n",
+                            "name": "Tom Johnson",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "burns",
+                                    "location": "left half of body",
+                                    "severity": 0.9
+                                },
+                                {
+                                    "name": "shrapnel",
+                                    "location": "left half of body",
+                                    "severity": 0.6
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 80,
+                                "rr": 18,
+                                "sp_o2": 98,
+                                "pain": 6
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_fb4f4ef7-314a-4416-a7d3-775a29aff17c",
+                            "unstructured": "Casualty D is a 40 YO male high value intelligence officer caught in the IED blast. Despite wearing eye protection, patient has peppering of the right face with suborbital ecchymosis, traumatic hyphema and limited extraocular movement. No other apparent injuries. Decreased visual acuity with cloudy vision on the right. No deficits on the left.\n",
+                            "name": "Lars Olsen",
+                            "demographics": {
+                                "age": 40,
+                                "sex": "male",
+                                "rank": "VIP"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "traumatic hyphema",
+                                    "location": "eyes",
+                                    "severity": 0.9
+                                },
+                                {
+                                    "name": "peppering",
+                                    "location": "right face",
+                                    "severity": 0.6
+                                },
+                                {
+                                    "name": "suborbital ecchymosis",
+                                    "location": "right face",
+                                    "severity": 0.6
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 105,
+                                "mm_hg": 120,
+                                "rr": 15,
+                                "sp_o2": 99,
+                                "pain": 2
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_ffeb3056-9b62-485d-a398-e96c8131a6d2",
+                            "unstructured": "Casualty E is a 26 YO Male caught in a vehicle explosion. Immediate partial amputation of RLE. Pain in right hip and pelvis.  Patient's mental status and vital signs are deteriorating.\n",
+                            "name": "Sean Davidson",
+                            "demographics": {
+                                "age": 26,
+                                "sex": "male",
+                                "rank": "Military"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "amputation",
+                                    "location": "right leg",
+                                    "severity": 1
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "right hip",
+                                    "severity": 0.5
+                                },
+                                {
+                                    "name": "fracture",
+                                    "location": "right pelivs",
+                                    "severity": 0.5
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 100,
+                                "rr": 15,
+                                "sp_o2": 95,
+                                "pain": 10
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        },
+                        {
+                            "id": "casualty_1a989969-3148-420f-9ada-95039b3adcdc",
+                            "unstructured": "Casualty F is a 12 YO Male caught in a vehicle explosion. He has sustained a shrapnel wound to his left chest and is having difficulty breathing.\n",
+                            "name": "Hassan Saleh",
+                            "demographics": {
+                                "age": 12,
+                                "sex": "male",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [
+                                {
+                                    "name": "shrapnel",
+                                    "location": "left chest",
+                                    "severity": 0.8
+                                },
+                                {
+                                    "name": "breathing difficulty",
+                                    "location": "chest",
+                                    "severity": 0.3
+                                }
+                            ],
+                            "vitals": {
+                                "hrpmin": 120,
+                                "mm_hg": 30,
+                                "rr": 25,
+                                "sp_o2": 99,
+                                "pain": 3
+                            },
+                            "mental_status": "upset",
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "options": [
+                    {
+                        "id": "PROBE-2-A",
+                        "value": "Combat Gauze",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-B",
+                        "value": "CAT Tourniquets",
+                        "kdma_association": {
+                            "knowledge": 3,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-C",
+                        "value": "Nasal Trumpet",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "PROBE-2-D",
+                        "value": "Alcohol Swabs",
+                        "kdma_association": {
+                            "knowledge": null,
+                            "denial": null,
+                            "mission": null
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Respond to Probe",
+            "parameters": {
+                "Scenario ID": "scenario_415d7e80-0fb4-4df2-b6fd-b133226bdc90",
+                "Probe ID": "PROBE-2",
+                "Choice": "PROBE-2-B",
+                "Justification": "Justifcation 329"
+            },
+            "response": {
+                "unstructured": "Initial setting: A squad of 8 soldiers and a high value intelligence officer are in two vehicles transiting from a village to a base in a desert region when there is an explosion presumed to be an IED approximately 90 km from the base. There do not appear to be any hostiles nearby. Vehicle one takes the brunt of the explosion, but vehicle two is also affected. Vehicle two still has a working radio.\nCasualty setting: Vehicle one contains four soldiers who are all severely injured. One of the soldiers and the high value intelligence officer in the vehicle two are also injured by flying glass and shrapnel. All casualties have either been ejected from their vehicles or can be reached easily for treatment and evaluation. Both vehicles are within 20 meters of the provider.\n",
+                "elapsed_time": 3.57,
+                "scenario_complete": true,
+                "mission": {
+                    "unstructured": "Protect the high value intelligence officer.",
+                    "mission_type": "ProtectVIP"
+                },
+                "environment": {
+                    "unstructured": "Daytime in a dry desert region. Evacuation is expected to be available within 40 minutes. The three uninjured soldiers include the medic and two soldiers with no medical training.\n",
+                    "aid_delay": null,
+                    "weather": "Sunny",
+                    "location": "Desert",
+                    "visibility": 0.5,
+                    "noise_ambient": 0.5,
+                    "noise_peak": 0.5
+                },
+                "threat_state": {
+                    "unstructured": "Hostiles are spotted 250 meters away.",
+                    "threats": {}
+                },
+                "supplies": [
+                    {
+                        "type": "IV kits",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Bags of Saline",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Fast Kit",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Junctional Tourniquets",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Combat Gauze",
+                        "quantity": 8
+                    },
+                    {
+                        "type": "CAT Tourniquets",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Pressure Dressings",
+                        "quantity": 5
+                    },
+                    {
+                        "type": "Bulky Dressings",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Over the Needle Catheters",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Vented Chest Seals",
+                        "quantity": 2
+                    },
+                    {
+                        "type": "Non-Vented Chest Seals",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Nasal Trumpet",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Oropharangeal-Airway",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Cric Kit",
+                        "quantity": 1
+                    },
+                    {
+                        "type": "Alcohol Swabs",
+                        "quantity": 10
+                    }
+                ],
+                "casualties": [
+                    {
+                        "id": "casualty_69ae1244-1616-4a77-b0bc-b5ea9622584f",
+                        "unstructured": "Casualty A is a 22 YO male rifleman in the vehicle suspected of being hit by an IED. Initial injuries appear to be 2nd and 3rd degree burns over all extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body). 1 cm puncture wound left neck extending into mouth and jaw. Open left lower arm extremity fracture with deformity. Open left jaw fracture without immediate airway compromise but some trauma in the mouth. Patient is unconscious.\n",
+                        "name": "Maurice Peters",
+                        "demographics": {
+                            "age": 22,
+                            "sex": "male",
+                            "rank": "Military"
+                        },
+                        "injuries": [
+                            {
+                                "name": "burns",
+                                "location": "entire body",
+                                "severity": 1
+                            },
+                            {
+                                "name": "puncture",
+                                "location": "left neck",
+                                "severity": 1
+                            },
+                            {
+                                "name": "puncture",
+                                "location": "mouth",
+                                "severity": 0.8
+                            },
+                            {
+                                "name": "puncture",
+                                "location": "jaw",
+                                "severity": 0.8
+                            },
+                            {
+                                "name": "fracture",
+                                "location": "left lower arm",
+                                "severity": 0.7
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 145,
+                            "mm_hg": 60,
+                            "rr": 40,
+                            "sp_o2": 85,
+                            "pain": null
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_d944ee9a-2ac3-4fa6-9196-2ce9e94e7d4c",
+                        "unstructured": "Casualty B is a 25 YO male rifleman and squad leader in the vehicle suspected of being hit by an IED. Intial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%), with peppered dirt and shrapnel over the same area.\n",
+                        "name": "Tom Johnson",
+                        "demographics": {
+                            "age": 25,
+                            "sex": "male",
+                            "rank": "Military"
+                        },
+                        "injuries": [
+                            {
+                                "name": "burns",
+                                "location": "left half of body",
+                                "severity": 0.9
+                            },
+                            {
+                                "name": "shrapnel",
+                                "location": "left half of body",
+                                "severity": 0.6
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 120,
+                            "mm_hg": 80,
+                            "rr": 18,
+                            "sp_o2": 98,
+                            "pain": 6
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_fb4f4ef7-314a-4416-a7d3-775a29aff17c",
+                        "unstructured": "Casualty D is a 40 YO male high value intelligence officer caught in the IED blast. Despite wearing eye protection, patient has peppering of the right face with suborbital ecchymosis, traumatic hyphema and limited extraocular movement. No other apparent injuries. Decreased visual acuity with cloudy vision on the right. No deficits on the left.\n",
+                        "name": "Lars Olsen",
+                        "demographics": {
+                            "age": 40,
+                            "sex": "male",
+                            "rank": "VIP"
+                        },
+                        "injuries": [
+                            {
+                                "name": "traumatic hyphema",
+                                "location": "eyes",
+                                "severity": 0.9
+                            },
+                            {
+                                "name": "peppering",
+                                "location": "right face",
+                                "severity": 0.6
+                            },
+                            {
+                                "name": "suborbital ecchymosis",
+                                "location": "right face",
+                                "severity": 0.6
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 105,
+                            "mm_hg": 120,
+                            "rr": 15,
+                            "sp_o2": 99,
+                            "pain": 2
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_ffeb3056-9b62-485d-a398-e96c8131a6d2",
+                        "unstructured": "Casualty E is a 26 YO Male caught in a vehicle explosion. Immediate partial amputation of RLE. Pain in right hip and pelvis.  Patient's mental status and vital signs are deteriorating.\n",
+                        "name": "Sean Davidson",
+                        "demographics": {
+                            "age": 26,
+                            "sex": "male",
+                            "rank": "Military"
+                        },
+                        "injuries": [
+                            {
+                                "name": "amputation",
+                                "location": "right leg",
+                                "severity": 1
+                            },
+                            {
+                                "name": "fracture",
+                                "location": "right hip",
+                                "severity": 0.5
+                            },
+                            {
+                                "name": "fracture",
+                                "location": "right pelivs",
+                                "severity": 0.5
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 120,
+                            "mm_hg": 100,
+                            "rr": 15,
+                            "sp_o2": 95,
+                            "pain": 10
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    },
+                    {
+                        "id": "casualty_1a989969-3148-420f-9ada-95039b3adcdc",
+                        "unstructured": "Casualty F is a 12 YO Male caught in a vehicle explosion. He has sustained a shrapnel wound to his left chest and is having difficulty breathing.\n",
+                        "name": "Hassan Saleh",
+                        "demographics": {
+                            "age": 12,
+                            "sex": "male",
+                            "rank": "Civilian"
+                        },
+                        "injuries": [
+                            {
+                                "name": "shrapnel",
+                                "location": "left chest",
+                                "severity": 0.8
+                            },
+                            {
+                                "name": "breathing difficulty",
+                                "location": "chest",
+                                "severity": 0.3
+                            }
+                        ],
+                        "vitals": {
+                            "hrpmin": 120,
+                            "mm_hg": 30,
+                            "rr": 25,
+                            "sp_o2": 99,
+                            "pain": 3
+                        },
+                        "mental_status": "upset",
+                        "assessed": false,
+                        "tag": null
+                    }
+                ]
+            }
+        }
+    ]
+}

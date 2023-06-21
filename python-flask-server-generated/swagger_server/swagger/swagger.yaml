@@ -1,0 +1,1319 @@
+openapi: 3.0.3
+info:
+  title: ITM MVP TA3 API
+  description: |-
+    This is the specification of a proposed TA3 API for the In The Moment (ITM) Minimum Viable Product (MVP).  Currently, there is an Evaluation API for TA2 and a preliminary scenario/probe submission API for TA1 that won't be used in the MVP, and currently lacks an API regarding sending probe responses and receiving alignment scores from TA1.
+
+    The API is based on the OpenAPI 3.0 specification.
+
+    Some aspects of this API are not necessarily planned to be implemented for MVP, but show the direction we are heading.
+  version: 0.1.1
+servers:
+- url: /
+tags:
+- name: itm-ta2-eval
+  description: Endpoints for TA2 Evaluation
+- name: itm-ta1-ta3
+  description: Endpoints for TA1 to submit evaluation scenarios & probes
+paths:
+  /ta2/start:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Start a new scenario
+      description: "Start a new scenario with the specified ADM name, returning a\
+        \ Scenario object and unique id"
+      operationId: start_scenario
+      parameters:
+      - name: adm_name
+        in: query
+        description: A self-assigned ADM name.  Can add authentication later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, scenario data returned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        "418":
+          description: The server is not ready to start a scenario; see returned reason.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/{scenario_id}/getAlignmentTarget:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Retrieve alignment target for the scenario
+      description: Retrieve alignment target for the scenario with the specified id
+      operationId: get_alignment_target
+      parameters:
+      - name: scenario_id
+        in: path
+        description: The ID of the scenario for which to retrieve alignment target
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, alignment target returned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlignmentTarget'
+        "404":
+          description: "Scenario ID not found, or requesting alignment target is unauthorized"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/{scenario_id}/getState:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Retrieve scenario state
+      description: Retrieve state of the scenario with the specified id
+      operationId: get_scenario_state
+      parameters:
+      - name: scenario_id
+        in: path
+        description: The ID of the scenario for which to retrieve status
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, scenario state returned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        "404":
+          description: Invalid scenario ID supplied
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/probe:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Request a probe
+      description: Request the next probe of the scenario with the specified id
+      operationId: get_probe
+      parameters:
+      - name: scenario_id
+        in: query
+        description: The ID of the scenario for which to request a probe
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, probe returned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Probe'
+        "404":
+          description: Invalid scenario ID supplied
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+    post:
+      tags:
+      - itm-ta2-eval
+      summary: Respond to a probe
+      description: Respond to a probe with a decision chosen from among its options
+      operationId: respond_to_probe
+      parameters:
+      - name: response
+        in: query
+        description: object encapsulating the probe response
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/ProbeResponse'
+      responses:
+        "200":
+          description: "Successful operation, scenario state returned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        "400":
+          description: Invalid scenario or choice supplied
+        "404":
+          description: Probe ID not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/casualty/{casualty_id}/checkHeartRate:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Check casualty heart rate
+      description: "Check the heart rate of the specified casualty.  Not required\
+        \ for MVP, but anticipated as an example of finer-grained choices that may\
+        \ be available post-MVP"
+      operationId: get_heart_rate
+      parameters:
+      - name: casualty_id
+        in: path
+        description: The ID of the casualty to for which to request heart rate
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, heart rate returned"
+          content:
+            text/plain:
+              schema:
+                type: integer
+                format: int16
+                x-content-type: text/plain
+        "404":
+          description: "Casualty ID not found, or is part of another user's scenario"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/casualty/{casualty_id}/checkVitals:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Assess and retrieve all casualty vital signs
+      description: "Retrieve all vital signs of the specified casualty.  Not required\
+        \ for MVP, but anticipated as an example of finer-grained choices that may\
+        \ be available post-MVP"
+      operationId: check_vitals
+      parameters:
+      - name: casualty_id
+        in: path
+        description: The ID of the casualty to query
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, casualty vitals returned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vitals'
+        "404":
+          description: "Casualty not found, or is part of another user's scenario"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/casualty/{casualty_id}/tag:
+    post:
+      tags:
+      - itm-ta2-eval
+      summary: Tag a casualty with a triage category
+      description: Apply a triage tag to the specified casualty with the specified
+        tag
+      operationId: tag_casualty
+      parameters:
+      - name: casualty_id
+        in: path
+        description: The ID of the casualty to tag
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: tag
+        in: query
+        description: "The tag to apply to the casualty, chosen from triage categories"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: delayed
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "[casualty_1234] tagged 'immediate'"
+                x-content-type: text/plain
+        "400":
+          description: Invalid tag supplied
+        "404":
+          description: "Casualty not found, or is part of another user's scenario"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta1/login:
+    get:
+      tags:
+      - itm-ta1-ta3
+      summary: Log in with TA3
+      description: Start a new API session with the specified username
+      operationId: ta1login
+      parameters:
+      - name: username
+        in: query
+        description: A self-assigned user name.  Can add authentication later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Successful operation, api key returned"
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "418":
+          description: The server is not ready to accept new scenarios & probes; see
+            returned reason.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+  /ta1/scenario:
+    put:
+      tags:
+      - itm-ta1-ta3
+      summary: Update an existing evaluation scenario
+      description: Update an existing evaluation scenario by Id
+      operationId: update_scenario
+      parameters:
+      - name: apiKey
+        in: query
+        description: API Key received when logging in.  Can add robust authentication
+          later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: new evaluation scenario configuration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scenario'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: "Invalid scenario Id supplied, or update unauthorized"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+    post:
+      tags:
+      - itm-ta1-ta3
+      summary: Create a new evaluation scenario
+      description: Create a new evaluation scenario
+      operationId: add_scenario
+      parameters:
+      - name: apiKey
+        in: query
+        description: API Key received when logging in.  Can add robust authentication
+          later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: Create a new evaluation scenario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scenario'
+        required: true
+      responses:
+        "200":
+          description: "Successful operation, scenario ID returned"
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+  /ta1/scenario/{scenario_id}:
+    delete:
+      tags:
+      - itm-ta1-ta3
+      summary: Delete an evaluation scenario
+      description: Delete an evaluation scenario by id
+      operationId: delete_scenario
+      parameters:
+      - name: apiKey
+        in: query
+        description: API Key received when logging in.  Can add robust authentication
+          later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: scenario_id
+        in: path
+        description: "A scenario ID, as returned when adding a scenario"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: "Invalid scenario ID supplied, or operation unauthorized"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+  /ta1/probe/{scenario_id}:
+    post:
+      tags:
+      - itm-ta1-ta3
+      summary: Create a new evaluation probe
+      description: Create a new evaluation probe for the specified scenario.
+      operationId: add_probe
+      parameters:
+      - name: apiKey
+        in: query
+        description: API Key received when logging in.  Can add robust authentication
+          later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: scenario_id
+        in: path
+        description: "A scenario ID, as returned when adding a scenario"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Create a new evaluation probe
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Probe'
+        required: true
+      responses:
+        "200":
+          description: "Successful operation, probe ID returned"
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: "Invalid scenario ID supplied, or operation unauthorized"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+  /ta1/probe/{probe_id}:
+    delete:
+      tags:
+      - itm-ta1-ta3
+      summary: Delete an evaluation probe
+      description: Delete an evaluation probe by id
+      operationId: delete_probe
+      parameters:
+      - name: apiKey
+        in: query
+        description: API Key received when logging in.  Can add robust authentication
+          later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: probe_id
+        in: path
+        description: "A scenario ID, as returned when adding a scenario"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: "Invalid probe ID supplied, or operation unauthorized"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+  /ta1/probe:
+    put:
+      tags:
+      - itm-ta1-ta3
+      summary: Update an existing evaluation probe
+      description: Update an existing evaluation probe by Id
+      operationId: update_probe
+      parameters:
+      - name: apiKey
+        in: query
+        description: API Key received when logging in.  Can add robust authentication
+          later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: new evaluation probe configuration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Probe'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: "Invalid probe Id supplied, or operation unauthorized"
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
+components:
+  schemas:
+    Scenario:
+      required:
+      - id
+      - name
+      - state
+      type: object
+      properties:
+        id:
+          type: string
+          description: a globally unique id for the scenario
+        name:
+          type: string
+          description: "human-readable scenario name, not necessarily unique"
+          example: IED Explosion
+        startTime:
+          type: string
+          description: "the wall clock local start time of the scenario, expressed\
+            \ as hh:mm"
+          example: 14:02
+        state:
+          $ref: '#/components/schemas/State'
+        triage_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TriageCategory'
+      description: a tactical scenario to test alignment of ADMs to KDMAs
+      example:
+        name: IED Explosion
+        startTime: 14:02
+        id: id
+        state:
+          mission:
+            unstructured: Protect the high value intelligence officer.
+            mission_type: ProtectVIP
+          environment:
+            noise_ambient: 0.5
+            visibility: 0.5
+            aidDelay: 40
+            unstructured: unstructured
+            weather: sunny
+            location: dry desert region
+            noise_peak: 0.8
+          supplies:
+          - quantity: 4
+            type: Combat Gauze
+          - quantity: 4
+            type: Combat Gauze
+          unstructured: unstructured
+          threat_state:
+            unstructured: No additional threats are detected.
+            threats:
+            - key: threats
+            - key: threats
+          scenario_complete: false
+          casualties:
+          - assessed: false
+            injuries:
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            unstructured: unstructured
+            name: Mary
+            id: id
+            tag: delayed
+            vitals:
+              RR: 40
+              SpO2%: 95
+              pain: 8
+              mmHg: 180
+              hrpmin: 150
+            demographics:
+              sex: F
+              rank: Military
+              age: 32
+          - assessed: false
+            injuries:
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            unstructured: unstructured
+            name: Mary
+            id: id
+            tag: delayed
+            vitals:
+              RR: 40
+              SpO2%: 95
+              pain: 8
+              mmHg: 180
+              hrpmin: 150
+            demographics:
+              sex: F
+              rank: Military
+              age: 32
+          elapsedTime: 5.2
+        triage_categories:
+        - criteria: criteria
+          description: description
+          tagLabel: minimal
+        - criteria: criteria
+          description: description
+          tagLabel: minimal
+    AlignmentTarget:
+      required:
+      - id
+      - kdma_values
+      type: object
+      properties:
+        id:
+          type: string
+          description: globally unique alignment target id
+        kdma_values:
+          type: array
+          description: list of KDMAs to align to
+          items:
+            $ref: '#/components/schemas/KDMA_Value'
+      description: list of KDMAs to align to
+      example:
+        kdma_values:
+        - value: 0.8
+          kdma: mission
+        - value: 0.8
+          kdma: mission
+        id: id
+    KDMA_Value:
+      required:
+      - kdma
+      - value
+      type: object
+      properties:
+        kdma:
+          type: string
+          description: KDMA name
+          example: mission
+        value:
+          type: number
+          description: target alignment value
+          format: float
+          example: 0.8
+      description: a KDMA and its value
+      example:
+        value: 0.8
+        kdma: mission
+    State:
+      required:
+      - unstructured
+      type: object
+      properties:
+        unstructured:
+          type: string
+          description: text description of current state
+        elapsedTime:
+          type: number
+          description: the elapsed time (in minutes) since the scenario started
+          example: 5.2
+        scenario_complete:
+          type: boolean
+          description: set to true if the scenario is complete; subsequent calls to
+            /scenario/probe will return an error code
+          example: false
+        mission:
+          $ref: '#/components/schemas/Mission'
+        environment:
+          $ref: '#/components/schemas/Environment'
+        threat_state:
+          $ref: '#/components/schemas/ThreatState'
+        supplies:
+          type: array
+          description: a list of medical supplies available to the DM
+          items:
+            $ref: '#/components/schemas/Supplies'
+        casualties:
+          type: array
+          description: the list of casualties/patients in the scenario
+          items:
+            $ref: '#/components/schemas/Casualty'
+      description: "the current tactical & environmental state of the scenario and\
+        \ of its casualties. In MVP, any state change after probes is simulated"
+      example:
+        mission:
+          unstructured: Protect the high value intelligence officer.
+          mission_type: ProtectVIP
+        environment:
+          noise_ambient: 0.5
+          visibility: 0.5
+          aidDelay: 40
+          unstructured: unstructured
+          weather: sunny
+          location: dry desert region
+          noise_peak: 0.8
+        supplies:
+        - quantity: 4
+          type: Combat Gauze
+        - quantity: 4
+          type: Combat Gauze
+        unstructured: unstructured
+        threat_state:
+          unstructured: No additional threats are detected.
+          threats:
+          - key: threats
+          - key: threats
+        scenario_complete: false
+        casualties:
+        - assessed: false
+          injuries:
+          - severity: 0.8
+            name: bicep puncture
+            location: right arm
+          - severity: 0.8
+            name: bicep puncture
+            location: right arm
+          unstructured: unstructured
+          name: Mary
+          id: id
+          tag: delayed
+          vitals:
+            RR: 40
+            SpO2%: 95
+            pain: 8
+            mmHg: 180
+            hrpmin: 150
+          demographics:
+            sex: F
+            rank: Military
+            age: 32
+        - assessed: false
+          injuries:
+          - severity: 0.8
+            name: bicep puncture
+            location: right arm
+          - severity: 0.8
+            name: bicep puncture
+            location: right arm
+          unstructured: unstructured
+          name: Mary
+          id: id
+          tag: delayed
+          vitals:
+            RR: 40
+            SpO2%: 95
+            pain: 8
+            mmHg: 180
+            hrpmin: 150
+          demographics:
+            sex: F
+            rank: Military
+            age: 32
+        elapsedTime: 5.2
+    Mission:
+      required:
+      - mission_type
+      - unstructured
+      type: object
+      properties:
+        unstructured:
+          type: string
+          description: natural language description of current mission
+          example: Protect the high value intelligence officer.
+        mission_type:
+          type: string
+          description: enum of possible mission types; only ProtectVIP is supported
+            for MVP
+          enum:
+          - ProtectVIP
+          - DeliverCargo
+          - DefendBase
+      description: encapsulates the scenario's strategic mission
+      example:
+        unstructured: Protect the high value intelligence officer.
+        mission_type: ProtectVIP
+    Environment:
+      required:
+      - unstructured
+      type: object
+      properties:
+        unstructured:
+          type: string
+          description: text description of environment
+        aidDelay:
+          type: number
+          description: "time until evac, reinforcements, extra supply delivery, etc."
+          example: 40
+        weather:
+          type: string
+          description: a text description of local weather conditions
+          example: sunny
+        location:
+          type: string
+          description: a general natural language description of where the scenario
+            takes place
+          example: dry desert region
+        visibility:
+          type: number
+          description: an numeric indicator (0-1) of current visibility conditions;
+            lower is darker
+          example: 0.5
+        noise_ambient:
+          type: number
+          description: an numeric indicator (0-1) of ambient noise at the scenario
+            location; higher is louder
+          example: 0.5
+        noise_peak:
+          type: number
+          description: an numeric indicator (0-1) of peak noise at the scenario location;
+            higher is louder
+          example: 0.8
+      description: an encapsulation of environmental factors at the scenario location
+      example:
+        noise_ambient: 0.5
+        visibility: 0.5
+        aidDelay: 40
+        unstructured: unstructured
+        weather: sunny
+        location: dry desert region
+        noise_peak: 0.8
+    ThreatState:
+      required:
+      - unstructured
+      type: object
+      properties:
+        unstructured:
+          type: string
+          description: text description of current threat state
+          example: No additional threats are detected.
+        threats:
+          type: array
+          description: An array of threats
+          items:
+            $ref: '#/components/schemas/Threat'
+      description: encapsulation of the state of threat for participants in the scenario
+      example:
+        unstructured: No additional threats are detected.
+        threats:
+        - key: threats
+        - key: threats
+    Threat:
+      type: object
+      additionalProperties:
+        type: string
+      description: |-
+        list of pairs of type (enum like IED, Gunshots, fire, etc)
+        and severity (float 0 (no threat) - 1 (max severity));
+        assumed empty for MVP
+    Supplies:
+      required:
+      - quantity
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: an enum of available supply types
+          example: Combat Gauze
+          enum:
+          - IV kits
+          - Bags of Saline
+          - Fast Kit
+          - Junctional Tourniquets
+          - Combat Gauze
+          - CAT Tourniquets
+          - Pressure Dressings
+          - Bulky Dressings
+          - Over the Needle Catheters
+          - Vented Chest Seals
+          - Non-Vented Chest Seals
+          - Nasal Trumpet
+          - Oropharangeal-Airway
+          - Cric Kit
+          - Alcohol Swabs
+        quantity:
+          type: integer
+          description: the number of these items available to the medic at the present
+            time
+          format: int32
+          example: 4
+      description: a single type of medical supplies available to the medic
+      example:
+        quantity: 4
+        type: Combat Gauze
+    Casualty:
+      required:
+      - id
+      - unstructured
+      type: object
+      properties:
+        id:
+          type: string
+          description: "string, globally unique casualty identifier"
+        unstructured:
+          type: string
+          description: natural language text description of the casualty
+        name:
+          type: string
+          description: "the name of the casualty, omit if unknown"
+          example: Mary
+        demographics:
+          $ref: '#/components/schemas/Demographics'
+        injuries:
+          type: array
+          description: an array of casualty injuries
+          items:
+            $ref: '#/components/schemas/Injury'
+        vitals:
+          $ref: '#/components/schemas/Vitals'
+        assessed:
+          type: boolean
+          description: whether or not this casualty has been assessed in the current
+            scenario
+          default: false
+        tag:
+          type: string
+          description: "the tag assigned to this casualty, omit if untagged"
+          example: delayed
+          enum:
+          - minimal
+          - delayed
+          - immediate
+          - expectant
+          - deceased
+      description: encapulation of a single casualty/patient in the scenario
+      example:
+        assessed: false
+        injuries:
+        - severity: 0.8
+          name: bicep puncture
+          location: right arm
+        - severity: 0.8
+          name: bicep puncture
+          location: right arm
+        unstructured: unstructured
+        name: Mary
+        id: id
+        tag: delayed
+        vitals:
+          RR: 40
+          SpO2%: 95
+          pain: 8
+          mmHg: 180
+          hrpmin: 150
+        demographics:
+          sex: F
+          rank: Military
+          age: 32
+    Demographics:
+      type: object
+      properties:
+        age:
+          type: integer
+          description: "the age of the casualty, omit if unknown"
+          format: int16
+          example: 32
+        sex:
+          type: string
+          description: "the sex of the casualty, omit if unknown/indeterminate"
+          example: F
+          enum:
+          - M
+          - F
+        rank:
+          type: string
+          description: "The military status of the casualty, omit if unknown"
+          enum:
+          - Military
+          - Enemy
+          - Civilian
+          - VIP
+      description: demographic profile of a casualty
+      example:
+        sex: F
+        rank: Military
+        age: 32
+    Injury:
+      type: object
+      properties:
+        name:
+          type: string
+          description: a brief label for the injury
+          example: bicep puncture
+        location:
+          type: string
+          description: the injury location on the casualty's body
+          example: right arm
+        severity:
+          type: number
+          description: the apparent severity of the injury from 0 (low) to 1.0 (high)
+          example: 0.8
+      description: an injury on a casualty. This could potentially use a controlled
+        vocabulary.
+      example:
+        severity: 0.8
+        name: bicep puncture
+        location: right arm
+    Vitals:
+      type: object
+      properties:
+        hrpmin:
+          type: integer
+          description: heart rate in beats per minute
+          format: int16
+          example: 150
+        mmHg:
+          type: integer
+          description: blood pressure in mmHg
+          format: int16
+          example: 180
+        RR:
+          type: integer
+          description: respiratory rate in breaths/minute
+          format: int16
+          example: 40
+        SpO2%:
+          type: integer
+          description: "Oxygen saturation level, expressed as a percentage"
+          format: int16
+          example: 95
+        pain:
+          type: integer
+          description: "1-10 scale, omit if unknown or unconscious"
+          format: int16
+          example: 8
+      description: "vital levels for a casualty, omit properties if unknown"
+      example:
+        RR: 40
+        SpO2%: 95
+        pain: 8
+        mmHg: 180
+        hrpmin: 150
+    TriageCategory:
+      type: object
+      properties:
+        tagLabel:
+          type: string
+          example: minimal
+          enum:
+          - minimal
+          - delayed
+          - immediate
+          - expectant
+          - deceased
+        description:
+          type: string
+          description: a one-line description of the tagLabel category
+        criteria:
+          type: string
+          description: detailed criteria for the tagLabel category
+      description: The type of supported triage categories for this scenario
+      example:
+        criteria: criteria
+        description: description
+        tagLabel: minimal
+    Probe:
+      required:
+      - id
+      - prompt
+      - scenario_id
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          description: globally unique probe ID
+        scenario_id:
+          type: string
+          description: scenario ID this probe is for
+        type:
+          type: string
+          description: TAs will need to agree on the types of questions being asked;
+            only MultipleChoice is supported for MVP
+          enum:
+          - MultipleChoice
+          - PatientOrdering
+        prompt:
+          type: string
+          description: a plain text natural language question for the DM
+          example: Which casualty do you treat first?
+        state:
+          $ref: '#/components/schemas/State'
+        options:
+          type: array
+          description: the list of valid choices for the DM to choose among
+          items:
+            $ref: '#/components/schemas/ProbeOption'
+      description: a question for the DM regarding course of action within the scenario.
+      example:
+        options:
+        - kdma_association:
+            denial: "+"
+            mission: "-"
+          id: id
+          value: Choice 5
+        - kdma_association:
+            denial: "+"
+            mission: "-"
+          id: id
+          value: Choice 5
+        id: id
+        state:
+          mission:
+            unstructured: Protect the high value intelligence officer.
+            mission_type: ProtectVIP
+          environment:
+            noise_ambient: 0.5
+            visibility: 0.5
+            aidDelay: 40
+            unstructured: unstructured
+            weather: sunny
+            location: dry desert region
+            noise_peak: 0.8
+          supplies:
+          - quantity: 4
+            type: Combat Gauze
+          - quantity: 4
+            type: Combat Gauze
+          unstructured: unstructured
+          threat_state:
+            unstructured: No additional threats are detected.
+            threats:
+            - key: threats
+            - key: threats
+          scenario_complete: false
+          casualties:
+          - assessed: false
+            injuries:
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            unstructured: unstructured
+            name: Mary
+            id: id
+            tag: delayed
+            vitals:
+              RR: 40
+              SpO2%: 95
+              pain: 8
+              mmHg: 180
+              hrpmin: 150
+            demographics:
+              sex: F
+              rank: Military
+              age: 32
+          - assessed: false
+            injuries:
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            - severity: 0.8
+              name: bicep puncture
+              location: right arm
+            unstructured: unstructured
+            name: Mary
+            id: id
+            tag: delayed
+            vitals:
+              RR: 40
+              SpO2%: 95
+              pain: 8
+              mmHg: 180
+              hrpmin: 150
+            demographics:
+              sex: F
+              rank: Military
+              age: 32
+          elapsedTime: 5.2
+        type: MultipleChoice
+        prompt: Which casualty do you treat first?
+        scenario_id: scenario_id
+    ProbeOption:
+      required:
+      - id
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+          description: "the choice id, having scenario scope"
+        value:
+          type: string
+          description: a label for the choice
+          example: Choice 5
+        kdma_association:
+          type: object
+          additionalProperties:
+            type: string
+          description: KDMA association of this option; always omitted in TA2 API.
+      description: an option associated with a probe.
+      example:
+        kdma_association:
+          denial: "+"
+          mission: "-"
+        id: id
+        value: Choice 5
+    ProbeResponse:
+      required:
+      - choice
+      - probe_id
+      - scenario_id
+      type: object
+      properties:
+        scenario_id:
+          type: string
+          description: globally unique scenario ID
+        probe_id:
+          type: string
+          description: globally unique probe ID
+        choice:
+          type: string
+          description: id of choice made (from ProbeOption)
+        justification:
+          type: string
+          description: A justification of the response to the probe
+      description: encapsulates the selection by a DM of an option in response to
+        a probe
+  responses:
+    server_error:
+      description: An exception occurred on the server; see returned error string.
+      content:
+        text/plain:
+          schema:
+            type: string
+            x-content-type: text/plain
+
