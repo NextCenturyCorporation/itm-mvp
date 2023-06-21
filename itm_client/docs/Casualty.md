@@ -9,7 +9,6 @@ Name | Type | Description | Notes
 **demographics** | [**Demographics**](Demographics.md) |  | [optional] 
 **injuries** | [**list[Injury]**](Injury.md) | an array of casualty injuries | [optional] 
 **vitals** | [**Vitals**](Vitals.md) |  | [optional] 
-**mental_status** | **str** | mood and apparent mental state, omit if unknown | [optional] 
 **assessed** | **bool** | whether or not this casualty has been assessed in the current scenario | [optional] [default to False]
 **tag** | **str** | the tag assigned to this casualty, omit if untagged | [optional] 
 

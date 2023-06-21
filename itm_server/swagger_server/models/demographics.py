@@ -93,7 +93,7 @@ class Demographics(Model):
         :param sex: The sex of this Demographics.
         :type sex: str
         """
-        allowed_values = ["male", "female"]  # noqa: E501
+        allowed_values = ["M", "F"]  # noqa: E501
         if sex not in allowed_values:
             raise ValueError(
                 "Invalid value for `sex` ({0}), must be one of {1}"

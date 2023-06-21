@@ -182,7 +182,6 @@ class ITMScenarioReader:
             demographics=demograpics,
             injuries=injuries,
             vitals=vitals,
-            mental_status=casualty_data.get('mental_status', 'upset'),
             assessed=False,
             tag=None
         )

@@ -6,8 +6,8 @@ info:
 
     The API is based on the OpenAPI 3.0 specification.
 
-    Some objects and operations are not necessarily planned to be implemented for MVP, but show the direction we are heading.
-  version: 0.1.0
+    Some aspects of this API are not necessarily planned to be implemented for MVP, but show the direction we are heading.
+  version: 0.1.1
 servers:
 - url: /
 tags:
@@ -55,7 +55,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/{scenarioId}/getAlignmentTarget:
+  /ta2/{scenario_id}/getAlignmentTarget:
     get:
       tags:
       - itm-ta2-eval
@@ -63,7 +63,7 @@ paths:
       description: Retrieve alignment target for the scenario with the specified id
       operationId: get_alignment_target
       parameters:
-      - name: scenarioId
+      - name: scenario_id
         in: path
         description: The ID of the scenario for which to retrieve alignment target
         required: true
@@ -88,7 +88,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/{scenarioId}/getState:
+  /ta2/{scenario_id}/getState:
     get:
       tags:
       - itm-ta2-eval
@@ -96,7 +96,7 @@ paths:
       description: Retrieve state of the scenario with the specified id
       operationId: get_scenario_state
       parameters:
-      - name: scenarioId
+      - name: scenario_id
         in: path
         description: The ID of the scenario for which to retrieve status
         required: true
@@ -111,7 +111,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/State'
-        "400":
+        "404":
           description: Invalid scenario ID supplied
         "500":
           description: An exception occurred on the server; see returned error string.
@@ -129,7 +129,7 @@ paths:
       description: Request the next probe of the scenario with the specified id
       operationId: get_probe
       parameters:
-      - name: scenarioId
+      - name: scenario_id
         in: query
         description: The ID of the scenario for which to request a probe
         required: true
@@ -166,7 +166,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProbeResponse'
-        required: true
       responses:
         "200":
           description: "Successful operation, scenario state returned"
@@ -175,9 +174,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/State'
         "400":
-          description: Invalid scenario or probe ID supplied
+          description: Invalid scenario or choice supplied
         "404":
-          description: Choice not found
+          description: Probe ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -186,17 +185,17 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualtyId}/checkHeartRate:
+  /ta2/casualty/{casualty_id}/checkHeartRate:
     get:
       tags:
       - itm-ta2-eval
       summary: Check casualty heart rate
-      description: "Check the heart rate of the specified casualty.  Not implemented\
-        \ for MVP, but anticipated as an example of finer grained choice than \"Treat\
-        \ patient B\"."
+      description: "Check the heart rate of the specified casualty.  Not required\
+        \ for MVP, but anticipated as an example of finer-grained choices that may\
+        \ be available post-MVP"
       operationId: get_heart_rate
       parameters:
-      - name: casualtyId
+      - name: casualty_id
         in: path
         description: The ID of the casualty to for which to request heart rate
         required: true
@@ -214,7 +213,7 @@ paths:
                 format: int16
                 x-content-type: text/plain
         "404":
-          description: "Casualty not found, or is part of another user's scenario"
+          description: "Casualty ID not found, or is part of another user's scenario"
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -223,17 +222,17 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualtyId}/checkVitals:
+  /ta2/casualty/{casualty_id}/checkVitals:
     get:
       tags:
       - itm-ta2-eval
       summary: Assess and retrieve all casualty vital signs
-      description: "Retrieve all vital signs of the specified casualty.  Not implemented\
-        \ for MVP, but anticipated as an example of finer grained choice than \"Treat\
-        \ patient B\"."
-      operationId: get_vitals
+      description: "Retrieve all vital signs of the specified casualty.  Not required\
+        \ for MVP, but anticipated as an example of finer-grained choices that may\
+        \ be available post-MVP"
+      operationId: check_vitals
       parameters:
-      - name: casualtyId
+      - name: casualty_id
         in: path
         description: The ID of the casualty to query
         required: true
@@ -258,16 +257,16 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualtyId}/tag:
+  /ta2/casualty/{casualty_id}/tag:
     post:
       tags:
       - itm-ta2-eval
       summary: Tag a casualty with a triage category
       description: Apply a triage tag to the specified casualty with the specified
         tag
-      operationId: tag_patient
+      operationId: tag_casualty
       parameters:
-      - name: casualtyId
+      - name: casualty_id
         in: path
         description: The ID of the casualty to tag
         required: true
@@ -291,7 +290,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "[patient_1234] tagged 'immediate'"
+                example: "[casualty_1234] tagged 'immediate'"
                 x-content-type: text/plain
         "400":
           description: Invalid tag supplied
@@ -421,7 +420,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
-  /ta1/scenario/{scenarioId}:
+  /ta1/scenario/{scenario_id}:
     delete:
       tags:
       - itm-ta1-ta3
@@ -438,7 +437,7 @@ paths:
         explode: true
         schema:
           type: string
-      - name: scenarioId
+      - name: scenario_id
         in: path
         description: "A scenario ID, as returned when adding a scenario"
         required: true
@@ -459,7 +458,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
-  /ta1/probe/{scenarioId}:
+  /ta1/probe/{scenario_id}:
     post:
       tags:
       - itm-ta1-ta3
@@ -476,7 +475,7 @@ paths:
         explode: true
         schema:
           type: string
-      - name: scenarioId
+      - name: scenario_id
         in: path
         description: "A scenario ID, as returned when adding a scenario"
         required: true
@@ -509,7 +508,7 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta1_ta3_controller
-  /ta1/probe/{probeId}:
+  /ta1/probe/{probe_id}:
     delete:
       tags:
       - itm-ta1-ta3
@@ -526,7 +525,7 @@ paths:
         explode: true
         schema:
           type: string
-      - name: probeId
+      - name: probe_id
         in: path
         description: "A scenario ID, as returned when adding a scenario"
         required: true
@@ -637,7 +636,8 @@ components:
           threat_state:
             unstructured: No additional threats are detected.
             threats:
-              key: threats
+            - key: threats
+            - key: threats
           scenario_complete: false
           casualties:
           - assessed: false
@@ -658,9 +658,8 @@ components:
               pain: 8
               mmHg: 180
               hrpmin: 150
-            mental_status: calm
             demographics:
-              sex: female
+              sex: F
               rank: Military
               age: 32
           - assessed: false
@@ -681,9 +680,8 @@ components:
               pain: 8
               mmHg: 180
               hrpmin: 150
-            mental_status: calm
             demographics:
-              sex: female
+              sex: F
               rank: Military
               age: 32
           elapsedTime: 5.2
@@ -702,12 +700,12 @@ components:
       properties:
         id:
           type: string
-          description: globally unique alignment target
+          description: globally unique alignment target id
         kdma_values:
           type: array
           description: list of KDMAs to align to
           items:
-            $ref: '#/components/schemas/AlignmentTarget_kdma_values'
+            $ref: '#/components/schemas/KDMA_Value'
       description: list of KDMAs to align to
       example:
         kdma_values:
@@ -716,6 +714,25 @@ components:
         - value: 0.8
           kdma: mission
         id: id
+    KDMA_Value:
+      required:
+      - kdma
+      - value
+      type: object
+      properties:
+        kdma:
+          type: string
+          description: KDMA name
+          example: mission
+        value:
+          type: number
+          description: target alignment value
+          format: float
+          example: 0.8
+      description: a KDMA and its value
+      example:
+        value: 0.8
+        kdma: mission
     State:
       required:
       - unstructured
@@ -772,7 +789,8 @@ components:
         threat_state:
           unstructured: No additional threats are detected.
           threats:
-            key: threats
+          - key: threats
+          - key: threats
         scenario_complete: false
         casualties:
         - assessed: false
@@ -793,9 +811,8 @@ components:
             pain: 8
             mmHg: 180
             hrpmin: 150
-          mental_status: calm
           demographics:
-            sex: female
+            sex: F
             rank: Military
             age: 32
         - assessed: false
@@ -816,9 +833,8 @@ components:
             pain: 8
             mmHg: 180
             hrpmin: 150
-          mental_status: calm
           demographics:
-            sex: female
+            sex: F
             rank: Military
             age: 32
         elapsedTime: 5.2
@@ -838,6 +854,7 @@ components:
             for MVP
           enum:
           - ProtectVIP
+          - ProtectCivilians
           - DeliverCargo
           - DefendBase
       description: encapsulates the scenario's strategic mission
@@ -899,18 +916,24 @@ components:
           description: text description of current threat state
           example: No additional threats are detected.
         threats:
-          type: object
-          additionalProperties:
-            type: string
-          description: |-
-            list of pairs of type (enum like IED, Gunshots, fire, etc)
-            and severity (float 0 (no threat) - 1 (max severity));
-            assumed empty for MVP
+          type: array
+          description: An array of threats
+          items:
+            $ref: '#/components/schemas/Threat'
       description: encapsulation of the state of threat for participants in the scenario
       example:
         unstructured: No additional threats are detected.
         threats:
-          key: threats
+        - key: threats
+        - key: threats
+    Threat:
+      type: object
+      additionalProperties:
+        type: string
+      description: |-
+        list of pairs of type (enum like IED, Gunshots, fire, etc)
+        and severity (float 0 (no threat) - 1 (max severity));
+        assumed empty for MVP
     Supplies:
       required:
       - quantity
@@ -972,16 +995,6 @@ components:
             $ref: '#/components/schemas/Injury'
         vitals:
           $ref: '#/components/schemas/Vitals'
-        mental_status:
-          type: string
-          description: "mood and apparent mental state, omit if unknown"
-          example: calm
-          enum:
-          - calm
-          - confused
-          - upset
-          - agony
-          - unresponsive
         assessed:
           type: boolean
           description: whether or not this casualty has been assessed in the current
@@ -1017,9 +1030,8 @@ components:
           pain: 8
           mmHg: 180
           hrpmin: 150
-        mental_status: calm
         demographics:
-          sex: female
+          sex: F
           rank: Military
           age: 32
     Demographics:
@@ -1033,10 +1045,10 @@ components:
         sex:
           type: string
           description: "the sex of the casualty, omit if unknown/indeterminate"
-          example: female
+          example: F
           enum:
-          - male
-          - female
+          - M
+          - F
         rank:
           type: string
           description: "The military status of the casualty, omit if unknown"
@@ -1047,7 +1059,7 @@ components:
           - VIP
       description: demographic profile of a casualty
       example:
-        sex: female
+        sex: F
         rank: Military
         age: 32
     Injury:
@@ -1149,6 +1161,7 @@ components:
             only MultipleChoice is supported for MVP
           enum:
           - MultipleChoice
+          - FreeResponse
           - PatientOrdering
         prompt:
           type: string
@@ -1196,7 +1209,8 @@ components:
           threat_state:
             unstructured: No additional threats are detected.
             threats:
-              key: threats
+            - key: threats
+            - key: threats
           scenario_complete: false
           casualties:
           - assessed: false
@@ -1217,9 +1231,8 @@ components:
               pain: 8
               mmHg: 180
               hrpmin: 150
-            mental_status: calm
             demographics:
-              sex: female
+              sex: F
               rank: Military
               age: 32
           - assessed: false
@@ -1240,9 +1253,8 @@ components:
               pain: 8
               mmHg: 180
               hrpmin: 150
-            mental_status: calm
             demographics:
-              sex: female
+              sex: F
               rank: Military
               age: 32
           elapsedTime: 5.2
@@ -1295,25 +1307,6 @@ components:
           description: A justification of the response to the probe
       description: encapsulates the selection by a DM of an option in response to
         a probe
-    AlignmentTarget_kdma_values:
-      required:
-      - kdma
-      - value
-      type: object
-      properties:
-        kdma:
-          type: string
-          description: KDMA name
-          example: mission
-        value:
-          type: number
-          description: target alignment value
-          format: float
-          example: 0.8
-      description: a KDMA to align to
-      example:
-        value: 0.8
-        kdma: mission
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

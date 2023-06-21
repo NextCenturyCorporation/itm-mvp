@@ -6,7 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.alignment_target_kdma_values import AlignmentTargetKdmaValues  # noqa: F401,E501
+from swagger_server.models.kdma_value import KDMAValue  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,17 +15,17 @@ class AlignmentTarget(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, kdma_values: List[AlignmentTargetKdmaValues]=None):  # noqa: E501
+    def __init__(self, id: str=None, kdma_values: List[KDMAValue]=None):  # noqa: E501
         """AlignmentTarget - a model defined in Swagger
 
         :param id: The id of this AlignmentTarget.  # noqa: E501
         :type id: str
         :param kdma_values: The kdma_values of this AlignmentTarget.  # noqa: E501
-        :type kdma_values: List[AlignmentTargetKdmaValues]
+        :type kdma_values: List[KDMAValue]
         """
         self.swagger_types = {
             'id': str,
-            'kdma_values': List[AlignmentTargetKdmaValues]
+            'kdma_values': List[KDMAValue]
         }
 
         self.attribute_map = {
@@ -50,7 +50,7 @@ class AlignmentTarget(Model):
     def id(self) -> str:
         """Gets the id of this AlignmentTarget.
 
-        globally unique alignment target  # noqa: E501
+        globally unique alignment target id  # noqa: E501
 
         :return: The id of this AlignmentTarget.
         :rtype: str
@@ -61,7 +61,7 @@ class AlignmentTarget(Model):
     def id(self, id: str):
         """Sets the id of this AlignmentTarget.
 
-        globally unique alignment target  # noqa: E501
+        globally unique alignment target id  # noqa: E501
 
         :param id: The id of this AlignmentTarget.
         :type id: str
@@ -72,24 +72,24 @@ class AlignmentTarget(Model):
         self._id = id
 
     @property
-    def kdma_values(self) -> List[AlignmentTargetKdmaValues]:
+    def kdma_values(self) -> List[KDMAValue]:
         """Gets the kdma_values of this AlignmentTarget.
 
         list of KDMAs to align to  # noqa: E501
 
         :return: The kdma_values of this AlignmentTarget.
-        :rtype: List[AlignmentTargetKdmaValues]
+        :rtype: List[KDMAValue]
         """
         return self._kdma_values
 
     @kdma_values.setter
-    def kdma_values(self, kdma_values: List[AlignmentTargetKdmaValues]):
+    def kdma_values(self, kdma_values: List[KDMAValue]):
         """Sets the kdma_values of this AlignmentTarget.
 
         list of KDMAs to align to  # noqa: E501
 
         :param kdma_values: The kdma_values of this AlignmentTarget.
-        :type kdma_values: List[AlignmentTargetKdmaValues]
+        :type kdma_values: List[KDMAValue]
         """
         if kdma_values is None:
             raise ValueError("Invalid value for `kdma_values`, must not be `None`")  # noqa: E501

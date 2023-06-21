@@ -4,14 +4,62 @@ All URIs are relative to */*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**get_alignment_target**](ItmTa2EvalApi.md#get_alignment_target) | **GET** /ta2/{scenarioId}/getAlignmentTarget | Retrieve alignment target for the scenario
-[**get_heart_rate**](ItmTa2EvalApi.md#get_heart_rate) | **GET** /ta2/casualty/{casualtyId}/checkHeartRate | Check casualty heart rate
+[**check_vitals**](ItmTa2EvalApi.md#check_vitals) | **GET** /ta2/casualty/{casualty_id}/checkVitals | Assess and retrieve all casualty vital signs
+[**get_alignment_target**](ItmTa2EvalApi.md#get_alignment_target) | **GET** /ta2/{scenario_id}/getAlignmentTarget | Retrieve alignment target for the scenario
+[**get_heart_rate**](ItmTa2EvalApi.md#get_heart_rate) | **GET** /ta2/casualty/{casualty_id}/checkHeartRate | Check casualty heart rate
 [**get_probe**](ItmTa2EvalApi.md#get_probe) | **GET** /ta2/probe | Request a probe
-[**get_scenario_state**](ItmTa2EvalApi.md#get_scenario_state) | **GET** /ta2/{scenarioId}/getState | Retrieve scenario state
-[**get_vitals**](ItmTa2EvalApi.md#get_vitals) | **GET** /ta2/casualty/{casualtyId}/checkVitals | Assess and retrieve all casualty vital signs
+[**get_scenario_state**](ItmTa2EvalApi.md#get_scenario_state) | **GET** /ta2/{scenario_id}/getState | Retrieve scenario state
 [**respond_to_probe**](ItmTa2EvalApi.md#respond_to_probe) | **POST** /ta2/probe | Respond to a probe
 [**start_scenario**](ItmTa2EvalApi.md#start_scenario) | **GET** /ta2/start | Start a new scenario
-[**tag_patient**](ItmTa2EvalApi.md#tag_patient) | **POST** /ta2/casualty/{casualtyId}/tag | Tag a casualty with a triage category
+[**tag_casualty**](ItmTa2EvalApi.md#tag_casualty) | **POST** /ta2/casualty/{casualty_id}/tag | Tag a casualty with a triage category
+
+# **check_vitals**
+> Vitals check_vitals(casualty_id)
+
+Assess and retrieve all casualty vital signs
+
+Retrieve all vital signs of the specified casualty.  Not required for MVP, but anticipated as an example of finer-grained choices that may be available post-MVP
+
+### Example
+```python
+from __future__ import print_function
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.ItmTa2EvalApi()
+casualty_id = 'casualty_id_example' # str | The ID of the casualty to query
+
+try:
+    # Assess and retrieve all casualty vital signs
+    api_response = api_instance.check_vitals(casualty_id)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling ItmTa2EvalApi->check_vitals: %s\n" % e)
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **casualty_id** | **str**| The ID of the casualty to query | 
+
+### Return type
+
+[**Vitals**](Vitals.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, text/plain
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_alignment_target**
 > AlignmentTarget get_alignment_target(scenario_id)
@@ -66,7 +114,7 @@ No authorization required
 
 Check casualty heart rate
 
-Check the heart rate of the specified casualty.  Not implemented for MVP, but anticipated as an example of finer grained choice than \"Treat patient B\".
+Check the heart rate of the specified casualty.  Not required for MVP, but anticipated as an example of finer-grained choices that may be available post-MVP
 
 ### Example
 ```python
@@ -205,56 +253,8 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **get_vitals**
-> Vitals get_vitals(casualty_id)
-
-Assess and retrieve all casualty vital signs
-
-Retrieve all vital signs of the specified casualty.  Not implemented for MVP, but anticipated as an example of finer grained choice than \"Treat patient B\".
-
-### Example
-```python
-from __future__ import print_function
-import time
-import swagger_client
-from swagger_client.rest import ApiException
-from pprint import pprint
-
-# create an instance of the API class
-api_instance = swagger_client.ItmTa2EvalApi()
-casualty_id = 'casualty_id_example' # str | The ID of the casualty to query
-
-try:
-    # Assess and retrieve all casualty vital signs
-    api_response = api_instance.get_vitals(casualty_id)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling ItmTa2EvalApi->get_vitals: %s\n" % e)
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **casualty_id** | **str**| The ID of the casualty to query | 
-
-### Return type
-
-[**Vitals**](Vitals.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json, text/plain
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **respond_to_probe**
-> State respond_to_probe(body)
+> State respond_to_probe(body=body)
 
 Respond to a probe
 
@@ -270,11 +270,11 @@ from pprint import pprint
 
 # create an instance of the API class
 api_instance = swagger_client.ItmTa2EvalApi()
-body = swagger_client.ProbeResponse() # ProbeResponse | the selection by a DM of an option in response to a probe
+body = swagger_client.ProbeResponse() # ProbeResponse | the selection by a DM of an option in response to a probe (optional)
 
 try:
     # Respond to a probe
-    api_response = api_instance.respond_to_probe(body)
+    api_response = api_instance.respond_to_probe(body=body)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling ItmTa2EvalApi->respond_to_probe: %s\n" % e)
@@ -284,7 +284,7 @@ except ApiException as e:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**ProbeResponse**](ProbeResponse.md)| the selection by a DM of an option in response to a probe | 
+ **body** | [**ProbeResponse**](ProbeResponse.md)| the selection by a DM of an option in response to a probe | [optional] 
 
 ### Return type
 
@@ -349,8 +349,8 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **tag_patient**
-> str tag_patient(casualty_id, tag)
+# **tag_casualty**
+> str tag_casualty(casualty_id, tag)
 
 Tag a casualty with a triage category
 
@@ -371,10 +371,10 @@ tag = 'tag_example' # str | The tag to apply to the casualty, chosen from triage
 
 try:
     # Tag a casualty with a triage category
-    api_response = api_instance.tag_patient(casualty_id, tag)
+    api_response = api_instance.tag_casualty(casualty_id, tag)
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling ItmTa2EvalApi->tag_patient: %s\n" % e)
+    print("Exception when calling ItmTa2EvalApi->tag_casualty: %s\n" % e)
 ```
 
 ### Parameters

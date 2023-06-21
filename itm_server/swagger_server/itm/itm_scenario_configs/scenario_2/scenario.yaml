@@ -29,7 +29,7 @@ state:
         Initial injuries show minor burns to the arms as well as bruising to the head and neck.
       demographics:
         age: 25
-        sex: male
+        sex: M
         rank: Civilian 
       vitals:
         hrpmin: 145

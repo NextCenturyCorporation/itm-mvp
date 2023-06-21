@@ -4,10 +4,10 @@ All URIs are relative to */*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**add_probe**](ItmTa1Ta3Api.md#add_probe) | **POST** /ta1/probe/{scenarioId} | Create a new evaluation probe
+[**add_probe**](ItmTa1Ta3Api.md#add_probe) | **POST** /ta1/probe/{scenario_id} | Create a new evaluation probe
 [**add_scenario**](ItmTa1Ta3Api.md#add_scenario) | **POST** /ta1/scenario | Create a new evaluation scenario
-[**delete_probe**](ItmTa1Ta3Api.md#delete_probe) | **DELETE** /ta1/probe/{probeId} | Delete an evaluation probe
-[**delete_scenario**](ItmTa1Ta3Api.md#delete_scenario) | **DELETE** /ta1/scenario/{scenarioId} | Delete an evaluation scenario
+[**delete_probe**](ItmTa1Ta3Api.md#delete_probe) | **DELETE** /ta1/probe/{probe_id} | Delete an evaluation probe
+[**delete_scenario**](ItmTa1Ta3Api.md#delete_scenario) | **DELETE** /ta1/scenario/{scenario_id} | Delete an evaluation scenario
 [**ta1login**](ItmTa1Ta3Api.md#ta1login) | **GET** /ta1/login | Log in with TA3
 [**update_probe**](ItmTa1Ta3Api.md#update_probe) | **PUT** /ta1/probe | Update an existing evaluation probe
 [**update_scenario**](ItmTa1Ta3Api.md#update_scenario) | **PUT** /ta1/scenario | Update an existing evaluation scenario
