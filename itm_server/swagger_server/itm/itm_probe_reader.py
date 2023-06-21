@@ -3,7 +3,7 @@ import os
 import yaml
 from typing import List, Dict
 from dataclasses import dataclass, field
-from swagger_server.models import Probe, ProbeOption
+from swagger_server.models import Probe, ProbeOption, State
 from .itm_probe_system import ITMProbeSystem
 
 
@@ -17,7 +17,7 @@ class ProbeYamlKDMAAssociation:
     def from_dict(obj: Dict):
         if (obj is not None):
             return ProbeYamlKDMAAssociation(
-                knowledge=obj.get("Knowledge"),
+                knowledge=obj.get("knowledge"),
                 denial=obj.get("denial"),
                 mission=obj.get("mission")
             )
@@ -115,8 +115,9 @@ class ITMProbeReader(ITMProbeSystem):
         probe_yaml = ProbeYaml.from_dict(probe_dict)
         return probe_yaml
 
-    def generate_probe(self, state) -> Probe:
+    def generate_probe(self, state: State) -> Probe:
         current_probe = self.probe_yamls[self.current_probe_index]
+        state.unstructured = current_probe.state.get('unstructured', state.unstructured)
         probe = current_probe.to_probe(state)
         self.probes[probe.id] = probe
         

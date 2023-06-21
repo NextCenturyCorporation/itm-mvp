@@ -5,7 +5,6 @@ from typing import List, Union
 
 from swagger_server.models import (
     AlignmentTarget,
-    AlignmentTargetKdmaValues,
     Casualty,
     Probe,
     ProbeOption,
@@ -120,6 +119,7 @@ class ITMScenarioSession:
         self.check_scenario_id(scenario_id)
         if self.responded_to_last_probe:
             probe = self.probe_system.generate_probe(self.scenario.state)
+            self.scenario.state.unstructured = probe.state.unstructured
             self.last_probe = probe
         else:
             probe = self.last_probe
@@ -235,7 +235,8 @@ class ITMScenarioSession:
             self.adm_name = self.adm_name.removeprefix("_random_")
             self.scenario = ITMScenarioGenerator().generate_scenario()
         else:
-            yaml_path = "swagger_server/itm/itm_scenario_configs/scenario_1/"
+            # THIS IS IMPORTANT, THIS IS WHERE WE CHOOSE SCENARIOS BY DIRECTORY NAME!!!
+            yaml_path = "swagger_server/itm/itm_scenario_configs/scenario_2/"
             
             scenario_file = "scenario.yaml"
             scenario_reader = ITMScenarioReader(yaml_path + scenario_file)

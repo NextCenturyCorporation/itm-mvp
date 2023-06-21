@@ -92,7 +92,7 @@ class Mission(object):
         """
         if mission_type is None:
             raise ValueError("Invalid value for `mission_type`, must not be `None`")  # noqa: E501
-        allowed_values = ["ProtectVIP", "DeliverCargo", "DefendBase"]  # noqa: E501
+        allowed_values = ["ProtectVIP", "DeliverCargo", "DefendBase", "ProtectCivilians"]  # noqa: E501
         if mission_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `mission_type` ({0}), must be one of {1}"  # noqa: E501

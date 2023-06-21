@@ -42,8 +42,13 @@ class ITMScenarioReader:
         """
         state, casualty_simulations, supplies_details = self._generate_state()
         triage_categories = self._generate_triage_categories()
+
+        # TODO We want to end up using this but for testing this will confuse the dashboard since we have 2 scenarios right now
+        id_actual = self.yaml_data['id']
+
+        id_generated = "scenario_" + str(uuid.uuid4())
         scenario = Scenario(
-            id="scenario_" + str(uuid.uuid4()),
+            id=id_generated,
             name=self.yaml_data['name'],
             start_time=str(0),
             state=state,
@@ -60,11 +65,11 @@ class ITMScenarioReader:
         supplies_details = ITMSupplies()
         supplies = [
             self._generate_supplies(supply_data, supplies_details)
-            for supply_data in state['supplies']
+            for supply_data in state.get('supplies', [])
         ]
         casualty_simulations = [
             self._generate_casualty_simulations(casualty_data)
-            for casualty_data in state['casualties']
+            for casualty_data in state.get('casualties', [])
         ]
         state = State(
             unstructured=unstructured,
@@ -95,14 +100,14 @@ class ITMScenarioReader:
         Returns:
             An Environment object representing the generated environment.
         """
-        environment = state['environment']
+        environment = state.get('environment', {})
         return Environment(
-            unstructured=environment['unstructured'],
-            weather=environment['weather'],
-            location=environment['location'],
-            visibility=environment['visibility'],
-            noise_ambient=environment['noise_ambient'],
-            noise_peak=environment['noise_peak']
+            unstructured=environment.get('unstructured'),
+            weather=environment.get('weather'),
+            location=environment.get('location'),
+            visibility=environment.get('visibility'),
+            noise_ambient=environment.get('noise_ambient'),
+            noise_peak=environment.get('noise_peak')
         )
     
     def _generate_threat_state(self, state):
@@ -148,11 +153,11 @@ class ITMScenarioReader:
         Returns:
             A casualty object representing the generated casualty.
         """
-        demograpics_data = casualty_data['demographics']
+        demograpics_data = casualty_data.get('demographics', {})
         demograpics = Demographics(
-            age=demograpics_data['age'],
-            sex=demograpics_data['sex'],
-            rank=demograpics_data['rank']
+            age=demograpics_data.get('age'),
+            sex=demograpics_data.get('sex'),
+            rank=demograpics_data.get('rank')
         )
         injuries = [
             Injury(
@@ -160,9 +165,9 @@ class ITMScenarioReader:
                 location=injury['location'],
                 severity=injury['severity']
             )
-            for injury in casualty_data['injuries']
+            for injury in casualty_data.get('injuries', [])
         ]
-        vital_data = casualty_data['vitals']
+        vital_data = casualty_data.get('vitals', {})
         vitals = Vitals(
             hrpmin=vital_data['hrpmin'],
             mm_hg=vital_data['mmHg'],
@@ -173,7 +178,7 @@ class ITMScenarioReader:
         casualty = Casualty(
             id="casualty_" + str(uuid.uuid4()),
             unstructured=casualty_data['unstructured'],
-            name=casualty_data['name'],
+            name=casualty_data.get('name', 'Unkown'),
             demographics=demograpics,
             injuries=injuries,
             vitals=vitals,
