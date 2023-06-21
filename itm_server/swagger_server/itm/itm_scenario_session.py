@@ -88,15 +88,15 @@ class ITMScenarioSession:
 
         Args:
             scenario_id: The ID of the scenario.
-            casualty_id_id: The ID of the casualty_id.
+            casualty_id: The ID of the casualty_id.
 
         Returns:
-            The heart rate of the casualty_id as an integer.
+            The heart rate of the casualty as an integer.
         """
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.vitals.heart_rate
+                response = casualty.vitals.hrpmin
                 self.add_history(
                     "Get Heart Rate", {"Casualty ID": casualty_id,}, response)
                 return response
@@ -146,7 +146,7 @@ class ITMScenarioSession:
 
         Args:
             scenario_id: The ID of the scenario.
-            casualty_id_id: The ID of the casualty.
+            casualty_id: The ID of the casualty.
 
         Returns:
             The vitals of the casualty as a Vitals object.

@@ -134,7 +134,6 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             )
             if len(command_4) > 0:
                 body.justification = command_4
-            print(body)
             response = self.itm.respond_to_probe(body)
         return response
 
