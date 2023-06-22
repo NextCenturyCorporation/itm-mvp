@@ -2,6 +2,11 @@
 
 This README provides a guide to setup and run the ITM application.
 
+## To-Dos
+* Return error codes from server as per API documentation
+* Move scenario selection to configuration and/or command-line arguments
+
+
 ## Prerequisites
 
 Ensure you have Python 3.10 installed on your system. If you don't have it installed, you can download it from the [official Python website](https://www.python.org/downloads/).
