@@ -17,13 +17,24 @@ from swagger_server.test import BaseTestCase
 class TestItmTa2EvalController(BaseTestCase):
     """ItmTa2EvalController integration test stubs"""
 
+    def test_check_vitals(self):
+        """Test case for check_vitals
+
+        Assess and retrieve all casualty vital signs
+        """
+        response = self.client.open(
+            '/ta2/casualty/{casualty_id}/checkVitals'.format(casualty_id='casualty_id_example'),
+            method='GET')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_get_alignment_target(self):
         """Test case for get_alignment_target
 
         Retrieve alignment target for the scenario
         """
         response = self.client.open(
-            '/ta2/{scenarioId}/getAlignmentTarget'.format(scenario_id='scenario_id_example'),
+            '/ta2/{scenario_id}/getAlignmentTarget'.format(scenario_id='scenario_id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -34,7 +45,7 @@ class TestItmTa2EvalController(BaseTestCase):
         Check casualty heart rate
         """
         response = self.client.open(
-            '/ta2/casualty/{casualtyId}/checkHeartRate'.format(casualty_id='casualty_id_example'),
+            '/ta2/casualty/{casualty_id}/checkHeartRate'.format(casualty_id='casualty_id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -58,18 +69,7 @@ class TestItmTa2EvalController(BaseTestCase):
         Retrieve scenario state
         """
         response = self.client.open(
-            '/ta2/{scenarioId}/getState'.format(scenario_id='scenario_id_example'),
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
-    def test_get_vitals(self):
-        """Test case for get_vitals
-
-        Assess and retrieve all casualty vital signs
-        """
-        response = self.client.open(
-            '/ta2/casualty/{casualtyId}/checkVitals'.format(casualty_id='casualty_id_example'),
+            '/ta2/{scenario_id}/getState'.format(scenario_id='scenario_id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -101,14 +101,14 @@ class TestItmTa2EvalController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def test_tag_patient(self):
-        """Test case for tag_patient
+    def test_tag_casualty(self):
+        """Test case for tag_casualty
 
         Tag a casualty with a triage category
         """
         query_string = [('tag', 'tag_example')]
         response = self.client.open(
-            '/ta2/casualty/{casualtyId}/tag'.format(casualty_id='casualty_id_example'),
+            '/ta2/casualty/{casualty_id}/tag'.format(casualty_id='casualty_id_example'),
             method='POST',
             query_string=query_string)
         self.assert200(response,

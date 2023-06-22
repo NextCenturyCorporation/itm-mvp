@@ -66,7 +66,7 @@ state:
       name: Maurice Peters
       demographics:
         age: 22
-        sex: male
+        sex: M
         rank: Military
       injuries:
         - name: burns
@@ -99,7 +99,7 @@ state:
         same area.
       demographics:
         age: 25 
-        sex: male  
+        sex: M  
         rank: Military 
       injuries:
         - name: burns
@@ -124,7 +124,7 @@ state:
         the left.
       demographics:
         age: 40 
-        sex: male  
+        sex: M  
         rank: VIP 
       injuries:
         - name: traumatic hyphema
@@ -150,7 +150,7 @@ state:
         Patient's mental status and vital signs are deteriorating.
       demographics:
         age: 26 
-        sex: male  
+        sex: M  
         rank: Military
       injuries:
         - name: amputation
@@ -176,7 +176,7 @@ state:
         having difficulty breathing.
       demographics:
         age: 12
-        sex: male  
+        sex: M  
         rank: Civilian
       injuries:
         - name: shrapnel

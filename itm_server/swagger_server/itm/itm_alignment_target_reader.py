@@ -1,7 +1,7 @@
 import yaml
 from swagger_server.models import (
     AlignmentTarget,
-    AlignmentTargetKdmaValues
+    KDMAValue
 )
 
 class ITMAlignmentTargetReader:
@@ -26,7 +26,7 @@ class ITMAlignmentTargetReader:
         for item in self.yaml_data.get('kdma_values', []):
             kdma = item.get('kdma')
             value = item.get('value')
-            kmda_value = AlignmentTargetKdmaValues(
+            kmda_value = KDMAValue(
                 kdma=kdma,
                 value=value if isinstance(value, (float, int)) else (1 if value == "+" else -1)
             )

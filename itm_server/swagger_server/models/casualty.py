@@ -17,7 +17,7 @@ class Casualty(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, unstructured: str=None, name: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, mental_status: str=None, assessed: bool=False, tag: str=None):  # noqa: E501
+    def __init__(self, id: str=None, unstructured: str=None, name: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, assessed: bool=False, tag: str=None):  # noqa: E501
         """Casualty - a model defined in Swagger
 
         :param id: The id of this Casualty.  # noqa: E501
@@ -32,8 +32,6 @@ class Casualty(Model):
         :type injuries: List[Injury]
         :param vitals: The vitals of this Casualty.  # noqa: E501
         :type vitals: Vitals
-        :param mental_status: The mental_status of this Casualty.  # noqa: E501
-        :type mental_status: str
         :param assessed: The assessed of this Casualty.  # noqa: E501
         :type assessed: bool
         :param tag: The tag of this Casualty.  # noqa: E501
@@ -46,7 +44,6 @@ class Casualty(Model):
             'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
-            'mental_status': str,
             'assessed': bool,
             'tag': str
         }
@@ -58,7 +55,6 @@ class Casualty(Model):
             'demographics': 'demographics',
             'injuries': 'injuries',
             'vitals': 'vitals',
-            'mental_status': 'mental_status',
             'assessed': 'assessed',
             'tag': 'tag'
         }
@@ -68,7 +64,6 @@ class Casualty(Model):
         self._demographics = demographics
         self._injuries = injuries
         self._vitals = vitals
-        self._mental_status = mental_status
         self._assessed = assessed
         self._tag = tag
 
@@ -220,35 +215,6 @@ class Casualty(Model):
         """
 
         self._vitals = vitals
-
-    @property
-    def mental_status(self) -> str:
-        """Gets the mental_status of this Casualty.
-
-        mood and apparent mental state, omit if unknown  # noqa: E501
-
-        :return: The mental_status of this Casualty.
-        :rtype: str
-        """
-        return self._mental_status
-
-    @mental_status.setter
-    def mental_status(self, mental_status: str):
-        """Sets the mental_status of this Casualty.
-
-        mood and apparent mental state, omit if unknown  # noqa: E501
-
-        :param mental_status: The mental_status of this Casualty.
-        :type mental_status: str
-        """
-        allowed_values = ["calm", "confused", "upset", "agony", "unresponsive"]  # noqa: E501
-        if mental_status not in allowed_values:
-            raise ValueError(
-                "Invalid value for `mental_status` ({0}), must be one of {1}"
-                .format(mental_status, allowed_values)
-            )
-
-        self._mental_status = mental_status
 
     @property
     def assessed(self) -> bool:

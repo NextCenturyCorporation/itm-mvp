@@ -15,12 +15,12 @@ from __future__ import absolute_import
 import unittest
 
 import swagger_client
-from swagger_client.models.triage_category import TriageCategory  # noqa: E501
+from swagger_client.models.threat import Threat  # noqa: E501
 from swagger_client.rest import ApiException
 
 
-class TestTriageCategory(unittest.TestCase):
-    """TriageCategory unit test stubs"""
+class TestThreat(unittest.TestCase):
+    """Threat unit test stubs"""
 
     def setUp(self):
         pass
@@ -28,10 +28,10 @@ class TestTriageCategory(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testTriageCategory(self):
-        """Test TriageCategory"""
+    def testThreat(self):
+        """Test Threat"""
         # FIXME: construct object with mandatory attributes with example values
-        # model = swagger_client.models.triage_category.TriageCategory()  # noqa: E501
+        # model = swagger_client.models.threat.Threat()  # noqa: E501
         pass
 
 

@@ -21,7 +21,7 @@ class TestItmTa1Ta3Controller(BaseTestCase):
         body = Probe()
         query_string = [('api_key', 'api_key_example')]
         response = self.client.open(
-            '/ta1/probe/{scenarioId}'.format(scenario_id='scenario_id_example'),
+            '/ta1/probe/{scenario_id}'.format(scenario_id='scenario_id_example'),
             method='POST',
             data=json.dumps(body),
             content_type='application/json',
@@ -52,7 +52,7 @@ class TestItmTa1Ta3Controller(BaseTestCase):
         """
         query_string = [('api_key', 'api_key_example')]
         response = self.client.open(
-            '/ta1/probe/{probeId}'.format(probe_id='probe_id_example'),
+            '/ta1/probe/{probe_id}'.format(probe_id='probe_id_example'),
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -65,7 +65,7 @@ class TestItmTa1Ta3Controller(BaseTestCase):
         """
         query_string = [('api_key', 'api_key_example')]
         response = self.client.open(
-            '/ta1/scenario/{scenarioId}'.format(scenario_id='scenario_id_example'),
+            '/ta1/scenario/{scenario_id}'.format(scenario_id='scenario_id_example'),
             method='DELETE',
             query_string=query_string)
         self.assert200(response,

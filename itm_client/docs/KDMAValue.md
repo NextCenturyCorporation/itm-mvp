@@ -1,4 +1,4 @@
-# AlignmentTargetKdmaValues
+# KDMAValue
 
 ## Properties
 Name | Type | Description | Notes
