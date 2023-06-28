@@ -32,7 +32,7 @@ paths:
         explode: true
         schema:
           type: string
-      - name: type
+      - name: session_type
         in: query
         description: "the type of session to start (test, eval, or a ta1 name)"
         required: true
@@ -40,6 +40,7 @@ paths:
         explode: true
         schema:
           type: string
+          example: test
       - name: max_scenarios
         in: query
         description: the maximum number of scenarios requested
@@ -118,12 +119,12 @@ paths:
         "204":
           description: No content
           content:
-            text/plain:
+            application/json:
               schema:
                 type: string
                 description: There are no more scenarios
                 example: No more scenarios
-                x-content-type: text/plain
+                x-content-type: application/json
         "403":
           description: Specifying a scenario ID is unauthorized
         "404":

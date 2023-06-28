@@ -353,7 +353,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **start_session**
-> str start_session(adm_name, type, max_scenarios=max_scenarios)
+> str start_session(adm_name, session_type, max_scenarios=max_scenarios)
 
 Start a new session
 
@@ -370,12 +370,12 @@ from pprint import pprint
 # create an instance of the API class
 api_instance = swagger_client.ItmTa2EvalApi()
 adm_name = 'adm_name_example' # str | A self-assigned ADM name.  Can add authentication later.
-type = 'type_example' # str | the type of session to start (test, eval, or a ta1 name)
+session_type = 'session_type_example' # str | the type of session to start (test, eval, or a ta1 name)
 max_scenarios = 56 # int | the maximum number of scenarios requested (optional)
 
 try:
     # Start a new session
-    api_response = api_instance.start_session(adm_name, type, max_scenarios=max_scenarios)
+    api_response = api_instance.start_session(adm_name, session_type, max_scenarios=max_scenarios)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling ItmTa2EvalApi->start_session: %s\n" % e)
@@ -386,7 +386,7 @@ except ApiException as e:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **adm_name** | **str**| A self-assigned ADM name.  Can add authentication later. | 
- **type** | **str**| the type of session to start (test, eval, or a ta1 name) | 
+ **session_type** | **str**| the type of session to start (test, eval, or a ta1 name) | 
  **max_scenarios** | **int**| the maximum number of scenarios requested | [optional] 
 
 ### Return type

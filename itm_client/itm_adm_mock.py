@@ -9,6 +9,8 @@ def main():
         print("  -y    : Use a premade yaml scene. This is the default if neither -r or -y is specified")
         return
     scene_type = ""
+    session_type = ""
+    scenario_count = 1
     if "-r" in sys.argv:
         scene_type = "_random_"
     if "-y" in sys.argv:
@@ -17,8 +19,14 @@ def main():
     use_db = ""
     if "--db" in sys.argv:
         use_db += "_db_"
+
+    if "--session" in sys.argv:
+        session_arg_index = sys.argv.index("--session")
+        session_type = sys.argv[session_arg_index + 1]
+        scenario_count = int(sys.argv[session_arg_index + 2])
+
     
-    adm = ADMScenarioRunner(use_db, scene_type)
+    adm = ADMScenarioRunner(use_db, scene_type, session_type, scenario_count)
     adm.run()
 
 if __name__ == "__main__":

@@ -701,18 +701,18 @@ class ItmTa2EvalApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def start_session(self, adm_name, type, **kwargs):  # noqa: E501
+    def start_session(self, adm_name, session_type, **kwargs):  # noqa: E501
         """Start a new session  # noqa: E501
 
         Start a new session with the specified ADM name  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.start_session(adm_name, type, async_req=True)
+        >>> thread = api.start_session(adm_name, session_type, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str adm_name: A self-assigned ADM name.  Can add authentication later. (required)
-        :param str type: the type of session to start (test, eval, or a ta1 name) (required)
+        :param str session_type: the type of session to start (test, eval, or a ta1 name) (required)
         :param int max_scenarios: the maximum number of scenarios requested
         :return: str
                  If the method is called asynchronously,
@@ -720,30 +720,30 @@ class ItmTa2EvalApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.start_session_with_http_info(adm_name, type, **kwargs)  # noqa: E501
+            return self.start_session_with_http_info(adm_name, session_type, **kwargs)  # noqa: E501
         else:
-            (data) = self.start_session_with_http_info(adm_name, type, **kwargs)  # noqa: E501
+            (data) = self.start_session_with_http_info(adm_name, session_type, **kwargs)  # noqa: E501
             return data
 
-    def start_session_with_http_info(self, adm_name, type, **kwargs):  # noqa: E501
+    def start_session_with_http_info(self, adm_name, session_type, **kwargs):  # noqa: E501
         """Start a new session  # noqa: E501
 
         Start a new session with the specified ADM name  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.start_session_with_http_info(adm_name, type, async_req=True)
+        >>> thread = api.start_session_with_http_info(adm_name, session_type, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str adm_name: A self-assigned ADM name.  Can add authentication later. (required)
-        :param str type: the type of session to start (test, eval, or a ta1 name) (required)
+        :param str session_type: the type of session to start (test, eval, or a ta1 name) (required)
         :param int max_scenarios: the maximum number of scenarios requested
         :return: str
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['adm_name', 'type', 'max_scenarios']  # noqa: E501
+        all_params = ['adm_name', 'session_type', 'max_scenarios']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -762,10 +762,10 @@ class ItmTa2EvalApi(object):
         if ('adm_name' not in params or
                 params['adm_name'] is None):
             raise ValueError("Missing the required parameter `adm_name` when calling `start_session`")  # noqa: E501
-        # verify the required parameter 'type' is set
-        if ('type' not in params or
-                params['type'] is None):
-            raise ValueError("Missing the required parameter `type` when calling `start_session`")  # noqa: E501
+        # verify the required parameter 'session_type' is set
+        if ('session_type' not in params or
+                params['session_type'] is None):
+            raise ValueError("Missing the required parameter `session_type` when calling `start_session`")  # noqa: E501
 
         collection_formats = {}
 
@@ -774,8 +774,8 @@ class ItmTa2EvalApi(object):
         query_params = []
         if 'adm_name' in params:
             query_params.append(('adm_name', params['adm_name']))  # noqa: E501
-        if 'type' in params:
-            query_params.append(('type', params['type']))  # noqa: E501
+        if 'session_type' in params:
+            query_params.append(('session_type', params['session_type']))  # noqa: E501
         if 'max_scenarios' in params:
             query_params.append(('max_scenarios', params['max_scenarios']))  # noqa: E501
 

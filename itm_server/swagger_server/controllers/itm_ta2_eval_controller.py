@@ -3,7 +3,6 @@ from swagger_server.models.probe_response import ProbeResponse
 from ..itm import ITMScenarioSession
 
 ITM_SESSION = ITMScenarioSession()
-USED_START_SESSION = False
 """
 The internal controller for ITM MVP
 """
@@ -100,33 +99,34 @@ def start_scenario(adm_name, scenario_id=None):  # noqa: E501
 
     :rtype: Scenario
     """
+    # 204 doesnt work :(
+    # return 'No more scenarios', 204\
     return ITM_SESSION.start_scenario(
         adm_name=adm_name,
-        scenario_id=scenario_id,
-        used_start_session=USED_START_SESSION
+        scenario_id=scenario_id
     )
 
 
-def start_session(adm_name, type, max_scenarios=None):  # noqa: E501
+def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
     """Start a new session
 
     Start a new session with the specified ADM name # noqa: E501
 
     :param adm_name: A self-assigned ADM name.  Can add authentication later.
     :type adm_name: str
-    :param type: the type of session to start (test, eval, or a ta1 name)
-    :type type: str
+    :param session_type: the type of session to start (test, eval, or a ta1 name)
+    :type session_type: str
     :param max_scenarios: the maximum number of scenarios requested
     :type max_scenarios: int
 
     :rtype: str
     """
-    USED_START_SESSION = True
-    return ITM_SESSION.start_session(
+    ITM_SESSION.start_session(
         adm_name=adm_name,
-        scenario_type=type,
+        session_type=session_type,
         max_scenarios=max_scenarios
     )
+    return f'Session started with session type: {session_type} and max scenarios {max_scenarios}'
 
 
 def tag_casualty(casualty_id, tag):  # noqa: E501

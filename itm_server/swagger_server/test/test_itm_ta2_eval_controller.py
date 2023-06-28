@@ -108,7 +108,7 @@ class TestItmTa2EvalController(BaseTestCase):
         Start a new session
         """
         query_string = [('adm_name', 'adm_name_example'),
-                        ('type', 'type_example'),
+                        ('session_type', 'session_type_example'),
                         ('max_scenarios', 56)]
         response = self.client.open(
             '/ta2/startSession',

@@ -1,9 +1,9 @@
-from datetime import datetime
 import time
 import uuid
 import random
 import os
 from typing import List, Union
+from copy import deepcopy
 
 from swagger_server.models import (
     AlignmentTarget,
@@ -38,6 +38,7 @@ class ITMScenarioSession:
         self.time_elapsed_scenario_time = 0
 
         # isso is short for ITM Session Scenario Object
+        self.session_type = 'test'
         self.current_isso: ITMSessionScenarioObject = None
         self.current_isso_index = 0
         self.session_issos = []
@@ -268,7 +269,7 @@ class ITMScenarioSession:
             self._end_scenario()
         return self.scenario.state
 
-    def start_scenario(self, adm_name: str, scenario_id: str=None, used_start_session=False) -> Scenario:
+    def start_scenario(self, adm_name: str, scenario_id: str=None) -> Scenario:
         """
         Start a new scenario.
 
@@ -279,8 +280,8 @@ class ITMScenarioSession:
             The started scenario as a Scenario object.
         """
         # A session has not been started so make a new one
-        if len(self.session_issos) == 0 or not used_start_session:
-            self.start_session(adm_name=adm_name, scenario_type='test', max_scenarios=1, avoid_recursive_start=True)
+        if len(self.session_issos) <= 0:
+            self.start_session(adm_name=adm_name, session_type=self.session_type, max_scenarios=1)
 
         # TODO this needs to get a specific scenario by id
         if scenario_id:
@@ -294,7 +295,7 @@ class ITMScenarioSession:
             "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
         return self.scenario
 
-    def start_session(self, adm_name: str, scenario_type: str, max_scenarios=-1, avoid_recursive_start=False) -> Scenario:
+    def start_session(self, adm_name: str, session_type: str, max_scenarios=-1) -> Scenario:
         """
         Start a new scenario.
 
@@ -308,6 +309,7 @@ class ITMScenarioSession:
         """
         self.adm_name = adm_name
         self.session_issos = []
+        self.session_type = session_type
 
         # Save to database based on adm_name. This needs to be changed!
         if self.adm_name.endswith("_db_"):
@@ -316,9 +318,9 @@ class ITMScenarioSession:
 
         yaml_paths = []
         yaml_path = "swagger_server/itm/itm_scenario_configs/"
-        if scenario_type == 'soartech' or scenario_type == 'test' or scenario_type == 'eval':
+        if session_type == 'soartech' or session_type == 'test' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'soartech/')
-        if scenario_type == 'adept' or scenario_type == 'test' or scenario_type == 'eval':
+        if session_type == 'adept' or session_type == 'test' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'adept/')
         self.number_of_scenarios = max_scenarios
 
@@ -327,16 +329,17 @@ class ITMScenarioSession:
             for path in yaml_paths
             for folder in self._get_sub_directory_names(path)
         ]
+        inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
+        while len(selected_yaml_directories) < max_scenarios:
+            random_directory = random.choice(inital_selected_yaml_directories)
+            selected_yaml_directories.append(random_directory)
         random.shuffle(selected_yaml_directories)
         for i in range(max_scenarios):
             scenario_object_handler = ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i])
             itm_scenario_object = \
                 scenario_object_handler.generate_session_scenario_object()
             self.session_issos.append(itm_scenario_object)
-
         self.current_isso_index = 0
-        if not avoid_recursive_start:
-            return self.start_scenario(adm_name=self.adm_name)
 
     def tag_casualty(self, casualty_id: str, tag: str) -> str:
         """

@@ -74,36 +74,70 @@ class ADMKnowledge:
 
 class ADMScenarioRunner(ScenarioRunner):
 
-    def __init__(self, save_to_db, scene_type):
+    def __init__(self, save_to_db, scene_type, session_type=None,
+                 max_scenarios=1):
         super().__init__()
         self.adm_name = scene_type + "ITM ADM4" + save_to_db
-        self.adm_knowledge: ADMKnowledge = ADMKnowledge()
+        self.adm_knowledge: ADMKnowledge = None
+        self.session_type = session_type
+        self.max_scenarios = max_scenarios
+        self.scenarios_ran = 0
+        self.total_probes_answered = 0
 
     def run(self):
-        if not self.adm_knowledge.scenario_id:
-            self.retrieve_scenario()
-            self.adm_knowledge.alignment_target = self.itm.get_alignment_target(self.scenario.id)
+        self.run_session() if self.session_type else self.run_single_scenario()
 
+    def run_single_scenario(self):
+        self.session_type, self.max_scenarios = 'test', 1
+        self.start_session()
+        self.retrieve_scenario()
         while not self.adm_knowledge.scenario_complete:
             self.get_probe()
             self.answer_probe()
-        self.end()
+        self.end_scenario()
 
-    def end(self):
-        print("------------------")
-        print(f"Scenario Ended for user: {self.adm_name}")
+    def run_session(self):
+        self.start_session()
+        while self.scenarios_ran < self.max_scenarios:
+            self.retrieve_scenario()
+            while not self.adm_knowledge.scenario_complete:
+                self.get_probe()
+                self.answer_probe()
+            self.end_scenario()
+            self.scenarios_ran += 1
+        self.end_session()
+
+    def end_scenario(self):
+        print(f"-------- Scenario {self.scenarios_ran} ---------")
         print(f"Probes Answered: {self.adm_knowledge.probes_answered}")
-        print(f"Probes Answers in Order: {self.adm_knowledge.probe_choices}")
-        print("------------------")
+        print(f"Probes Answers in Order: {self.adm_knowledge.probe_choices}\n")
+        self.adm_knowledge = ADMKnowledge()
+
+    def end_session(self):
+        print("[End Session]")
+        print(f"Session Ended for user: {self.adm_name}")
+        print(f"Scenarios ran: {self.scenarios_ran}")
+        print(f"Total Probes Answered: {self.total_probes_answered}\n")
+
+    def start_session(self):
+        print(f"[Start Session]: {self.session_type}")
+        self.itm.start_session(adm_name=self.adm_name,
+                               session_type=self.session_type,
+                               max_scenarios=self.max_scenarios)
 
     def retrieve_scenario(self):
-        scenario: Scenario = self.itm.start_scenario(self.adm_name)
-        self.scenario = scenario
-        state: State = self.scenario.state
+        self.adm_knowledge = ADMKnowledge()
+        self.set_scenario(self.itm.start_scenario(self.adm_name))
+        self.adm_knowledge.alignment_target = \
+            self.itm.get_alignment_target(self.adm_knowledge.scenario.id)
+
+    def set_scenario(self, scenario):
+        self.adm_knowledge.scenario = scenario
+        state: State = scenario.state
         self.adm_knowledge.scenario_id = scenario.id
         self.adm_knowledge.casualties = state.casualties
-        self.adm_knowledge.all_casualty_ids = \
-            [casualty.id for casualty in state.casualties]
+        self.adm_knowledge.all_casualty_ids = [
+            casualty.id for casualty in state.casualties]
         self.adm_knowledge.treated_casualty_ids = []
         self.adm_knowledge.probes_received = []
         self.adm_knowledge.probe_choices = []
@@ -120,19 +154,18 @@ class ADMScenarioRunner(ScenarioRunner):
 
     def answer_probe(self):
         self.adm_knowledge.probes_answered += 1
-        casualty_choice = random.choice([p for p in self.adm_knowledge.all_casualty_ids])
-        self.itm.tag_casualty(
-            casualty_id=casualty_choice, tag=self.assess_casualty_priority())
-        probe_choice = random.choice([p for p in self.adm_knowledge.probe_options])
-        body = ProbeResponse(
-            scenario_id=self.adm_knowledge.scenario_id,
-            probe_id=self.adm_knowledge.current_probe.id,
-            choice=probe_choice.id,
-            justification=f"Justifcation {random.randint(0, 1000)}"
-        )
+        casualty_choice = random.choice(self.adm_knowledge.all_casualty_ids)
+        self.itm.tag_casualty(casualty_id=casualty_choice,
+                              tag=self.assess_casualty_priority())
+        probe_choice = random.choice(self.adm_knowledge.probe_options)
+        body = ProbeResponse(scenario_id=self.adm_knowledge.scenario_id,
+                             probe_id=self.adm_knowledge.current_probe.id,
+                             choice=probe_choice.id,
+                             justification=f"Justifcation {random.randint(0, 1000)}")
         response = self.itm.respond_to_probe(body=body)
         self.adm_knowledge.probe_choices.append(probe_choice.value)
         self.adm_knowledge.scenario_complete = response.scenario_complete
+        self.total_probes_answered += 1
 
     def assess_casualty_priority(self):
         casualty_priority = random.randint(1, 5)
