@@ -2,6 +2,7 @@ import time
 import uuid
 import random
 import os
+import connexion
 from typing import List, Union
 from copy import deepcopy
 
@@ -285,7 +286,7 @@ class ITMScenarioSession:
 
         # TODO this needs to get a specific scenario by id
         if scenario_id:
-            pass
+            raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
 
         self.current_isso = self.session_issos[self.current_isso_index]
         self.scenario = self.current_isso.scenario

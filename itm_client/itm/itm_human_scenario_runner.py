@@ -1,5 +1,7 @@
+from json import loads
 from enum import Enum
 from swagger_client.models import Scenario, State, ProbeResponse
+from swagger_client.rest import ApiException
 from .itm_scenario_runner import ScenarioRunner
 
 
@@ -208,22 +210,29 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         print("ITM Scenario Ended")
 
     def perform_operations(self, command_1, response):
-        if command_1 in self.get_full_string_and_shortcut(CommandOption.START):
-            response = self.start_scenario_operation(self.username)
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.ALIGNMENT_TARGETS):
-            response = self.alignment_targets_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.PROBE):
-            response = self.probe_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.RESPOND):
-            response = self.respond_probe_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.STATUS):
-            response = self.status_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.VITALS):
-            response = self.vitals_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.HEART_RATE):
-            response = self.heart_rate_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.TAG):
-            response = self.tag_scenario_operation()
+        try:
+            if command_1 in self.get_full_string_and_shortcut(CommandOption.START):
+                response = self.start_scenario_operation(self.username)
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.ALIGNMENT_TARGETS):
+                response = self.alignment_targets_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.PROBE):
+                response = self.probe_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.RESPOND):
+                response = self.respond_probe_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.STATUS):
+                response = self.status_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.VITALS):
+                response = self.vitals_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.HEART_RATE):
+                response = self.heart_rate_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.TAG):
+                response = self.tag_scenario_operation()
+        except ApiException as e:
+            exception_body = loads(e.body.decode('utf-8')) # Parse the string as a JSON object
+            print("ApiException: ", e.status, e.reason, f"Detail: \"{exception_body['detail']}\"")
+        except Exception as e:
+            print("Exception: ", e)
+
         if response != None:
             print(response)
 
