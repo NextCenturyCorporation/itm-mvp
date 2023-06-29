@@ -99,8 +99,6 @@ def start_scenario(adm_name, scenario_id=None):  # noqa: E501
 
     :rtype: Scenario
     """
-    # 204 doesnt work :(
-    # return 'No more scenarios', 204\
     return ITM_SESSION.start_scenario(
         adm_name=adm_name,
         scenario_id=scenario_id

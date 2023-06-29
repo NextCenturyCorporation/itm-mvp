@@ -30,6 +30,7 @@ class Scenario(object):
     swagger_types = {
         'id': 'str',
         'name': 'str',
+        'session_complete': 'bool',
         'start_time': 'str',
         'state': 'State',
         'triage_categories': 'list[TriageCategory]'
@@ -38,24 +39,29 @@ class Scenario(object):
     attribute_map = {
         'id': 'id',
         'name': 'name',
+        'session_complete': 'session_complete',
         'start_time': 'startTime',
         'state': 'state',
         'triage_categories': 'triage_categories'
     }
 
-    def __init__(self, id=None, name=None, start_time=None, state=None, triage_categories=None):  # noqa: E501
+    def __init__(self, id='1234', name=None, session_complete=None, start_time=None, state=None, triage_categories=None):  # noqa: E501
         """Scenario - a model defined in Swagger"""  # noqa: E501
         self._id = None
         self._name = None
+        self._session_complete = None
         self._start_time = None
         self._state = None
         self._triage_categories = None
         self.discriminator = None
         self.id = id
         self.name = name
+        if session_complete is not None:
+            self.session_complete = session_complete
         if start_time is not None:
             self.start_time = start_time
-        self.state = state
+        if state is not None:
+            self.state = state
         if triage_categories is not None:
             self.triage_categories = triage_categories
 
@@ -110,6 +116,29 @@ class Scenario(object):
         self._name = name
 
     @property
+    def session_complete(self):
+        """Gets the session_complete of this Scenario.  # noqa: E501
+
+        set to true if the session is complete; that is, there are no more scenarios  # noqa: E501
+
+        :return: The session_complete of this Scenario.  # noqa: E501
+        :rtype: bool
+        """
+        return self._session_complete
+
+    @session_complete.setter
+    def session_complete(self, session_complete):
+        """Sets the session_complete of this Scenario.
+
+        set to true if the session is complete; that is, there are no more scenarios  # noqa: E501
+
+        :param session_complete: The session_complete of this Scenario.  # noqa: E501
+        :type: bool
+        """
+
+        self._session_complete = session_complete
+
+    @property
     def start_time(self):
         """Gets the start_time of this Scenario.  # noqa: E501
 
@@ -150,8 +179,6 @@ class Scenario(object):
         :param state: The state of this Scenario.  # noqa: E501
         :type: State
         """
-        if state is None:
-            raise ValueError("Invalid value for `state`, must not be `None`")  # noqa: E501
 
         self._state = state
 

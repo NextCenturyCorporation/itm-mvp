@@ -52,7 +52,8 @@ class ITMScenarioReader:
             name=self.yaml_data['name'],
             start_time=str(0),
             state=state,
-            triage_categories=triage_categories
+            triage_categories=triage_categories,
+            session_complete=False
         )
         return (scenario, casualty_simulations, supplies_details)
     

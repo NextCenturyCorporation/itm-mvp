@@ -98,8 +98,8 @@ class ADMScenarioRunner(ScenarioRunner):
         self.start_session()
         # Run until an empty scenario is returned
         while True:
-            retrieved_valid_scenario = self.retrieve_scenario()
-            if not retrieved_valid_scenario:
+            is_empty_scenario = self.retrieve_scenario()
+            if is_empty_scenario:
                 break
             while not self.adm_knowledge.scenario_complete:
                 self.get_probe()
@@ -127,16 +127,15 @@ class ADMScenarioRunner(ScenarioRunner):
                                max_scenarios=self.max_scenarios)
 
     def retrieve_scenario(self):
-        try:
-            self.adm_knowledge = ADMKnowledge() 
-            self.set_scenario(self.itm.start_scenario(self.adm_name))
-            self.adm_knowledge.alignment_target = \
-                self.itm.get_alignment_target(self.adm_knowledge.scenario.id)
+        self.adm_knowledge = ADMKnowledge() 
+        scenario: Scenario = self.itm.start_scenario(self.adm_name)
+        if scenario.session_complete:
             return True
-        except:
-            print("No more scenarios")
-            return False
-            
+        self.set_scenario(scenario)
+        self.adm_knowledge.alignment_target = \
+            self.itm.get_alignment_target(self.adm_knowledge.scenario.id)
+        return False
+
     def set_scenario(self, scenario):
         self.adm_knowledge.scenario = scenario
         state: State = scenario.state

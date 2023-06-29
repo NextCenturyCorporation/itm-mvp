@@ -302,7 +302,9 @@ class ITMScenarioSession:
                 "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
             return self.scenario
         except:
-            return Scenario(), 204
+            # Empty Scenario
+            return Scenario(session_complete=True, id='', name='',
+                            start_time=None, state=None, triage_categories=None)
 
     def start_session(self, adm_name: str, session_type: str, max_scenarios=-1, used_start_session=False) -> Scenario:
         """

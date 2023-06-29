@@ -111,20 +111,12 @@ paths:
           type: string
       responses:
         "200":
-          description: "Successful operation, scenario data returned"
+          description: "Successful operation; scenario data returned, or session_complete\
+            \ is True"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Scenario'
-        "204":
-          description: No content
-          content:
-            application/json:
-              schema:
-                type: string
-                description: There are no more scenarios
-                example: No more scenarios
-                x-content-type: application/json
         "403":
           description: Specifying a scenario ID is unauthorized
         "404":
@@ -679,16 +671,21 @@ components:
       required:
       - id
       - name
-      - state
       type: object
       properties:
         id:
           type: string
           description: a globally unique id for the scenario
+          default: "1234"
         name:
           type: string
           description: "human-readable scenario name, not necessarily unique"
           example: IED Explosion
+        session_complete:
+          type: boolean
+          description: "set to true if the session is complete; that is, there are\
+            \ no more scenarios"
+          example: false
         startTime:
           type: string
           description: "the wall clock local start time of the scenario, expressed\
@@ -700,11 +697,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TriageCategory'
-      description: a tactical scenario to test alignment of ADMs to KDMAs
+      description: a tactical scenario
       example:
+        session_complete: false
         name: IED Explosion
         startTime: 14:02
-        id: id
+        id: "1234"
         state:
           mission:
             unstructured: Protect the high value intelligence officer.
