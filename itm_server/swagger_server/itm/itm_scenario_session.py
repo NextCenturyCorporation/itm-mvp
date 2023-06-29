@@ -281,8 +281,13 @@ class ITMScenarioSession:
             The started scenario as a Scenario object.
         """
         # A session has not been started so make a new one
-        if len(self.session_issos) <= 0:
-            self.start_session(adm_name=adm_name, session_type=self.session_type, max_scenarios=1)
+        if len(self.session_issos) <= 0 or not self.used_start_session:
+            self.start_session(
+                adm_name=adm_name,
+                session_type=self.session_type,
+                max_scenarios=1,
+                used_start_session=False
+            )
 
         # TODO this needs to get a specific scenario by id
         if scenario_id:
@@ -296,7 +301,7 @@ class ITMScenarioSession:
             "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
         return self.scenario
 
-    def start_session(self, adm_name: str, session_type: str, max_scenarios=-1) -> Scenario:
+    def start_session(self, adm_name: str, session_type: str, max_scenarios=-1, used_start_session=False) -> Scenario:
         """
         Start a new scenario.
 
@@ -311,6 +316,7 @@ class ITMScenarioSession:
         self.adm_name = adm_name
         self.session_issos = []
         self.session_type = session_type
+        self.used_start_session = used_start_session
 
         # Save to database based on adm_name. This needs to be changed!
         if self.adm_name.endswith("_db_"):

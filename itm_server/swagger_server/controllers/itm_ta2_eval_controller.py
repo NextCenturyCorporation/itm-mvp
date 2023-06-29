@@ -124,7 +124,8 @@ def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
     ITM_SESSION.start_session(
         adm_name=adm_name,
         session_type=session_type,
-        max_scenarios=max_scenarios
+        max_scenarios=max_scenarios,
+        used_start_session=True
     )
     return f'Session started with session type: {session_type} and max scenarios {max_scenarios}'
 

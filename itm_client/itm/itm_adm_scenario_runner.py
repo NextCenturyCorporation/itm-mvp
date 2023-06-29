@@ -88,8 +88,6 @@ class ADMScenarioRunner(ScenarioRunner):
         self.run_session() if self.session_type else self.run_single_scenario()
 
     def run_single_scenario(self):
-        self.session_type, self.max_scenarios = 'test', 1
-        self.start_session()
         self.retrieve_scenario()
         while not self.adm_knowledge.scenario_complete:
             self.get_probe()
