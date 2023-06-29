@@ -1,31 +1,23 @@
-import sys
+import argparse
 from itm import ADMScenarioRunner
 
 def main():
-    if "-h" in sys.argv or "--h" in sys.argv:
-        print("Usage:")
-        print("  --db   : Put the scene in the MongoDB (ensure that the itm_dashboard docker container is running) and save a json output file locally inside itm_server/itm_mvp_local_output/")
-        print("  -r    : Use a randomly generated scene")
-        print("  -y    : Use a premade yaml scene. This is the default if neither -r or -y is specified")
-        return
-    scene_type = ""
-    session_type = ""
-    scenario_count = 1
-    if "-r" in sys.argv:
-        scene_type = "_random_"
-    if "-y" in sys.argv:
-        scene_type = ""
-    
-    use_db = ""
-    if "--db" in sys.argv:
-        use_db += "_db_"
+    parser = argparse.ArgumentParser(description='Runs ADM scenarios.')
+    parser.add_argument('--db', action='store_true', help=\
+                        'Put the scene in the MongoDB and save a json output file locally inside itm_server/itm_mvp_local_output/')
+    parser.add_argument('-r', action='store_true', help='Use a randomly generated scene')
+    parser.add_argument('-y', action='store_true', help='Use a premade yaml scene')
+    parser.add_argument('--session', nargs=2, metavar=('session_type', 'scenario_count'), help=\
+                        'Specify session type and scenario count. '
+                        'If you want to run through all available scenarios without repeating any use scenario count -1')
 
-    if "--session" in sys.argv:
-        session_arg_index = sys.argv.index("--session")
-        session_type = sys.argv[session_arg_index + 1]
-        scenario_count = int(sys.argv[session_arg_index + 2])
+    args = parser.parse_args()
 
-    
+    scene_type = "_random_" if args.r else ""
+    use_db = "_db_" if args.db else ""
+    session_type = args.session[0] if args.session else ""
+    scenario_count = int(args.session[1]) if args.session else 1
+
     adm = ADMScenarioRunner(use_db, scene_type, session_type, scenario_count)
     adm.run()
 

@@ -43,9 +43,9 @@ class ITMScenarioSession:
         self.current_isso: ITMSessionScenarioObject = None
         self.current_isso_index = 0
         self.session_issos = []
-        # -1 for infinity
-        self.number_of_scenarios = -1 
+        self.number_of_scenarios = 1
         self.scenario: Scenario = None
+        self.used_start_session = False
 
         # ITMProbeGenerator or ITMProbeReader
         self.probe_system = None
@@ -281,7 +281,7 @@ class ITMScenarioSession:
             The started scenario as a Scenario object.
         """
         # A session has not been started so make a new one
-        if len(self.session_issos) <= 0 or not self.used_start_session:
+        if not self.used_start_session:
             self.start_session(
                 adm_name=adm_name,
                 session_type=self.session_type,
@@ -293,13 +293,16 @@ class ITMScenarioSession:
         if scenario_id:
             raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
 
-        self.current_isso = self.session_issos[self.current_isso_index]
-        self.scenario = self.current_isso.scenario
-        self.current_isso_index += 1
+        try:
+            self.current_isso = self.session_issos[self.current_isso_index]
+            self.scenario = self.current_isso.scenario
+            self.current_isso_index += 1
 
-        self._add_history(
-            "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
-        return self.scenario
+            self._add_history(
+                "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
+            return self.scenario
+        except:
+            return Scenario(), 204
 
     def start_session(self, adm_name: str, session_type: str, max_scenarios=-1, used_start_session=False) -> Scenario:
         """
@@ -334,12 +337,15 @@ class ITMScenarioSession:
         selected_yaml_directories = [
             f"{path}{folder}/"
             for path in yaml_paths
-            for folder in self._get_sub_directory_names(path)
-        ]
-        inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
-        while len(selected_yaml_directories) < max_scenarios:
-            random_directory = random.choice(inital_selected_yaml_directories)
-            selected_yaml_directories.append(random_directory)
+            for folder in self._get_sub_directory_names(path)]
+        if max_scenarios > -1:
+            # fill in extra scenarios with random copies
+            inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
+            while len(selected_yaml_directories) < max_scenarios:
+                random_directory = random.choice(inital_selected_yaml_directories)
+                selected_yaml_directories.append(random_directory)
+        else:
+            max_scenarios = len(selected_yaml_directories)
         random.shuffle(selected_yaml_directories)
         for i in range(max_scenarios):
             scenario_object_handler = ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i])
