@@ -43,7 +43,7 @@ class ITMScenarioSession:
         self.current_isso: ITMSessionScenarioObject = None
         self.current_isso_index = 0
         self.session_issos = []
-        self.number_of_scenarios = 1
+        self.number_of_scenarios = None
         self.scenario: Scenario = None
         self.used_start_session = False
 
@@ -90,7 +90,8 @@ class ITMScenarioSession:
             Exception: If the scenario ID does not match.
         """
         if not scenario_id == self.scenario.id:
-            raise Exception('Invalid Scenario ID')
+            return False, 'Scenario ID not found', 404
+        return True, '', 0
 
     def _end_scenario(self):
         """
@@ -140,7 +141,9 @@ class ITMScenarioSession:
         Returns:
             The alignment target for the specified scenario as an AlignmentTarget object.
         """
-        self._check_scenario_id(scenario_id)
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
         return self.current_isso.alignment_target_reader.alignment_target
 
 
@@ -162,6 +165,7 @@ class ITMScenarioSession:
                 self._add_history(
                     "Get Heart Rate", {"Casualty ID": casualty_id}, response)
                 return response
+        return 'Casualty ID not found', 404
 
     def get_probe(self, scenario_id: str) -> Probe:
         """
@@ -173,7 +177,9 @@ class ITMScenarioSession:
         Returns:
             A Probe object representing the generated probe.
         """
-        self._check_scenario_id(scenario_id)
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
         if self.responded_to_last_probe:
             probe = self.current_isso.probe_system.generate_probe(self.scenario.state)
             self.scenario.state.unstructured = probe.state.unstructured
@@ -207,7 +213,9 @@ class ITMScenarioSession:
         Returns:
             The current state of the scenario as a ScenarioState object.
         """
-        self._check_scenario_id(scenario_id)
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
         self._add_history(
             "Get Scenario State",
             {"Scenario ID": scenario_id},
@@ -232,6 +240,7 @@ class ITMScenarioSession:
                 self._add_history(
                     "Get Vitals", {"Casualty ID": casualty_id}, response)
                 return casualty.vitals
+        return 'Casualty ID not found', 404
 
     def respond_to_probe(self, body: ProbeResponse) -> State:
         """
@@ -243,6 +252,14 @@ class ITMScenarioSession:
         Returns:
             The updated scenario state as a ScenarioState object.
         """
+        (successful, message, code) = self._check_scenario_id(body.scenario_id)
+        if not successful:
+            return message, 400
+        if body.choice not in [option.id for option in self.last_probe.options]:
+            return 'Choice not valid', 404
+        if body.probe_id != self.last_probe.id:
+            return 'Probe ID not found', 404
+
         self.responded_to_last_probe = True
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
@@ -280,6 +297,19 @@ class ITMScenarioSession:
         Returns:
             The started scenario as a Scenario object.
         """
+        # TODO this needs to get a specific scenario by id
+        if scenario_id:
+            raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
+        
+        # TODO this needs to check if we don't have this scenario id
+        if scenario_id and not scenario_id not in ['scenario_id_list']:
+            return "Scenario ID does not exist", 404
+        
+        # placeholder for System Overload error code
+        system_overload = False
+        if system_overload:
+            return "System Overload", 418
+
         # A session has not been started so make a new one
         if not self.used_start_session:
             self.start_session(
@@ -288,11 +318,6 @@ class ITMScenarioSession:
                 max_scenarios=1,
                 used_start_session=False
             )
-
-        # TODO this needs to get a specific scenario by id
-        if scenario_id:
-            raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
-
         try:
             self.current_isso = self.session_issos[self.current_isso_index]
             self.scenario = self.current_isso.scenario
@@ -318,6 +343,17 @@ class ITMScenarioSession:
         Returns:
             The first started scenario as a Scenario object.
         """
+        if session_type not in ['test', 'adept', 'soartech', 'eval']:
+            return (
+                'Invalid session type. Must be "test, adept, soartech, or eval"',
+                400
+            )
+
+        # placeholder for System Overload error code
+        system_overload = False
+        if system_overload:
+            return 'System Overload', 418
+
         self.adm_name = adm_name
         self.session_issos = []
         self.session_type = session_type
@@ -340,7 +376,7 @@ class ITMScenarioSession:
             f"{path}{folder}/"
             for path in yaml_paths
             for folder in self._get_sub_directory_names(path)]
-        if max_scenarios > -1:
+        if max_scenarios != None and max_scenarios >= 1:
             # fill in extra scenarios with random copies
             inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
             while len(selected_yaml_directories) < max_scenarios:
@@ -355,6 +391,8 @@ class ITMScenarioSession:
                 scenario_object_handler.generate_session_scenario_object()
             self.session_issos.append(itm_scenario_object)
         self.current_isso_index = 0
+
+        return f'Session started with session type: {session_type} and max scenarios {max_scenarios}'
 
     def tag_casualty(self, casualty_id: str, tag: str) -> str:
         """
@@ -377,3 +415,4 @@ class ITMScenarioSession:
                     {"Casualty ID": casualty_id, "Tag": tag},
                     response)
                 return response
+        return 'Casualty ID not found', 404

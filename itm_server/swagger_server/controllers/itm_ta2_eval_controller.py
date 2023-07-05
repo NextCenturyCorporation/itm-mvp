@@ -4,7 +4,8 @@ from ..itm import ITMScenarioSession
 
 ITM_SESSION = ITMScenarioSession()
 """
-The internal controller for ITM MVP
+The internal controller for ITM MVP.
+`TODO support multiple sessions on the same server simultaneously`
 """
 
 def check_vitals(casualty_id):  # noqa: E501
@@ -119,13 +120,12 @@ def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
 
     :rtype: str
     """
-    ITM_SESSION.start_session(
+    return ITM_SESSION.start_session(
         adm_name=adm_name,
         session_type=session_type,
         max_scenarios=max_scenarios,
         used_start_session=True
     )
-    return f'Session started with session type: {session_type} and max scenarios {max_scenarios}'
 
 
 def tag_casualty(casualty_id, tag):  # noqa: E501

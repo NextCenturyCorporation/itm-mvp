@@ -75,17 +75,19 @@ class ADMKnowledge:
 class ADMScenarioRunner(ScenarioRunner):
 
     def __init__(self, save_to_db, scene_type, session_type=None,
-                 max_scenarios=1):
+                 max_scenarios=0, eval_mode=False):
         super().__init__()
         self.adm_name = scene_type + "ITM ADM4" + save_to_db
         self.adm_knowledge: ADMKnowledge = None
         self.session_type = session_type
         self.max_scenarios = max_scenarios
+        self.eval_mode = eval_mode
         self.scenarios_ran = 0
         self.total_probes_answered = 0
 
     def run(self):
-        self.run_session() if self.session_type else self.run_single_scenario()
+        self.run_session() if self.session_type or self.eval_mode else \
+                            self.run_single_scenario()
 
     def run_single_scenario(self):
         self.retrieve_scenario()
@@ -122,9 +124,18 @@ class ADMScenarioRunner(ScenarioRunner):
 
     def start_session(self):
         print(f"[Start Session]: {self.session_type}")
-        self.itm.start_session(adm_name=self.adm_name,
-                               session_type=self.session_type,
-                               max_scenarios=self.max_scenarios)
+        if self.eval_mode:
+            self.itm.start_session(
+                adm_name=self.adm_name,
+                session_type='eval',
+                max_scenarios=0
+            )
+        else:
+            self.itm.start_session(
+                adm_name=self.adm_name,
+                session_type=self.session_type,
+                max_scenarios=self.max_scenarios
+            )
 
     def retrieve_scenario(self):
         self.adm_knowledge = ADMKnowledge() 
