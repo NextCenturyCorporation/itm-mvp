@@ -34,9 +34,9 @@ import swagger_client
 import random
 from swagger_client.configuration import Configuration
 from swagger_client.api_client import ApiClient
-from swagger_client.models import Scenario, State, Probe, ProbeResponse
+from swagger_client.models import Scenario, State, Probe, ProbeResponse, AlignmentTarget
 
-def answer_probe(probe: Probe, scenario_id: str):
+def answer_probe(probe: Probe, scenario_id: str, alignment_target: AlignmentTarget):
     probe_choice = random.choice(probe.options)
     body = ProbeResponse(
         scenario_id=scenario_id, probe_id=probe.id,
@@ -92,10 +92,11 @@ def main():
         if scenario.session_complete:
             break
 
+        alignment_target: AlignmentTarget = itm.get_alignment_target(scenario.id)
         state: State = scenario.state
         while not state.scenario_complete:
             probe: Probe = itm.get_probe(scenario.id)
-            probe_response_body = answer_probe(probe, scenario.id)
+            probe_response_body = answer_probe(probe, scenario.id, alignment_target)
             state = itm.respond_to_probe(body=probe_response_body)
         print(f'scenario: {scenario.id} complete')
     print(f'Session complete')
