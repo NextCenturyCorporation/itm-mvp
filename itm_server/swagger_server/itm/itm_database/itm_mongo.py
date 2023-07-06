@@ -90,7 +90,6 @@ class MongoDB:
             # Convert Python dictionary to JSON and write to file
             json.dump(data, f, indent=4)
 
-    """
     def clear_database(self):
         # List all collections in the database
         collections = ['test', 'scenarios']
@@ -98,4 +97,3 @@ class MongoDB:
         # Loop through the collections and delete all documents
         for collection in collections:
             self.db[collection].delete_many({})
-    """

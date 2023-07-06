@@ -7,17 +7,17 @@ const { RESET_PASSWORD_URL} = require('./config');
 const { MONGO_CONFIGS, AWS_CONFIGS } = require('./account-configs');
 let AWS = require('aws-sdk');
 
-AWS.config.update({
-  accessKeyId: AWS_CONFIGS.ACCESS_KEY,
-  secretAccessKey: AWS_CONFIGS.SECRET_ACCESS_KEY,
-  region: AWS_CONFIGS.REGION
-});
-
-let transporter = nodemailer.createTransport({
-  SES: new AWS.SES({
-    apiVersion: '2010-12-01'
-  })
-});
+// AWS.config.update({
+//   accessKeyId: AWS_CONFIGS.ACCESS_KEY,
+//   secretAccessKey: AWS_CONFIGS.SECRET_ACCESS_KEY,
+//   region: AWS_CONFIGS.REGION
+// });
+// 
+// let transporter = nodemailer.createTransport({
+//   SES: new AWS.SES({
+//     apiVersion: '2010-12-01'
+//   })
+// });
 
 // We connect mongoose to our local mongodb database
 const connection = mongoose.connect('mongodb://dashboard-mongo:27017/dashboard', {
