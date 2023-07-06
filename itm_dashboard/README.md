@@ -18,4 +18,9 @@ To rebuild only the dashboard-ui after making edits in that directory, from the 
 bash dahsboard_ui.sh
 ```
 
-If you made changes to the node-graphql then you need to run the "Running from Docker" section instructions instead.
+# Helpful Script to Rebuild Graphql and UI
+
+If you made changes to the node-graphql then from the base `itm_dashboard` directory run:
+```
+bash graphql_dashboard_ui.sh
+```

@@ -62,7 +62,7 @@ const HomeChartModal = ({ data, selectedADMName, selectedId, handleADMNameChange
                             <MenuItem value="">None</MenuItem>
                             {
                                 data.filter(item => item.history[0].parameters["ADM Name"] === selectedADMName).map((item, index) => (
-                                    <MenuItem value={item.history[0].response.id} key={index}>{item.history[0].response.id}</MenuItem>
+                                    <MenuItem value={item._id} key={index}>{item.history[0].response.id}</MenuItem>
                                 ))
                             }
                         </Select>

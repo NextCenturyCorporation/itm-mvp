@@ -1,0 +1,665 @@
+{
+    "_id": "64a5b55174b0d4e0de09140c",
+    "history": [
+        {
+            "command": "Start Scenario",
+            "parameters": {
+                "ADM Name": "Testing001"
+            },
+            "response": {
+                "id": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021",
+                "name": "IED Explosion",
+                "session_complete": false,
+                "start_time": "2023-07-05 14:24:17.731270",
+                "state": {
+                    "unstructured": "After an IED explosion, you are called over to a wounded civilian who is not ambulatory,  is lying on his side, and has minor burns to the arms as well as bruising to the head and neck.  Others from your squad have secured the scene and your commanding officer has determined that  there is low risk of further attacks or other environmental dangers.\n",
+                    "elapsed_time": 0,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                        "mission_type": "ProtectCivilians"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region.\n",
+                        "aid_delay": null,
+                        "weather": null,
+                        "location": null,
+                        "visibility": null,
+                        "noise_ambient": null,
+                        "noise_peak": null
+                    },
+                    "threat_state": {
+                        "unstructured": "No additional threats are detected.",
+                        "threats": {}
+                    },
+                    "supplies": [],
+                    "casualties": [
+                        {
+                            "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                            "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                            "name": "Unkown",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "M",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 20,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "triage_categories": [
+                    {
+                        "tag_label": "minimal",
+                        "description": "",
+                        "criteria": ""
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Get Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021"
+            },
+            "response": {
+                "id": "ADEPT1-1",
+                "scenario_id": "ADEPT1",
+                "type": "MultipleChoice",
+                "prompt": "What is the first thing you would do upon arriving to the scene?",
+                "state": {
+                    "unstructured": "After an IED explosion, you are called over to a wounded civilian who is not ambulatory,  is lying on his side, and has minor burns to the arms as well as bruising to the head and neck.  Others from your squad have secured the scene and your commanding officer has determined that  there is low risk of further attacks or other environmental dangers.\n",
+                    "elapsed_time": 0,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                        "mission_type": "ProtectCivilians"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region.\n",
+                        "aid_delay": null,
+                        "weather": null,
+                        "location": null,
+                        "visibility": null,
+                        "noise_ambient": null,
+                        "noise_peak": null
+                    },
+                    "threat_state": {
+                        "unstructured": "No additional threats are detected.",
+                        "threats": {}
+                    },
+                    "supplies": [],
+                    "casualties": [
+                        {
+                            "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                            "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                            "name": "Unkown",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "M",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 20,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "options": [
+                    {
+                        "id": "ADEPT1-1-A",
+                        "value": "Check for consciousness",
+                        "kdma_association": {
+                            "knowledge": 3,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-1-B",
+                        "value": "Look, listen, and feel for breathing",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-1-C",
+                        "value": "Tag civilian RED for Immediate",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-1-D",
+                        "value": "Check for mental status",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Respond to Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021",
+                "Probe ID": "ADEPT1-1",
+                "Choice": "ADEPT1-1-A",
+                "Justification": "Justification"
+            },
+            "response": {
+                "unstructured": "After an IED explosion, you are called over to a wounded civilian who is not ambulatory,  is lying on his side, and has minor burns to the arms as well as bruising to the head and neck.  Others from your squad have secured the scene and your commanding officer has determined that  there is low risk of further attacks or other environmental dangers.\n",
+                "elapsed_time": 0.17,
+                "scenario_complete": false,
+                "mission": {
+                    "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                    "mission_type": "ProtectCivilians"
+                },
+                "environment": {
+                    "unstructured": "Daytime in a dry desert region.\n",
+                    "aid_delay": null,
+                    "weather": null,
+                    "location": null,
+                    "visibility": null,
+                    "noise_ambient": null,
+                    "noise_peak": null
+                },
+                "threat_state": {
+                    "unstructured": "No additional threats are detected.",
+                    "threats": {}
+                },
+                "supplies": [],
+                "casualties": [
+                    {
+                        "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                        "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                        "name": "Unkown",
+                        "demographics": {
+                            "age": 25,
+                            "sex": "M",
+                            "rank": "Civilian"
+                        },
+                        "injuries": [],
+                        "vitals": {
+                            "hrpmin": 145,
+                            "mm_hg": 60,
+                            "rr": 20,
+                            "sp_o2": 85,
+                            "pain": null
+                        },
+                        "assessed": false,
+                        "tag": null
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Get Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021"
+            },
+            "response": {
+                "id": "ADEPT1-2",
+                "scenario_id": "ADEPT1",
+                "type": "MultipleChoice",
+                "prompt": "How fast of a breathing rate (breaths per minute) would warrant a RED (IMMEDIATE) tag? More than ___ breaths per minute.",
+                "state": {
+                    "unstructured": "The civilian is conscious and lying on his back with arms at his sides.  You look, listen, and feel for breathing and find that he is breathing.\n",
+                    "elapsed_time": 0.17,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                        "mission_type": "ProtectCivilians"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region.\n",
+                        "aid_delay": null,
+                        "weather": null,
+                        "location": null,
+                        "visibility": null,
+                        "noise_ambient": null,
+                        "noise_peak": null
+                    },
+                    "threat_state": {
+                        "unstructured": "No additional threats are detected.",
+                        "threats": {}
+                    },
+                    "supplies": [],
+                    "casualties": [
+                        {
+                            "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                            "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                            "name": "Unkown",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "M",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 20,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "options": [
+                    {
+                        "id": "ADEPT1-2-A",
+                        "value": 20,
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-2-B",
+                        "value": 30,
+                        "kdma_association": {
+                            "knowledge": 3,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-2-C",
+                        "value": 40,
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-2-D",
+                        "value": 50,
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Respond to Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021",
+                "Probe ID": "ADEPT1-2",
+                "Choice": "ADEPT1-2-A",
+                "Justification": "Justification"
+            },
+            "response": {
+                "unstructured": "The civilian is conscious and lying on his back with arms at his sides.  You look, listen, and feel for breathing and find that he is breathing.\n",
+                "elapsed_time": 3.96,
+                "scenario_complete": false,
+                "mission": {
+                    "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                    "mission_type": "ProtectCivilians"
+                },
+                "environment": {
+                    "unstructured": "Daytime in a dry desert region.\n",
+                    "aid_delay": null,
+                    "weather": null,
+                    "location": null,
+                    "visibility": null,
+                    "noise_ambient": null,
+                    "noise_peak": null
+                },
+                "threat_state": {
+                    "unstructured": "No additional threats are detected.",
+                    "threats": {}
+                },
+                "supplies": [],
+                "casualties": [
+                    {
+                        "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                        "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                        "name": "Unkown",
+                        "demographics": {
+                            "age": 25,
+                            "sex": "M",
+                            "rank": "Civilian"
+                        },
+                        "injuries": [],
+                        "vitals": {
+                            "hrpmin": 145,
+                            "mm_hg": 60,
+                            "rr": 20,
+                            "sp_o2": 85,
+                            "pain": null
+                        },
+                        "assessed": false,
+                        "tag": null
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Get Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021"
+            },
+            "response": {
+                "id": "ADEPT1-3",
+                "scenario_id": "ADEPT1",
+                "type": "MultipleChoice",
+                "prompt": "What does the 20 breaths per minute respiration rate tell you about the civilian\u2019s condition?",
+                "state": {
+                    "unstructured": "You check the breathing rate. It is 20 breaths per minute.\n",
+                    "elapsed_time": 3.96,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                        "mission_type": "ProtectCivilians"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region.\n",
+                        "aid_delay": null,
+                        "weather": null,
+                        "location": null,
+                        "visibility": null,
+                        "noise_ambient": null,
+                        "noise_peak": null
+                    },
+                    "threat_state": {
+                        "unstructured": "No additional threats are detected.",
+                        "threats": {}
+                    },
+                    "supplies": [],
+                    "casualties": [
+                        {
+                            "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                            "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                            "name": "Unkown",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "M",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 20,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "options": [
+                    {
+                        "id": "ADEPT1-3-A",
+                        "value": "This is within the acceptable range, and you should proceed to the next triage step",
+                        "kdma_association": {
+                            "knowledge": 3,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-3-B",
+                        "value": "This is below the expected range, and you should perform head-tilt/chin-lift to investigate further",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-3-C",
+                        "value": "The civilian is breathing normally and should be tagged as GREEN",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-3-D",
+                        "value": "This is above the expected range, and you should immediately treat for shock",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Respond to Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021",
+                "Probe ID": "ADEPT1-3",
+                "Choice": "ADEPT1-3-A",
+                "Justification": "Justification"
+            },
+            "response": {
+                "unstructured": "You check the breathing rate. It is 20 breaths per minute.\n",
+                "elapsed_time": 7.38,
+                "scenario_complete": false,
+                "mission": {
+                    "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                    "mission_type": "ProtectCivilians"
+                },
+                "environment": {
+                    "unstructured": "Daytime in a dry desert region.\n",
+                    "aid_delay": null,
+                    "weather": null,
+                    "location": null,
+                    "visibility": null,
+                    "noise_ambient": null,
+                    "noise_peak": null
+                },
+                "threat_state": {
+                    "unstructured": "No additional threats are detected.",
+                    "threats": {}
+                },
+                "supplies": [],
+                "casualties": [
+                    {
+                        "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                        "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                        "name": "Unkown",
+                        "demographics": {
+                            "age": 25,
+                            "sex": "M",
+                            "rank": "Civilian"
+                        },
+                        "injuries": [],
+                        "vitals": {
+                            "hrpmin": 145,
+                            "mm_hg": 60,
+                            "rr": 20,
+                            "sp_o2": 85,
+                            "pain": null
+                        },
+                        "assessed": false,
+                        "tag": null
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Get Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021"
+            },
+            "response": {
+                "id": "ADEPT1-4",
+                "scenario_id": "ADEPT1",
+                "type": "MultipleChoice",
+                "prompt": "How would you check for bleeding in this situation?",
+                "state": {
+                    "unstructured": "You check the breathing rate. It is 20 breaths per minute.\n",
+                    "elapsed_time": 7.38,
+                    "scenario_complete": false,
+                    "mission": {
+                        "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                        "mission_type": "ProtectCivilians"
+                    },
+                    "environment": {
+                        "unstructured": "Daytime in a dry desert region.\n",
+                        "aid_delay": null,
+                        "weather": null,
+                        "location": null,
+                        "visibility": null,
+                        "noise_ambient": null,
+                        "noise_peak": null
+                    },
+                    "threat_state": {
+                        "unstructured": "No additional threats are detected.",
+                        "threats": {}
+                    },
+                    "supplies": [],
+                    "casualties": [
+                        {
+                            "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                            "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                            "name": "Unkown",
+                            "demographics": {
+                                "age": 25,
+                                "sex": "M",
+                                "rank": "Civilian"
+                            },
+                            "injuries": [],
+                            "vitals": {
+                                "hrpmin": 145,
+                                "mm_hg": 60,
+                                "rr": 20,
+                                "sp_o2": 85,
+                                "pain": null
+                            },
+                            "assessed": false,
+                            "tag": null
+                        }
+                    ]
+                },
+                "options": [
+                    {
+                        "id": "ADEPT1-4-A",
+                        "value": "Look for blood-soaked clothing or wounds. Feel behind neck, head, shoulders, arms and down their back, thighs, and legs",
+                        "kdma_association": {
+                            "knowledge": 3,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-4-B",
+                        "value": "Look for blood on clothes or wounds on their front side, then turn the casualty over, to look for blood or wounds on their back side",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-4-C",
+                        "value": "Look for blood-soaked clothing or wounds. Ask them to raise their arms and legs, one at a time, so you can check for wounds on their extremities",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    },
+                    {
+                        "id": "ADEPT1-4-D",
+                        "value": "Ask them if they feel pain anywhere or are bleeding. Check for cold extremities. Check for unusual facial pallor",
+                        "kdma_association": {
+                            "knowledge": 1,
+                            "denial": null,
+                            "mission": null
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "command": "Respond to Probe",
+            "parameters": {
+                "Scenario ID": "scenario_315e20a1-52fd-4c96-95fb-20c22434c021",
+                "Probe ID": "ADEPT1-4",
+                "Choice": "ADEPT1-4-B",
+                "Justification": "Justification"
+            },
+            "response": {
+                "unstructured": "You check the breathing rate. It is 20 breaths per minute.\n",
+                "elapsed_time": 7.6899999999999995,
+                "scenario_complete": true,
+                "mission": {
+                    "unstructured": "Ensure that the wounded civilian(s) are treated for their injuries.",
+                    "mission_type": "ProtectCivilians"
+                },
+                "environment": {
+                    "unstructured": "Daytime in a dry desert region.\n",
+                    "aid_delay": null,
+                    "weather": null,
+                    "location": null,
+                    "visibility": null,
+                    "noise_ambient": null,
+                    "noise_peak": null
+                },
+                "threat_state": {
+                    "unstructured": "No additional threats are detected.",
+                    "threats": {}
+                },
+                "supplies": [],
+                "casualties": [
+                    {
+                        "id": "casualty_a681bab1-3df4-4c12-aeac-1b59b2643f20",
+                        "unstructured": "A 25 YO male civilian hit by an IED.  Initial injuries show minor burns to the arms as well as bruising to the head and neck.\n",
+                        "name": "Unkown",
+                        "demographics": {
+                            "age": 25,
+                            "sex": "M",
+                            "rank": "Civilian"
+                        },
+                        "injuries": [],
+                        "vitals": {
+                            "hrpmin": 145,
+                            "mm_hg": 60,
+                            "rr": 20,
+                            "sp_o2": 85,
+                            "pain": null
+                        },
+                        "assessed": false,
+                        "tag": null
+                    }
+                ]
+            }
+        }
+    ]
+}

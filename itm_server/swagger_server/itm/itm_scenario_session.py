@@ -52,6 +52,7 @@ class ITMScenarioSession:
 
         self.last_probe = None
         self.responded_to_last_probe = True
+        self.probes_responded_to = []
 
         # This calls the dashboard's MongoDB
         self.save_to_database = False
@@ -104,6 +105,8 @@ class ITMScenarioSession:
         retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
         # Write the retrieved data to a local JSON file
         self.mongo_db.write_to_json_file(retrieved_data)
+        self.history = []
+        self.probes_responded_to = []
 
     def _get_realtime_elapsed_time(self) -> float:
         """
@@ -255,12 +258,15 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(body.scenario_id)
         if not successful:
             return message, 400
+        if body.probe_id in self.probes_responded_to:
+            return f'Already responded to prode with id {body.probe_id}', 400
         if body.choice not in [option.id for option in self.last_probe.options]:
             return 'Choice not valid', 404
         if body.probe_id != self.last_probe.id:
             return 'Probe ID not found', 404
 
         self.responded_to_last_probe = True
+        self.probes_responded_to.append(body.probe_id)
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
@@ -331,7 +337,7 @@ class ITMScenarioSession:
             return Scenario(session_complete=True, id='', name='',
                             start_time=None, state=None, triage_categories=None)
 
-    def start_session(self, adm_name: str, session_type: str, max_scenarios=-1, used_start_session=False) -> Scenario:
+    def start_session(self, adm_name: str, session_type: str, max_scenarios=None, used_start_session=False) -> Scenario:
         """
         Start a new scenario.
 
@@ -359,10 +365,13 @@ class ITMScenarioSession:
         self.session_type = session_type
         self.used_start_session = used_start_session
 
-        # Save to database based on adm_name. This needs to be changed!
+        # Save to database based on adm_name. This is good enough for now but should be changed.
         if self.adm_name.endswith("_db_"):
             self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
+        if self.session_type == 'eval':
+            self.save_to_database = True
+            max_scenarios = None
 
         yaml_paths = []
         yaml_path = "swagger_server/itm/itm_scenario_configs/"

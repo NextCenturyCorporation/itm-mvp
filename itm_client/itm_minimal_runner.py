@@ -78,7 +78,7 @@ def main():
             session_type=session_type,
             max_scenarios=scenario_count
         )
-    
+
     while True:
         scenario: Scenario = itm.start_scenario(args.adm_name)
         if scenario.session_complete:
