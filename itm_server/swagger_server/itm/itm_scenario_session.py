@@ -259,7 +259,7 @@ class ITMScenarioSession:
         if not successful:
             return message, 400
         if body.probe_id in self.probes_responded_to:
-            return f'Already responded to prode with id {body.probe_id}', 400
+            return f'Already responded to probe with id {body.probe_id}', 400
         if body.choice not in [option.id for option in self.last_probe.options]:
             return 'Choice not valid', 404
         if body.probe_id != self.last_probe.id:
@@ -364,6 +364,8 @@ class ITMScenarioSession:
         self.session_issos = []
         self.session_type = session_type
         self.used_start_session = used_start_session
+        self.history = []
+        self.probes_responded_to = []
 
         # Save to database based on adm_name. This is good enough for now but should be changed.
         if self.adm_name.endswith("_db_"):
