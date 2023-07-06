@@ -3,9 +3,7 @@
 This README provides a guide to setup and run the ITM application.
 
 ## To-Dos
-* Return error codes from server as per API documentation
-* Move scenario selection to configuration and/or command-line arguments
-
+* Simplify API error code responses
 
 ## Prerequisites
 
