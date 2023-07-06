@@ -28,9 +28,14 @@ class TagTypes(Enum):
 
 
 class ITMHumanScenarioRunner(ScenarioRunner):
-    def __init__(self, save_to_db, scene_type):
+    def __init__(self, save_to_db, session_type, max_scenarios=-1):
         super().__init__()
-        self.username = scene_type + "ITM Human" + save_to_db
+        self.username = session_type + "ITM Human" + save_to_db
+        self.session_type = session_type
+        if max_scenarios > 0:
+            self.max_scenarios = max_scenarios
+        else:
+            self.max_scenarios = None
         self.scenario_complete = False
         self.session_complete = False
         self.session_id = None
@@ -40,6 +45,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         self.current_probe_id = ''
         self.current_probe_text = ''
         self.current_probe_options = {}
+        self.current_probe_answered = False
 
     def get_full_string_and_shortcut(self, parts):
         if isinstance(parts, CommandOption):
@@ -98,6 +104,9 @@ class ITMHumanScenarioRunner(ScenarioRunner):
     def start_scenario_operation(self, temp_username):
         if self.scenario_id == None:
             response: Scenario = self.itm.start_scenario(temp_username)
+            self.current_probe_answered = False
+            self.current_probe_id = ''
+            self.session_id = 'foobar' # ensure we don't start a new session
             if response.session_complete == False:
                 self.scenario_id = response.id
                 self.scenario = response
@@ -112,8 +121,10 @@ class ITMHumanScenarioRunner(ScenarioRunner):
 
     def start_session_operation(self, temp_username):
         if self.session_id == None:
-            # human always want all scenarios; maybe accept value via command line later
-            response: Scenario = self.itm.start_session(temp_username, 'eval', max_scenarios=5)
+            if self.max_scenarios == None:
+                response: Scenario = self.itm.start_session(temp_username, self.session_type)
+            else:
+                response: Scenario = self.itm.start_session(temp_username, self.session_type, max_scenarios=self.max_scenarios)
             self.session_id = 'foobar' # later, the API will return a session_id
         else:
             response = "Session is already started."
@@ -134,6 +145,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             self.current_probe_id = response.id
             self.current_probe_text = response.prompt
             self.current_probe_options = response.options
+            self.current_probe_answered = False
         return response
 
     def respond_probe_operation(self):
@@ -141,6 +153,8 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             response = "No active scenario; please start a scenario first."
         elif self.current_probe_id == '':
             response = "No active probe; please request a probe first."
+        elif self.current_probe_answered == True:
+            response = "You have already responded to that probe."
         else:
             print("Probe prompt: \"", self.current_probe_text, "\"")
             command_3 = self.get_probe_option_id()
@@ -156,6 +170,8 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             if response.scenario_complete == True:
                 self.scenario_complete = True
                 self.scenario_id = None
+            else:
+                self.current_probe_answered = True
         return response
 
     def status_scenario_operation(self):
