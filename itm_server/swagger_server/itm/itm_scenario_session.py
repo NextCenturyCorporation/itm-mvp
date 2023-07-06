@@ -98,6 +98,8 @@ class ITMScenarioSession:
         """
         End the current scenario and store history to mongo and json file.
         """
+        self.history = []
+        self.probes_responded_to = []
         if not self.save_to_database:
             return
         self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
@@ -105,8 +107,6 @@ class ITMScenarioSession:
         retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
         # Write the retrieved data to a local JSON file
         self.mongo_db.write_to_json_file(retrieved_data)
-        self.history = []
-        self.probes_responded_to = []
 
     def _get_realtime_elapsed_time(self) -> float:
         """
