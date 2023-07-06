@@ -36,7 +36,9 @@ const ScenarioPageModal = ({ data, checkedItems, setCheckedItems }) => {
     };
 
     const handleSelectAll = () => {
-        const allItems = data.map((item) => item.id);
+        const allItems = data
+            .filter((item, index, self) => self.findIndex((i) => i.id === item.id) === index)
+            .map((item) => item.id)
         setCheckedItems(allItems);
     };
 
@@ -67,11 +69,13 @@ const ScenarioPageModal = ({ data, checkedItems, setCheckedItems }) => {
                                 renderValue={(selected) => `Selected ${selected.length}`}
                             >
                                 {
-                                    data.map((item, index) => (
-                                        <MenuItem value={item.id} key={index}>
-                                            <Checkbox checked={checkedItems.includes(item.id)} />
-                                            <ListItemText primary={item.name} />
-                                        </MenuItem>
+                                    data
+                                    .filter((item, index, self) => self.findIndex((i) => i.id === item.id) === index)
+                                    .map((item) => (
+                                    <MenuItem value={item.id} key={item.id}>
+                                        <Checkbox checked={checkedItems.includes(item.id)} />
+                                        <ListItemText primary={item.id} />
+                                    </MenuItem>
                                     ))
                                 }
                             </Select>

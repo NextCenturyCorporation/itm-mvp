@@ -40,3 +40,5 @@ build/
 # Miscellaneous files
 .DS_Store
 Thumbs.db
+
+/itm_server/itm_mvp_local_output/
