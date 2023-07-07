@@ -117,7 +117,7 @@ class ITMScenarioSession:
             A Probe object representing the generated probe.
         """
         self.check_scenario_id(scenario_id)
-        if self.responded_to_last_probe:
+        if self.responded_to_last_probe and self.scenario.state.scenario_complete == False:
             probe = self.probe_system.generate_probe(self.scenario.state)
             self.scenario.state.unstructured = probe.state.unstructured
             self.last_probe = probe
@@ -236,7 +236,7 @@ class ITMScenarioSession:
             self.scenario = ITMScenarioGenerator().generate_scenario()
         else:
             # THIS IS IMPORTANT, THIS IS WHERE WE CHOOSE SCENARIOS BY DIRECTORY NAME!!!
-            yaml_path = "swagger_server/itm/itm_scenario_configs/scenario_2/"
+            yaml_path = "swagger_server/itm/itm_scenario_configs/scenario_1/"
             
             scenario_file = "scenario.yaml"
             scenario_reader = ITMScenarioReader(yaml_path + scenario_file)
