@@ -8,10 +8,10 @@ from .itm_probe_reader import ITMProbeReader
 from .itm_supplies import ITMSupplies
 from .itm_scenario_reader import ITMScenarioReader
 from .itm_alignment_target_reader import ITMAlignmentTargetReader
+from .itm_ta1_controller import ITMTa1Controller
 
 @dataclass
 class ITMSessionScenarioObject:
-    folder_name: str = None
     scenario: Scenario = None
     scenario_reader: ITMScenarioReader = None
     probe_system: ITMProbeReader = None
@@ -19,6 +19,7 @@ class ITMSessionScenarioObject:
     casualty_simulations: List[CasualtySimulation] = None
     casualty_simulator = None
     supplies: ITMSupplies = None
+    ta1_controller: ITMTa1Controller = None
 
 class ITMSessionScenarioObjectHandler:
 
@@ -40,5 +41,11 @@ class ITMSessionScenarioObjectHandler:
         isso.alignment_target_reader = ITMAlignmentTargetReader(self.yaml_path + "alignment_target.yaml")
 
         isso.scenario.start_time = datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S.%f")
+
+        scene_type = 'adept' if 'adept' in self.yaml_path else 'soartech'
+        isso.ta1_controller = ITMTa1Controller(
+            isso.alignment_target_reader.alignment_target.id,
+            scene_type
+        )
 
         return isso

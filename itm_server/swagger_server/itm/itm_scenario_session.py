@@ -102,6 +102,14 @@ class ITMScenarioSession:
             self.history = []
             self.probes_responded_to = []
             return
+        alignment_target_session_alignment = \
+            self.current_isso.ta1_controller.get_session_alignment()
+        self._add_history(
+            "TA1 Alignment Target Session Alignment",
+            {"Session ID": self.current_isso.ta1_controller.session_id,
+             "Target ID": self.current_isso.ta1_controller.alignment_target_id},
+             alignment_target_session_alignment
+        )
         self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
         insert_id = self.mongo_db.insert_data('test', {"history": self.history})
         retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
@@ -286,11 +294,28 @@ class ITMScenarioSession:
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
         self.scenario.state.scenario_complete = \
             self.current_isso.probe_system.probe_count <= 0
+
         self._add_history(
             "Respond to Probe",
             {"Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
              "Choice": body.choice, "Justification": body.justification},
             self.scenario.state.to_dict())
+
+        self.current_isso.ta1_controller.post_probe(body)
+        probe_response_alignment = \
+            self.current_isso.ta1_controller.get_probe_response_alignment(
+            body.scenario_id,
+            body.probe_id
+        )
+        self._add_history(
+            "TA1 Probe Response Alignment",
+            {"Session ID": self.current_isso.ta1_controller.session_id,
+             "Scenario ID": body.scenario_id,
+             "Target ID": self.current_isso.ta1_controller.alignment_target_id,
+             "Probe ID": body.probe_id},
+            probe_response_alignment
+        )
+
         if self.scenario.state.scenario_complete:
             self._end_scenario()
         return self.scenario.state
@@ -327,12 +352,27 @@ class ITMScenarioSession:
                 used_start_session=False
             )
         try:
-            self.current_isso = self.session_issos[self.current_isso_index]
+            self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             self.scenario = self.current_isso.scenario
             self.current_isso_index += 1
 
             self._add_history(
-                "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
+                "Start Scenario",
+                {"ADM Name": self.adm_name},
+                self.scenario.to_dict())
+
+            session_id = self.current_isso.ta1_controller.new_session()
+            self._add_history(
+                "TA1 Alignment Target Session ID", {}, session_id
+            )
+            scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
+            self._add_history(
+                "TA1 Alignment Target Data",
+                {"Session ID": self.current_isso.ta1_controller.session_id,
+                "Scenario ID": self.current_isso.scenario.id},
+                scenario_alignment
+            )
+
             return self.scenario
         except:
             # Empty Scenario
