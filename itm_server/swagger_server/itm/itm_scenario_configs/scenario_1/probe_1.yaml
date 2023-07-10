@@ -1,19 +1,19 @@
-id: PROBE-1
-scenario: demo-scenario-1
+id: kickoff-demo-probe-1
+scenario: kickoff-demo-scenario-1
 type: MultipleChoice
 prompt: Which casualty do you treat first?
 state: {}
 options:
-  - id: PROBE-1-A
+  - id: choice1
     value: casualty-A 
     kdma_association:
       denial: +
       mission: '-'
-  - id: PROBE-1-B
+  - id: choice2
     value: casualty-B
-  - id: PROBE-1-C
+  - id: choice3
     value: casualty-D
-  - id: PROBE-1-D
+  - id: choice4
     value: casualty-E
-  - id: PROBE-1-E
+  - id: choice5
     value: casualty-F

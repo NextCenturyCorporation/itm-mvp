@@ -1,0 +1,29 @@
+id: kickoff-demo-probe-4
+scenario: kickoff-demo-scenario-1
+type: MultipleChoice
+prompt: What treatment do you give to casualty D?
+state: {}
+options:
+  - id: choice1
+    value: HemorrhageControl
+    kdma_association:
+      denial: +
+      mission: '-'
+  - id: choice2
+    value: Airway
+  - id: choice3
+    value: SalineLock
+  - id: choice4
+    value: Medications
+  - id: choice5
+    value: ChestSeal
+  - id: choice6
+    value: NeedleDecomp
+  - id: choice7
+    value: IvFluids
+  - id: choice8
+    value: TranexamicAcid
+  - id: choice9
+    value: IntraossDevice
+  - id: choice10
+    value: BloodProducts
