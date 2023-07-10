@@ -1,7 +1,10 @@
-from datetime import datetime
 import time
 import uuid
+import random
+import os
+import connexion
 from typing import List, Union
+from copy import deepcopy
 
 from swagger_server.models import (
     AlignmentTarget,
@@ -13,15 +16,11 @@ from swagger_server.models import (
     State,
     Vitals,
 )
-from .itm_casualty_simulator import ITMCasualtySimulator
 from .itm_database.itm_mongo import MongoDB
-from .itm_probe_generator import ITMProbeGenerator
-from .itm_probe_reader import ITMProbeReader
-from .itm_scenario_generator import ITMScenarioGenerator
-from .itm_supplies import ITMSupplies
-from .itm_scenario_reader import ITMScenarioReader
-from .itm_alignment_target_reader import ITMAlignmentTargetReader
-
+from .itm_session_scenario_object import (
+    ITMSessionScenarioObjectHandler,
+    ITMSessionScenarioObject
+)
 
 
 class ITMScenarioSession:
@@ -38,20 +37,22 @@ class ITMScenarioSession:
         self.time_started = 0
         self.time_elapsed_realtime = 0
         self.time_elapsed_scenario_time = 0
-        self.formatted_start_time = None
+
+        # isso is short for ITM Session Scenario Object
+        self.session_type = 'test'
+        self.current_isso: ITMSessionScenarioObject = None
+        self.current_isso_index = 0
+        self.session_issos = []
+        self.number_of_scenarios = None
         self.scenario: Scenario = None
-
-        self.supplies_details = ITMSupplies()
-        self.casualty_simulator = ITMCasualtySimulator()
-
-        self.alignment_target_reader: ITMAlignmentTargetReader = None
+        self.used_start_session = False
 
         # ITMProbeGenerator or ITMProbeReader
         self.probe_system = None
 
         self.last_probe = None
         self.responded_to_last_probe = True
-        self.probes_answers_required_to_complete_scenario = 0
+        self.probes_responded_to = []
 
         # This calls the dashboard's MongoDB
         self.save_to_database = False
@@ -59,18 +60,27 @@ class ITMScenarioSession:
                                 'localhost', '27017', 'dashboard')
         self.history = []
 
-    def get_realtime_elapsed_time(self) -> float:
-        """
-        Return the elapsed time since the session started.
 
-        Returns:
-            The elapsed time in seconds as a float.
+    def _add_history(self,
+                    command: str,
+                    parameters: dict,
+                    response: Union[dict, str]) -> None:
         """
-        if self.time_started:
-            self.time_elapsed_realtime = time.time() - self.time_started
-        return round(self.time_elapsed_realtime, 2)
+        Add a command to the history of the scenario session.
 
-    def check_scenario_id(self, scenario_id: str) -> None:
+        Args:
+            command: The command executed.
+            parameters: The parameters passed to the command.
+            response: The response from the command.
+        """
+        history = {
+            "command": command,
+            "parameters": parameters,
+            "response": response
+        }
+        self.history.append(history)
+
+    def _check_scenario_id(self, scenario_id: str) -> None:
         """
         Check if the provided scenario ID matches the session's scenario ID.
 
@@ -81,11 +91,66 @@ class ITMScenarioSession:
             Exception: If the scenario ID does not match.
         """
         if not scenario_id == self.scenario.id:
-            raise Exception('Invalid Scenario ID')
+            return False, 'Scenario ID not found', 404
+        return True, '', 0
+
+    def _end_scenario(self):
+        """
+        End the current scenario and store history to mongo and json file.
+        """
+        if not self.save_to_database:
+            self.history = []
+            self.probes_responded_to = []
+            return
+        self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
+        insert_id = self.mongo_db.insert_data('test', {"history": self.history})
+        retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
+        # Write the retrieved data to a local JSON file
+        self.mongo_db.write_to_json_file(retrieved_data)
+        self.history = []
+        self.probes_responded_to = []
+
+    def _get_realtime_elapsed_time(self) -> float:
+        """
+        Return the elapsed time since the session started.
+
+        Returns:
+            The elapsed time in seconds as a float.
+        """
+        if self.time_started:
+            self.time_elapsed_realtime = time.time() - self.time_started
+        return round(self.time_elapsed_realtime, 2)
+
+    def _get_sub_directory_names(self, directory):
+        """
+        Return the names of all of the subdirectories inside of the
+        parameter directory.
+
+        Args:
+            directory: The directory to search inside of for subdirectories.
+        """
+        directories = []
+        for item in os.listdir(directory):
+            item_path = os.path.join(directory, item)
+            if os.path.isdir(item_path):
+                directories.append(item)
+        return directories
 
     def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
-        self.check_scenario_id(scenario_id)
-        return self.alignment_target_reader.alignment_target
+        """
+        Get the alignment target for a specific scenario.
+
+        Args:
+            scenario_id: The ID of the scenario.
+
+        Returns:
+            The alignment target for the specified scenario as an AlignmentTarget object.
+        """
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
+        return self.current_isso.alignment_target_reader.alignment_target
+
 
     def get_heart_rate(self, casualty_id: str) -> int:
         """
@@ -102,9 +167,10 @@ class ITMScenarioSession:
         for casualty in casualties:
             if casualty.id == casualty_id:
                 response = casualty.vitals.hrpmin
-                self.add_history(
+                self._add_history(
                     "Get Heart Rate", {"Casualty ID": casualty_id}, response)
                 return response
+        return 'Casualty ID not found', 404
 
     def get_probe(self, scenario_id: str) -> Probe:
         """
@@ -116,16 +182,18 @@ class ITMScenarioSession:
         Returns:
             A Probe object representing the generated probe.
         """
-        self.check_scenario_id(scenario_id)
-        if self.responded_to_last_probe and self.scenario.state.scenario_complete == False:
-            probe = self.probe_system.generate_probe(self.scenario.state)
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
+        if self.responded_to_last_probe:
+            probe = self.current_isso.probe_system.generate_probe(self.scenario.state)
             self.scenario.state.unstructured = probe.state.unstructured
             self.last_probe = probe
         else:
             probe = self.last_probe
 
         self.responded_to_last_probe = False
-        self.add_history("Get Probe", {"Scenario ID": scenario_id}, probe.to_dict())
+        self._add_history("Get Probe", {"Scenario ID": scenario_id}, probe.to_dict())
         modifed_options = [
             ProbeOption(
                 id=p.id, value=p.value, kdma_association={}
@@ -150,13 +218,15 @@ class ITMScenarioSession:
         Returns:
             The current state of the scenario as a ScenarioState object.
         """
-        self.check_scenario_id(scenario_id)
-        self.add_history(
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
+        self._add_history(
             "Get Scenario State",
             {"Scenario ID": scenario_id},
             self.scenario.state.to_dict())
         return self.scenario.state
-    
+
     def get_vitals(self, casualty_id: str) -> Vitals:
         """
         Get the vitals of a casualty in the scenario.
@@ -172,9 +242,10 @@ class ITMScenarioSession:
         for casualty in casualties:
             if casualty.id == casualty_id:
                 response = casualty.vitals.to_dict()
-                self.add_history(
+                self._add_history(
                     "Get Vitals", {"Casualty ID": casualty_id}, response)
                 return casualty.vitals
+        return 'Casualty ID not found', 404
 
     def respond_to_probe(self, body: ProbeResponse) -> State:
         """
@@ -186,34 +257,45 @@ class ITMScenarioSession:
         Returns:
             The updated scenario state as a ScenarioState object.
         """
+        (successful, message, code) = self._check_scenario_id(body.scenario_id)
+        if not successful:
+            return message, 400
+        if body.probe_id in self.probes_responded_to:
+            return f'Already responded to probe with id {body.probe_id}', 400
+        if body.choice not in [option.id for option in self.last_probe.options]:
+            return 'Choice not valid', 404
+        if body.probe_id != self.last_probe.id:
+            return 'Probe ID not found', 404
+
         self.responded_to_last_probe = True
-        self.probe_system.respond_to_probe(
+        self.probes_responded_to.append(body.probe_id)
+        self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
             justification=body.justification
         )
-        time_elapsed_during_treatment = self.casualty_simulator.treat_casualty(
+        time_elapsed_during_treatment = self.current_isso.casualty_simulator.treat_casualty(
             casualty_id=body.choice,
             supply=body.justification
         )
         self.time_elapsed_scenario_time += time_elapsed_during_treatment
-        self.casualty_simulator.update_vitals(time_elapsed_during_treatment)
+        self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
 
-        self.probe_system.probe_count -= 1
-        self.probe_system.current_probe_index += 1
+        self.current_isso.probe_system.probe_count -= 1
+        self.current_isso.probe_system.current_probe_index += 1
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
         self.scenario.state.scenario_complete = \
-            self.probe_system.probe_count <= 0
-        self.add_history(
+            self.current_isso.probe_system.probe_count <= 0
+        self._add_history(
             "Respond to Probe",
             {"Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
-            "Choice": body.choice, "Justification": body.justification}, 
+             "Choice": body.choice, "Justification": body.justification},
             self.scenario.state.to_dict())
         if self.scenario.state.scenario_complete:
-            self.end_scenario()
+            self._end_scenario()
         return self.scenario.state
 
-    def start_scenario(self, adm_name: str) -> Scenario:
+    def start_scenario(self, adm_name: str, scenario_id: str=None) -> Scenario:
         """
         Start a new scenario.
 
@@ -223,42 +305,107 @@ class ITMScenarioSession:
         Returns:
             The started scenario as a Scenario object.
         """
-        self.adm_name = adm_name
+        # TODO this needs to get a specific scenario by id
+        if scenario_id:
+            raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
+        
+        # TODO this needs to check if we don't have this scenario id
+        if scenario_id and not scenario_id not in ['scenario_id_list']:
+            return "Scenario ID does not exist", 404
+        
+        # placeholder for System Overload error code
+        system_overload = False
+        if system_overload:
+            return "System Overload", 418
 
-        # Save to database based on adm_name. This needs to be changed!
+        # A session has not been started so make a new one
+        if not self.used_start_session:
+            self.start_session(
+                adm_name=adm_name,
+                session_type=self.session_type,
+                max_scenarios=1,
+                used_start_session=False
+            )
+        try:
+            self.current_isso = self.session_issos[self.current_isso_index]
+            self.scenario = self.current_isso.scenario
+            self.current_isso_index += 1
+
+            self._add_history(
+                "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
+            return self.scenario
+        except:
+            # Empty Scenario
+            return Scenario(session_complete=True, id='', name='',
+                            start_time=None, state=None, triage_categories=None)
+
+    def start_session(self, adm_name: str, session_type: str, max_scenarios=None, used_start_session=False) -> Scenario:
+        """
+        Start a new scenario.
+
+        Args:
+            adm_name: The adm name associated with the scenario.
+            type: The type of scenarios either soartech, adept, test, or eval
+            max_scenarios: The max number of scenarios presented during the session
+
+        Returns:
+            The first started scenario as a Scenario object.
+        """
+        if session_type not in ['test', 'adept', 'soartech', 'eval']:
+            return (
+                'Invalid session type. Must be "test, adept, soartech, or eval"',
+                400
+            )
+
+        # placeholder for System Overload error code
+        system_overload = False
+        if system_overload:
+            return 'System Overload', 418
+
+        self.adm_name = adm_name
+        self.session_issos = []
+        self.session_type = session_type
+        self.used_start_session = used_start_session
+        self.history = []
+        self.probes_responded_to = []
+
+        # Save to database based on adm_name. This is good enough for now but should be changed.
         if self.adm_name.endswith("_db_"):
             self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
-        # Generate or read scenario based on adm_name.
-        # This needs to be changed too!
-        if self.adm_name.startswith("_random_"):
-            self.adm_name = self.adm_name.removeprefix("_random_")
-            self.scenario = ITMScenarioGenerator().generate_scenario()
+        if self.session_type == 'eval':
+            self.save_to_database = True
+            max_scenarios = None
+
+        yaml_paths = []
+        yaml_path = "swagger_server/itm/itm_scenario_configs/"
+        if session_type == 'soartech' or session_type == 'test' or session_type == 'eval':
+            yaml_paths.append(yaml_path + 'soartech/')
+        if session_type == 'adept' or session_type == 'test' or session_type == 'eval':
+            yaml_paths.append(yaml_path + 'adept/')
+        self.number_of_scenarios = max_scenarios
+
+        selected_yaml_directories = [
+            f"{path}{folder}/"
+            for path in yaml_paths
+            for folder in self._get_sub_directory_names(path)]
+        if max_scenarios != None and max_scenarios >= 1:
+            # fill in extra scenarios with random copies
+            inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
+            while len(selected_yaml_directories) < max_scenarios:
+                random_directory = random.choice(inital_selected_yaml_directories)
+                selected_yaml_directories.append(random_directory)
         else:
-            # THIS IS IMPORTANT, THIS IS WHERE WE CHOOSE SCENARIOS BY DIRECTORY NAME!!!
-            yaml_path = "swagger_server/itm/itm_scenario_configs/scenario_1/"
-            
-            scenario_file = "scenario.yaml"
-            scenario_reader = ITMScenarioReader(yaml_path + scenario_file)
-            ( self.scenario, casualty_simulations,
-              self.supplies_details ) = \
-                scenario_reader.read_scenario_from_yaml()
-            self.casualty_simulator.setup_casualties(self.scenario, casualty_simulations)
-            
-            self.probe_system = ITMProbeReader(yaml_path)
-            
-            alignment_target_file = "alignment_target.yaml"
-            self.alignment_target_reader = ITMAlignmentTargetReader(yaml_path + alignment_target_file)
+            max_scenarios = len(selected_yaml_directories)
+        random.shuffle(selected_yaml_directories)
+        for i in range(max_scenarios):
+            scenario_object_handler = ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i])
+            itm_scenario_object = \
+                scenario_object_handler.generate_session_scenario_object()
+            self.session_issos.append(itm_scenario_object)
+        self.current_isso_index = 0
 
-        self.time_started = time.time()
-        iso_timestamp = datetime.fromtimestamp(time.time())
-        self.scenario.start_time = iso_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")
-        self.formatted_start_time = iso_timestamp
-
-        self.probe_system.scenario = self.scenario
-        self.add_history(
-            "Start Scenario", {"ADM Name": self.adm_name}, self.scenario.to_dict())
-        return self.scenario
+        return f'Session started with session type: {session_type} and max scenarios {max_scenarios}'
 
     def tag_casualty(self, casualty_id: str, tag: str) -> str:
         """
@@ -276,40 +423,9 @@ class ITMScenarioSession:
             if casualty.id == casualty_id:
                 casualty.tag = tag
                 response = f"{casualty.id} tagged as {tag}."
-                self.add_history(
+                self._add_history(
                     "Tag Casualty",
                     {"Casualty ID": casualty_id, "Tag": tag},
                     response)
                 return response
-
-    def add_history(self,
-                    command: str,
-                    parameters: dict,
-                    response: Union[dict, str]) -> None:
-        """
-        Add a command to the history of the scenario session.
-
-        Args:
-            command: The command executed.
-            parameters: The parameters passed to the command.
-            response: The response from the command.
-        """
-        history = {
-            "command": command,
-            "parameters": parameters,
-            "response": response
-        }
-        self.history.append(history)
-
-
-    def end_scenario(self):
-        """
-        End the current scenario and store history to mongo and json file.
-        """
-        if not self.save_to_database:
-            return
-        self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
-        insert_id = self.mongo_db.insert_data('test', {"history": self.history})
-        retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
-        # Write the retrieved data to a local JSON file
-        self.mongo_db.write_to_json_file(retrieved_data)
+        return 'Casualty ID not found', 404

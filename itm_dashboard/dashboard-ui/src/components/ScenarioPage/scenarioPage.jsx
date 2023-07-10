@@ -15,8 +15,8 @@ import gql from 'graphql-tag';
 const GET_ALL_ITM_SCENARIOS = gql`
     query getAllScenarios($id: ID) {
         getAllScenarios(id: $id) {
-            name
             id
+            name
             state {
                 mission {
                     unstructured
@@ -100,15 +100,15 @@ const ScenarioPage = () => {
     );
     
     const MainTable = () => {
-        const [selectedNames, setSelectedName] = useState([]);
+        const [selectedIDS, setSelectedIDS] = useState([]);
         const [checkedItems, setCheckedItems] = useState([]);
 
         const handleAddName = (name) => {
-            setSelectedName([...selectedNames, name]);
+            setSelectedIDS([...selectedIDS, name]);
         };
 
         const handleRemoveName = (name) => {
-            setSelectedName(selectedNames.filter((item) => item !== name));
+            setSelectedIDS(selectedIDS.filter((item) => item !== name));
         };
           
 
@@ -133,11 +133,18 @@ const ScenarioPage = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {data.map((item, index) => (
-                                                    checkedItems.includes(item.id) &&
-                                                    <TableRow key={index}style={{ backgroundColor: index % 2 === 0 ? '#f4f4f4' : '#fafafa' }}>
-                                                        <TableCell className="tableCell main">{renderNestedItems(item)}</TableCell>
-                                                    </TableRow>
+                                            {data
+                                                .filter((item, index, self) => self.findIndex((i) => i.id === item.id) === index)
+                                                .filter((item) => checkedItems.includes(item.id))
+                                                .map((item, index) => (
+                                                <TableRow
+                                                    key={index}
+                                                    style={{ backgroundColor: index % 2 === 0 ? '#f4f4f4' : '#fafafa' }}
+                                                >
+                                                    <TableCell className="tableCell main">
+                                                    {renderNestedItems(item)}
+                                                    </TableCell>
+                                                </TableRow>
                                                 ))}
                                             </TableBody>
                                         </Table>

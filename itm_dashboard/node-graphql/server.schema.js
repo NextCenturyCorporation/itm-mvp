@@ -114,8 +114,8 @@ const typeDefs = gql`
   }
 
   enum Sex {
-    male
-    female
+    M
+    F
     unknown
   }
 
@@ -145,6 +145,7 @@ const typeDefs = gql`
 
   enum MissionType {
     ProtectVIP
+    ProtectCivilians
     DeliverCargo
     DefendBase
   }

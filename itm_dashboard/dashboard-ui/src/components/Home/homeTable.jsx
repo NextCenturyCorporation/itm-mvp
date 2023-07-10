@@ -81,7 +81,7 @@ const HomeTable = () => {
                         if (error) return <div>Error</div>
         
                         data = data["getAllHistory"];
-                        let selectedItem = data.find(item => item.history[0].response.id === selectedId);
+                        let selectedItem = data.find(item => item._id === selectedId);
                         return (
                             <div>
                                 <div className='center-div'>
@@ -95,7 +95,7 @@ const HomeTable = () => {
                                 </div>
                                 {selectedItem &&
                                     <div>
-                                        <AlignmentScoreBox performer={selectedADMName}/>
+                                        {/*<AlignmentScoreBox performer={selectedADMName}/>*/}
                                         <Paper className='paper-container'>
                                             <TableContainer style={{ maxHeight: '70vh' }}>
                                                 <Table stickyHeader aria-label="simple table">

@@ -91,11 +91,27 @@ class TestItmTa2EvalController(BaseTestCase):
     def test_start_scenario(self):
         """Test case for start_scenario
 
-        Start a new scenario
+        Get the next scenario
         """
-        query_string = [('adm_name', 'adm_name_example')]
+        query_string = [('adm_name', 'adm_name_example'),
+                        ('scenario_id', 'scenario_id_example')]
         response = self.client.open(
             '/ta2/start',
+            method='GET',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_start_session(self):
+        """Test case for start_session
+
+        Start a new session
+        """
+        query_string = [('adm_name', 'adm_name_example'),
+                        ('session_type', 'session_type_example'),
+                        ('max_scenarios', 56)]
+        response = self.client.open(
+            '/ta2/startSession',
             method='GET',
             query_string=query_string)
         self.assert200(response,

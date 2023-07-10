@@ -43,16 +43,16 @@ class ITMScenarioReader:
         state, casualty_simulations, supplies_details = self._generate_state()
         triage_categories = self._generate_triage_categories()
 
-        # TODO We want to end up using this but for testing this will confuse the dashboard since we have 2 scenarios right now
         id_actual = self.yaml_data['id']
+        # id_generated = "scenario_" + str(uuid.uuid4())
 
-        id_generated = "scenario_" + str(uuid.uuid4())
         scenario = Scenario(
-            id=id_generated,
+            id=id_actual,
             name=self.yaml_data['name'],
             start_time=str(0),
             state=state,
-            triage_categories=triage_categories
+            triage_categories=triage_categories,
+            session_complete=False
         )
         return (scenario, casualty_simulations, supplies_details)
     

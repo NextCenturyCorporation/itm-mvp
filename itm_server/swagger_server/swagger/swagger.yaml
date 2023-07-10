@@ -7,7 +7,7 @@ info:
     The API is based on the OpenAPI 3.0 specification.
 
     Some aspects of this API are not necessarily planned to be implemented for MVP, but show the direction we are heading.
-  version: 0.1.1
+  version: 0.1.2
 servers:
 - url: /
 tags:
@@ -16,13 +16,81 @@ tags:
 - name: itm-ta1-ta3
   description: Endpoints for TA1 to submit evaluation scenarios & probes
 paths:
+  /ta2/startSession:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Start a new session
+      description: Start a new session with the specified ADM name
+      operationId: start_session
+      parameters:
+      - name: adm_name
+        in: query
+        description: A self-assigned ADM name.  Can add authentication later.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: session_type
+        in: query
+        description: "the type of session to start (test, eval, or a ta1 name)"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: test
+      - name: max_scenarios
+        in: query
+        description: the maximum number of scenarios requested
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int16
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+                x-content-type: text/plain
+        "400":
+          description: Bad request; see returned reason.
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Reason for rejecting the request to start a session
+                example: Invalid session type
+                x-content-type: text/plain
+        "418":
+          description: The server is not ready to start a session; see returned reason.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: system overloaded
+                x-content-type: text/plain
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
   /ta2/start:
     get:
       tags:
       - itm-ta2-eval
-      summary: Start a new scenario
-      description: "Start a new scenario with the specified ADM name, returning a\
-        \ Scenario object and unique id"
+      summary: Get the next scenario
+      description: "Get the next scenario in a session with the specified ADM name,\
+        \ returning a Scenario object and unique id"
       operationId: start_scenario
       parameters:
       - name: adm_name
@@ -33,19 +101,33 @@ paths:
         explode: true
         schema:
           type: string
+      - name: scenario_id
+        in: query
+        description: "a scenario id to start, used internally by TA3"
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       responses:
         "200":
-          description: "Successful operation, scenario data returned"
+          description: "Successful operation; scenario data returned, or session_complete\
+            \ is True"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Scenario'
+        "403":
+          description: Specifying a scenario ID is unauthorized
+        "404":
+          description: Scenario ID not found
         "418":
           description: The server is not ready to start a scenario; see returned reason.
           content:
             text/plain:
               schema:
                 type: string
+                example: system overloaded
                 x-content-type: text/plain
         "500":
           description: An exception occurred on the server; see returned error string.
@@ -589,16 +671,21 @@ components:
       required:
       - id
       - name
-      - state
       type: object
       properties:
         id:
           type: string
           description: a globally unique id for the scenario
+          default: "1234"
         name:
           type: string
           description: "human-readable scenario name, not necessarily unique"
           example: IED Explosion
+        session_complete:
+          type: boolean
+          description: "set to true if the session is complete; that is, there are\
+            \ no more scenarios"
+          example: false
         startTime:
           type: string
           description: "the wall clock local start time of the scenario, expressed\
@@ -610,11 +697,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TriageCategory'
-      description: a tactical scenario to test alignment of ADMs to KDMAs
+      description: a tactical scenario
       example:
+        session_complete: false
         name: IED Explosion
         startTime: 14:02
-        id: id
+        id: "1234"
         state:
           mission:
             unstructured: Protect the high value intelligence officer.

@@ -1,11 +1,15 @@
+from json import loads
 from enum import Enum
 from swagger_client.models import Scenario, State, ProbeResponse
+from swagger_client.rest import ApiException
 from .itm_scenario_runner import ScenarioRunner
+import traceback
 
 
 class CommandOption(Enum):
-    START = "start (s)"
-    ALIGNMENT_TARGETS = "alignment targets (a)"
+    SESSION = "start_session (s)"
+    SCENARIO = "get_scenario (g)"
+    ALIGNMENT_TARGETS = "alignment_targets (a)"
     PROBE = "probe (p)"
     STATUS = "status (u)"
     VITALS = "vitals (v)"
@@ -24,16 +28,24 @@ class TagTypes(Enum):
 
 
 class ITMHumanScenarioRunner(ScenarioRunner):
-    def __init__(self, save_to_db, scene_type):
+    def __init__(self, save_to_db, session_type, max_scenarios=-1):
         super().__init__()
-        self.username = scene_type + "ITM Human" + save_to_db
+        self.username = session_type + "ITM Human" + save_to_db
+        self.session_type = session_type
+        if max_scenarios > 0:
+            self.max_scenarios = max_scenarios
+        else:
+            self.max_scenarios = None
         self.scenario_complete = False
+        self.session_complete = False
+        self.session_id = None
         self.scenario_id = None
         self.patients = {}
         self.medical_supplies = {}
         self.current_probe_id = ''
         self.current_probe_text = ''
         self.current_probe_options = {}
+        self.current_probe_answered = False
 
     def get_full_string_and_shortcut(self, parts):
         if isinstance(parts, CommandOption):
@@ -92,13 +104,30 @@ class ITMHumanScenarioRunner(ScenarioRunner):
     def start_scenario_operation(self, temp_username):
         if self.scenario_id == None:
             response: Scenario = self.itm.start_scenario(temp_username)
-            self.scenario_id = response.id
-            self.scenario = response
-            state: State = response.state
-            self.patients = state.casualties
-            self.medical_supplies = response.state.supplies
+            self.current_probe_answered = False
+            self.current_probe_id = ''
+            self.session_id = 'foobar' # ensure we don't start a new session
+            if response.session_complete == False:
+                self.scenario_id = response.id
+                self.scenario = response
+                state: State = response.state
+                self.patients = state.casualties
+                self.medical_supplies = response.state.supplies
+            else:
+                self.session_complete = True
         else:
             response = "Scenario is already started."
+        return response
+
+    def start_session_operation(self, temp_username):
+        if self.session_id == None:
+            if self.max_scenarios == None:
+                response: Scenario = self.itm.start_session(temp_username, self.session_type)
+            else:
+                response: Scenario = self.itm.start_session(temp_username, self.session_type, max_scenarios=self.max_scenarios)
+            self.session_id = 'foobar' # later, the API will return a session_id
+        else:
+            response = "Session is already started."
         return response
 
     def alignment_targets_operation(self):
@@ -116,6 +145,7 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             self.current_probe_id = response.id
             self.current_probe_text = response.prompt
             self.current_probe_options = response.options
+            self.current_probe_answered = False
         return response
 
     def respond_probe_operation(self):
@@ -123,6 +153,8 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             response = "No active scenario; please start a scenario first."
         elif self.current_probe_id == '':
             response = "No active probe; please request a probe first."
+        elif self.current_probe_answered == True:
+            response = "You have already responded to that probe."
         else:
             print("Probe prompt: \"", self.current_probe_text, "\"")
             command_3 = self.get_probe_option_id()
@@ -135,6 +167,11 @@ class ITMHumanScenarioRunner(ScenarioRunner):
             if len(command_4) > 0:
                 body.justification = command_4
             response = self.itm.respond_to_probe(body=body)
+            if response.scenario_complete == True:
+                self.scenario_complete = True
+                self.scenario_id = None
+            else:
+                self.current_probe_answered = True
         return response
 
     def status_scenario_operation(self):
@@ -198,39 +235,49 @@ class ITMHumanScenarioRunner(ScenarioRunner):
         return response
 
     def run(self):
-        while not self.scenario_complete:
+        while not self.session_complete:
             command_1 = input(
                 f"Enter a Command from the following options "
                 f"{[command_option.value for command_option in CommandOption]}: "
             ).lower()
             response = None
             self.perform_operations(command_1, response)
-        print("ITM Scenario Ended")
+        print("ITM Session Ended")
 
     def perform_operations(self, command_1, response):
-        if command_1 in self.get_full_string_and_shortcut(CommandOption.START):
-            response = self.start_scenario_operation(self.username)
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.ALIGNMENT_TARGETS):
-            response = self.alignment_targets_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.PROBE):
-            response = self.probe_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.RESPOND):
-            response = self.respond_probe_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.STATUS):
-            response = self.status_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.VITALS):
-            response = self.vitals_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.HEART_RATE):
-            response = self.heart_rate_scenario_operation()
-        elif command_1 in self.get_full_string_and_shortcut(CommandOption.TAG):
-            response = self.tag_scenario_operation()
+        try:
+            if command_1 in self.get_full_string_and_shortcut(CommandOption.SESSION):
+                response = self.start_session_operation(self.username)
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.SCENARIO):
+                response = self.start_scenario_operation(self.username)
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.ALIGNMENT_TARGETS):
+                response = self.alignment_targets_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.PROBE):
+                response = self.probe_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.RESPOND):
+                response = self.respond_probe_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.STATUS):
+                response = self.status_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.VITALS):
+                response = self.vitals_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.HEART_RATE):
+                response = self.heart_rate_scenario_operation()
+            elif command_1 in self.get_full_string_and_shortcut(CommandOption.TAG):
+                response = self.tag_scenario_operation()
+        except ApiException as e:
+            exception_body = loads(e.body.decode('utf-8')) # Parse the string as a JSON object
+            print("ApiException: ", e.status, e.reason, f"Detail: \"{exception_body['detail']}\"")
+        except Exception as e:
+            print("Exception: ", e)
+            traceback.print_exc()
+
         if response != None:
             print(response)
 
         if command_1 in self.get_full_string_and_shortcut(CommandOption.END):
-            self.scenario_complete = True
+            self.session_complete = True
             print("Ending Session...")
-        if isinstance(response, State):
-            if response.scenario_complete:
-                self.scenario_complete = True
-                print("Scenario Complete: Ending Session...")
+        elif isinstance(response, Scenario):
+            if response.session_complete == True:
+                self.session_complete = True # if there are no more scenarios, then the session is over
+                print("Session Complete: Ending Session...")

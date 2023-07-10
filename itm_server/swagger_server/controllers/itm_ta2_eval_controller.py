@@ -2,6 +2,11 @@ import connexion
 from swagger_server.models.probe_response import ProbeResponse
 from ..itm import ITMScenarioSession
 
+ITM_SESSION = ITMScenarioSession()
+"""
+The internal controller for ITM MVP.
+`TODO support multiple sessions on the same server simultaneously`
+"""
 
 def check_vitals(casualty_id):  # noqa: E501
     """Assess and retrieve all casualty vital signs
@@ -13,7 +18,7 @@ def check_vitals(casualty_id):  # noqa: E501
 
     :rtype: Vitals
     """
-    return itm_session.get_vitals(casualty_id=casualty_id)
+    return ITM_SESSION.get_vitals(casualty_id=casualty_id)
 
 
 def get_alignment_target(scenario_id):  # noqa: E501
@@ -26,7 +31,7 @@ def get_alignment_target(scenario_id):  # noqa: E501
 
     :rtype: AlignmentTarget
     """
-    return itm_session.get_alignment_target(scenario_id=scenario_id)
+    return ITM_SESSION.get_alignment_target(scenario_id=scenario_id)
 
 
 def get_heart_rate(casualty_id):  # noqa: E501
@@ -39,7 +44,7 @@ def get_heart_rate(casualty_id):  # noqa: E501
 
     :rtype: int
     """
-    return itm_session.get_heart_rate(casualty_id=casualty_id)
+    return ITM_SESSION.get_heart_rate(casualty_id=casualty_id)
 
 
 def get_probe(scenario_id):  # noqa: E501
@@ -52,7 +57,7 @@ def get_probe(scenario_id):  # noqa: E501
 
     :rtype: Probe
     """
-    return itm_session.get_probe(scenario_id=scenario_id)
+    return ITM_SESSION.get_probe(scenario_id=scenario_id)
 
 
 def get_scenario_state(scenario_id):  # noqa: E501
@@ -65,7 +70,7 @@ def get_scenario_state(scenario_id):  # noqa: E501
 
     :rtype: State
     """
-    return itm_session.get_scenario_state(scenario_id=scenario_id)
+    return ITM_SESSION.get_scenario_state(scenario_id=scenario_id)
 
 
 def respond_to_probe(body=None):  # noqa: E501
@@ -80,22 +85,47 @@ def respond_to_probe(body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = ProbeResponse.from_dict(connexion.request.get_json())
-    return itm_session.respond_to_probe(body=body)
+    return ITM_SESSION.respond_to_probe(body=body)
 
 
-def start_scenario(adm_name):  # noqa: E501
-    """Start a new scenario
+def start_scenario(adm_name, scenario_id=None):  # noqa: E501
+    """Get the next scenario
 
-    Start a new scenario with the specified ADM name, returning a Scenario object and unique id # noqa: E501
+    Get the next scenario in a session with the specified ADM name, returning a Scenario object and unique id # noqa: E501
 
     :param adm_name: A self-assigned ADM name.  Can add authentication later.
     :type adm_name: str
+    :param scenario_id: a scenario id to start, used internally by TA3
+    :type scenario_id: str
 
     :rtype: Scenario
     """
-    global itm_session
-    itm_session = ITMScenarioSession()
-    return itm_session.start_scenario(adm_name=adm_name)
+    return ITM_SESSION.start_scenario(
+        adm_name=adm_name,
+        scenario_id=scenario_id
+    )
+
+
+def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
+    """Start a new session
+
+    Start a new session with the specified ADM name # noqa: E501
+
+    :param adm_name: A self-assigned ADM name.  Can add authentication later.
+    :type adm_name: str
+    :param session_type: the type of session to start (test, eval, or a ta1 name)
+    :type session_type: str
+    :param max_scenarios: the maximum number of scenarios requested
+    :type max_scenarios: int
+
+    :rtype: str
+    """
+    return ITM_SESSION.start_session(
+        adm_name=adm_name,
+        session_type=session_type,
+        max_scenarios=max_scenarios,
+        used_start_session=True
+    )
 
 
 def tag_casualty(casualty_id, tag):  # noqa: E501
@@ -110,4 +140,4 @@ def tag_casualty(casualty_id, tag):  # noqa: E501
 
     :rtype: str
     """
-    return itm_session.tag_casualty(casualty_id=casualty_id, tag=tag)
+    return ITM_SESSION.tag_casualty(casualty_id=casualty_id, tag=tag)
