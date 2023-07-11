@@ -129,11 +129,11 @@ export class App extends React.Component {
                                     <Link className="nav-link-home" to="/">Home</Link>
                                 </li>
                                 <li className="nav-item">
+                                    <Link className="nav-link-home" to="/scores">Scores</Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="nav-link-home" to="/scenarios">Scenarios</Link>
                                 </li>
-                                {/*<li className="nav-item">
-                                    <Link className="nav-link-home" to="/scores">Scores</Link>
-                                </li>*/}
                             </ul>
                             <ul className="navbar-nav ml-auto">
                                 <li className="login-user">
@@ -167,12 +167,12 @@ export class App extends React.Component {
                         <Route exact path="/">
                             <Home newState={this.state}/>
                         </Route>
+                        <Route exact path="/scores">
+                            <Scores/>
+                        </Route>
                         <Route exact path="/scenarios">
                             <Scenarios/>
                         </Route>
-                        {/*<Route exact path="/scores">
-                            <Scores/>
-                        </Route>*/}
                         <Route path="/login">
                             <Login newState={this.state} userLoginHandler={this.userLoginHandler}/>
                         </Route>
