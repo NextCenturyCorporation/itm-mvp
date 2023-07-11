@@ -101,7 +101,7 @@ class ITMScenarioSession:
         alignment_target_session_alignment = \
             self.current_isso.ta1_controller.get_session_alignment()
         self._add_history(
-            "TA1 Alignment Target Session Alignment",
+            "TA1 Session Alignment",
             {"Session ID": self.current_isso.ta1_controller.session_id,
              "Target ID": self.current_isso.ta1_controller.alignment_target_id},
              alignment_target_session_alignment
