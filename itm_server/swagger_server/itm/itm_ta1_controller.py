@@ -31,8 +31,8 @@ class ITMTa1Controller:
 
     def post_probe(self, probe_response: ProbeResponse):
         body = {"session_id": self.session_id, "response": probe_response.to_dict()}
-        url = f"http://127.0.0.1:{self.port}/api/v1/response/"
-        self.to_dict(requests.post(url, data=json.dumps(body)))
+        url = f"http://127.0.0.1:{self.port}/api/v1/response"
+        self.to_dict(requests.post(url, json=body))
         return None
     
     def get_probe_response_alignment(self, scenario_id, probe_id):
