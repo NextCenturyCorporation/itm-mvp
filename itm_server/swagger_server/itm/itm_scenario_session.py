@@ -54,6 +54,9 @@ class ITMScenarioSession:
         self.responded_to_last_probe = True
         self.probes_responded_to = []
 
+        # This determines whether the server makes calls to TA1
+        self.ta1_integration = False
+
         # This calls the dashboard's MongoDB
         self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
@@ -98,14 +101,15 @@ class ITMScenarioSession:
         """
         End the current scenario and store history to mongo and json file.
         """
-        alignment_target_session_alignment = \
-            self.current_isso.ta1_controller.get_session_alignment()
-        self._add_history(
-            "TA1 Session Alignment",
-            {"Session ID": self.current_isso.ta1_controller.session_id,
-             "Target ID": self.current_isso.ta1_controller.alignment_target_id},
-             alignment_target_session_alignment
-        )
+        if self.ta1_integration == True:
+            alignment_target_session_alignment = \
+                self.current_isso.ta1_controller.get_session_alignment()
+            self._add_history(
+                "TA1 Session Alignment",
+                {"Session ID": self.current_isso.ta1_controller.session_id,
+                "Target ID": self.current_isso.ta1_controller.alignment_target_id},
+                alignment_target_session_alignment
+            )
         if not self.save_to_database:
             self.history = []
             self.probes_responded_to = []
@@ -301,20 +305,21 @@ class ITMScenarioSession:
              "Choice": body.choice, "Justification": body.justification},
             self.scenario.state.to_dict())
 
-        self.current_isso.ta1_controller.post_probe(body)
-        probe_response_alignment = \
-            self.current_isso.ta1_controller.get_probe_response_alignment(
-            body.scenario_id,
-            body.probe_id
-        )
-        self._add_history(
-            "TA1 Probe Response Alignment",
-            {"Session ID": self.current_isso.ta1_controller.session_id,
-             "Scenario ID": body.scenario_id,
-             "Target ID": self.current_isso.ta1_controller.alignment_target_id,
-             "Probe ID": body.probe_id},
-            probe_response_alignment
-        )
+        if self.ta1_integration == True:
+            self.current_isso.ta1_controller.post_probe(body)
+            probe_response_alignment = \
+                self.current_isso.ta1_controller.get_probe_response_alignment(
+                body.scenario_id,
+                body.probe_id
+            )
+            self._add_history(
+                "TA1 Probe Response Alignment",
+                {"Session ID": self.current_isso.ta1_controller.session_id,
+                "Scenario ID": body.scenario_id,
+                "Target ID": self.current_isso.ta1_controller.alignment_target_id,
+                "Probe ID": body.probe_id},
+                probe_response_alignment
+            )
 
         if self.scenario.state.scenario_complete:
             self._end_scenario()
@@ -361,17 +366,18 @@ class ITMScenarioSession:
                 {"ADM Name": self.adm_name},
                 self.scenario.to_dict())
 
-            session_id = self.current_isso.ta1_controller.new_session()
-            self._add_history(
-                "TA1 Alignment Target Session ID", {}, session_id
-            )
-            scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
-            self._add_history(
-                "TA1 Alignment Target Data",
-                {"Session ID": self.current_isso.ta1_controller.session_id,
-                "Scenario ID": self.current_isso.scenario.id},
-                scenario_alignment
-            )
+            if self.ta1_integration == True:
+                session_id = self.current_isso.ta1_controller.new_session()
+                self._add_history(
+                    "TA1 Alignment Target Session ID", {}, session_id
+                )
+                scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
+                self._add_history(
+                    "TA1 Alignment Target Data",
+                    {"Session ID": self.current_isso.ta1_controller.session_id,
+                    "Scenario ID": self.current_isso.scenario.id},
+                    scenario_alignment
+                )
 
             return self.scenario
         except:
@@ -415,6 +421,7 @@ class ITMScenarioSession:
             self.save_to_database = True
         if self.session_type == 'eval':
             self.save_to_database = True
+            self.ta1_integration = True
             max_scenarios = None
 
         yaml_paths = []
