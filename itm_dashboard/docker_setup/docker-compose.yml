@@ -1,8 +1,6 @@
 version: '3'
-
 networks:
   dashboard-net:
-
 services:
   dashboard-ui:
     container_name: dashboard-ui
@@ -30,7 +28,10 @@ services:
     networks:
       - dashboard-net
     environment:
-      NODE_OPTIONS: "--max-old-space-size=16384"
+      - NODE_OPTIONS="--max-old-space-size=16384"
+      - MONGO_DATABASE=dashboard
+      - MONGO_USER=simplemongousername
+      - MONGO_PASSWORD=simplemongopassword
   dashboard-mongo: 
     image: 'mongo'
     container_name: dashboard-mongo
