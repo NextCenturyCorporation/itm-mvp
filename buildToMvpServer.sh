@@ -10,7 +10,7 @@ buildContainer() {
     BUILD_PATH=$2
 
     echo "Building $BUILD_TAG with path $BUILD_PATH"
-    # docker build -t $BUILD_TAG $BUILD_PATH
+    docker build -t $BUILD_TAG $BUILD_PATH
     OLD_ID=$(ssh $MVP_SERVER "docker inspect --format {{.Id}} $BUILD_TAG 2> /dev/null || echo none")
     NEW_ID=$(docker inspect --format {{.Id}} $BUILD_TAG 2> /dev/null || echo none)
     
