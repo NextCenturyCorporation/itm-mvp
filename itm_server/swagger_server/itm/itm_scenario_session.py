@@ -435,11 +435,12 @@ class ITMScenarioSession:
 
         """
         self.session_type = 'soartech'
+        session_type = 'soartech'
         # Save to database based on adm_name. This is good enough for now but should be changed.
         if self.adm_name.endswith("_db_"):
             self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
-        if self.session_type in ['eval', 'soartech']:
+        if self.session_type in ['eval', 'soartech, 'adept']:
             self.save_to_database = True
             self.ta1_integration = True
             max_scenarios = None
