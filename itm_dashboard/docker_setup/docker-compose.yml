@@ -1,6 +1,8 @@
 version: '3'
+
 networks:
   dashboard-net:
+
 services:
   dashboard-ui:
     container_name: dashboard-ui
