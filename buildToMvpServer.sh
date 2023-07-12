@@ -2,7 +2,6 @@
 # Use https://nextcentury.atlassian.net/wiki/spaces/ITM/pages/2966978561/Setup+Local+SSH+credentials+correctly to setup ssh 
 MVP_SERVER=10.216.38.88
 
-CURRENT_DIR=$(pwd)
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 buildContainer() {
@@ -26,6 +25,3 @@ buildContainer() {
 buildContainer dashboard-ui $SCRIPT_DIR/itm_dashboard/dashboard-ui/
 buildContainer dashboard-graphql $SCRIPT_DIR/itm_dashboard/node-graphql/
 buildContainer itm-server $SCRIPT_DIR/itm_server/
-
-
-# ssh $MVP_SERVER docker run -d -p 8080:8080 --name itm-server itm-server:local
