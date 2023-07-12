@@ -415,7 +415,15 @@ class ITMScenarioSession:
         self.history = []
         self.probes_responded_to = []
 
-        # Save to database based on adm_name. This is good enough for now but should be changed.
+
+        """
+        Note For ITM Darpa Demo. Use the commented out code starting with
+        self.session_type = 'soartech' and then comment out this block.
+        Using the commented out block instead of this will serve up
+        only a soartech scene and integrate it with TA1 and the 
+        database
+        """
+        # Save to database based on adm_name.
         if self.adm_name.endswith("_db_"):
             self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
@@ -423,6 +431,18 @@ class ITMScenarioSession:
             self.save_to_database = True
             self.ta1_integration = True
             max_scenarios = None
+
+        """
+        self.session_type = 'soartech'
+        # Save to database based on adm_name. This is good enough for now but should be changed.
+        if self.adm_name.endswith("_db_"):
+            self.adm_name = self.adm_name.removesuffix("_db_")
+            self.save_to_database = True
+        if self.session_type in ['eval', 'soartech']:
+            self.save_to_database = True
+            self.ta1_integration = True
+            max_scenarios = None
+        """
 
         yaml_paths = []
         yaml_path = "swagger_server/itm/itm_scenario_configs/"
