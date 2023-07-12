@@ -281,6 +281,7 @@ class ITMScenarioSession:
 
         self.responded_to_last_probe = True
         self.probes_responded_to.append(body.probe_id)
+        body.justification = '' if body.justification == None else body.justification
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
