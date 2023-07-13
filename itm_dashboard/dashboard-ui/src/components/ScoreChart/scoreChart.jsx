@@ -23,21 +23,19 @@ const ScoreChart = () => {
     const mapData = (data) => {
         let newScores = {...alignmentScoreTotal};
         data.map((item) => {
-            if (item.history[0].response.hasOwnProperty("state")) {
-                const performer = item.history[0].parameters["adm_name"];
-                const prevPerformerData = newScores[performer] || { total: 0, count: 0 };
-                newScores[performer] = {
-                    total: prevPerformerData.total + item.history[0]["response"]["state"]["casualties"][0]["demographics"]["age"],
-                    count: prevPerformerData.count + 1,
-                };
-            }
+            const performer = item.history[0].parameters["ADM Name"];
+            const prevPerformerData = newScores[performer] || { total: 0, count: 0 };
+            newScores[performer] = {
+                total: prevPerformerData.total + item.history[item.history.length - 1].response.score,
+                count: prevPerformerData.count + 1,
+            };
         });
         setAlignmentScoreTotal(newScores);
     }
 
     const mappedArray = Object.entries(alignmentScoreTotal).map(([performer, { total, count }]) => ({
         performer,
-        "Average Alignment Score": count !== 0 ? (total / count/ 100).toFixed(2) : 0
+        "Average Alignment Score": count !== 0 ? (total / count).toFixed(4) : 0
     }));
 
     if (loading) return <div>Loading ...</div>
