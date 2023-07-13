@@ -95,7 +95,7 @@ const HomeTable = () => {
                                 </div>
                                 {selectedItem &&
                                     <div>
-                                        {/*<AlignmentScoreBox performer={selectedADMName}/>*/}
+                                        <AlignmentScoreBox performer={selectedADMName} data={selectedItem}/>
                                         <Paper className='paper-container'>
                                             <TableContainer style={{ maxHeight: '70vh' }}>
                                                 <Table stickyHeader aria-label="simple table">
@@ -108,7 +108,7 @@ const HomeTable = () => {
                                                     </TableHead>
                                                     <TableBody>
                                                         {selectedItem.history.map((item, index) => (
-                                                            <TableRow key={index}>
+                                                            <TableRow key={index} className={item.command.startsWith('TA1') ? 'ta1-row' : ''}>
                                                                 <TableCell className="tableCell main">{item.command}</TableCell>
                                                                 <TableCell className="tableCell main">{renderNestedItems(item.parameters)}</TableCell>
                                                                 <TableCell className="tableCell main">{renderNestedItems(item.response)}</TableCell>
