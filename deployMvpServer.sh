@@ -10,4 +10,5 @@ ssh $MVP_SERVER docker run -d -p 8080:8080 --name itm-server itm-server
 
 
 ssh $MVP_SERVER docker-compose -f /home/ec2-user/github/itm-mvp/itm_dashboard/docker_setup/docker-compose.yml down
+scp ./itm_dashboard/dashboard-ui/public/configs/prod/config.js $MVP_SERVER:/home/ec2-user/github/itm-mvp/itm_dashboard/dashboard-ui/public/configs/prod/config.js
 ssh $MVP_SERVER docker-compose -f /home/ec2-user/github/itm-mvp/itm_dashboard/docker_setup/docker-compose.yml up -d
