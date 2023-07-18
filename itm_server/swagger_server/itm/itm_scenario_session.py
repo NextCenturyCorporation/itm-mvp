@@ -22,6 +22,9 @@ from .itm_session_scenario_object import (
     ITMSessionScenarioObject
 )
 
+HOST = os.getenv('ITM_HOSTNAME') 
+if (HOST == None or HOST == ""):
+    HOST = "localhost"
 
 class ITMScenarioSession:
     """
@@ -60,7 +63,7 @@ class ITMScenarioSession:
         # This calls the dashboard's MongoDB
         self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
-                                'localhost', '27017', 'dashboard')
+                                '{HOST}', '27017', 'dashboard')
         self.history = []
 
 
