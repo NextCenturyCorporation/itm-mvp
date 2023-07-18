@@ -63,7 +63,7 @@ class ITMScenarioSession:
         # This calls the dashboard's MongoDB
         self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
-                                '{HOST}', '27017', 'dashboard')
+                                HOST, '27017', 'dashboard')
         self.history = []
 
 
