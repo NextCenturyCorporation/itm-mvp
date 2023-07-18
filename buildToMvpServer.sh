@@ -29,4 +29,4 @@ buildContainer dashboard-graphql $SCRIPT_DIR/itm_dashboard/node-graphql/
 # itm-server can't be built locally while on corenet because cyber sucks
 # but it does work on the machine so we will build there instead for now.
 scp ./buildOnMvpServer.sh $MVP_SERVER:/home/ec2-user/buildOnMvpServer.sh
-ssh $MVP_SERVER bash -c 'chmod +x buildOnMvpServer.sh; ./buildOnMvpServer.sh'
+ssh $MVP_SERVER 'chmod +x buildOnMvpServer.sh; ./buildOnMvpServer.sh'

@@ -8,11 +8,11 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 deployServer() {
     ssh $MVP_SERVER docker kill itm-server; 
     ssh $MVP_SERVER docker rm itm-server;
-    ssh $MVP_SERVER docker run -d -p 8080:8080 -e ITM_HOSTNAME=$MVP_SERVER --name itm-server itm-server;
+    ssh $MVP_SERVER docker run -d -p 8080:8080 -e "ITM_HOSTNAME=$MVP_SERVER" --name itm-server itm-server;
 }
 
 deployDashbaord() {
-    ssh $MVP_SERVER export ITM_HOSTNAME=$MVP_SERVER
+    ssh $MVP_SERVER export ITM_HOSTNAME="$MVP_SERVER"
     ssh $MVP_SERVER docker-compose -f /home/ec2-user/github/itm-mvp/itm_dashboard/docker_setup/docker-compose.yml down
     scp ./itm_dashboard/dashboard-ui/public/configs/prod/config.js $MVP_SERVER:/home/ec2-user/github/itm-mvp/itm_dashboard/dashboard-ui/public/configs/prod/config.js
     ssh $MVP_SERVER docker-compose -f /home/ec2-user/github/itm-mvp/itm_dashboard/docker_setup/docker-compose.yml up -d
