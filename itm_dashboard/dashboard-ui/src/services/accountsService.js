@@ -4,7 +4,7 @@ import GraphQLClient from '@accounts/graphql-client';
 import { ApolloClient } from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import {GRAPHQL_URL} from '../../public/configs/prod/config'
+import {GRAPHQL_URL} from './config'
 import gql from 'graphql-tag';
 
 console.log("uri", GRAPHQL_URL, "1002");
