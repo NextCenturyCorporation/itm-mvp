@@ -59,6 +59,8 @@ def main():
                         help='Run an evaluation session. '
                         'Supercedes --session and is the default if nothing is specified. '
                         'Implies --db.')
+    parser.add_argument('--host', type=str, 
+                        help='Specify the server host to run against')
 
     args = parser.parse_args()
     if args.session:
@@ -71,7 +73,15 @@ def main():
     scenario_count = int(args.session[1]) if len(args.session) > 1 else 0
 
     config = Configuration()
-    config.host = "http://127.0.0.1:8080"
+    if not args.host:
+        config.host = "http://localhost:8080"
+    else:
+        if ":" in args.host:
+            config.host = args.host
+        else:
+            config.host = f"{args.host}:8080"
+    print("Using host "+config.host)
+    
     api_client = ApiClient(configuration=config)
     itm = swagger_client.ItmTa2EvalApi(api_client=api_client)
 
