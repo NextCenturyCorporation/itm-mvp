@@ -9,7 +9,7 @@ buildContainer() {
     BUILD_PATH=$2
 
     echo "Building $BUILD_TAG with path $BUILD_PATH"
-    docker build -t $BUILD_TAG $BUILD_PATH
+    docker build --no-cache -t $BUILD_TAG $BUILD_PATH
     OLD_ID=$(ssh $MVP_SERVER "docker inspect --format {{.Id}} $BUILD_TAG 2> /dev/null || echo none")
     NEW_ID=$(docker inspect --format {{.Id}} $BUILD_TAG 2> /dev/null || echo none)
     
@@ -24,9 +24,9 @@ buildContainer() {
 
 buildContainer dashboard-ui $SCRIPT_DIR/itm_dashboard/dashboard-ui/
 buildContainer dashboard-graphql $SCRIPT_DIR/itm_dashboard/node-graphql/
-# buildContainer itm-server $SCRIPT_DIR/itm_server/
+buildContainer itm-server $SCRIPT_DIR/itm_server/
 
-# itm-server can't be built locally while on corenet because cyber sucks
+# The following is for when the itm-server can't be built locally while on corenet, isnt necessary now
 # but it does work on the machine so we will build there instead for now.
-scp ./buildOnMvpServer.sh $MVP_SERVER:/home/ec2-user/buildOnMvpServer.sh
-ssh $MVP_SERVER 'chmod +x buildOnMvpServer.sh; ./buildOnMvpServer.sh'
+# scp ./buildOnMvpServer.sh $MVP_SERVER:/home/ec2-user/buildOnMvpServer.sh
+# ssh $MVP_SERVER 'chmod +x buildOnMvpServer.sh; ./buildOnMvpServer.sh'
