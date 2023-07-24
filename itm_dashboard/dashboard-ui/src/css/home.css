@@ -1,0 +1,32 @@
+.home-container {
+    background-color: #F8F8F8;
+}
+
+/* .charts-container {
+    padding-bottom: 15px;
+} */
+
+.chart-home-container {
+    -moz-box-shadow: 0 0 3px #ccc;
+    -webkit-box-shadow: 0 0 3px #ccc;
+    box-shadow: 0 0 3px #ccc;
+    border-radius: 15px;
+    background-color: #ffffff;
+    margin: 10px 25px;
+    min-height:150px;
+}
+
+.chart-header {
+    display: flex;
+    padding: 5px 0 0 20px;
+    position: absolute;
+    width: 95%;
+}
+
+/* .chart-selector {
+    margin-left: 15px;
+} */
+
+.chart-header-label {
+    margin-top: 9px;
+}
