@@ -1,0 +1,16 @@
+#!/usr/bin/env ansible-playbook -i inventory
+
+---
+- name: Configure ubuntu instances with common requirements
+  hosts: amazon-linux
+  gather_facts: true
+  become: true
+  roles:
+    - git
+
+- name: Configure ubuntu instances with common requirements
+  hosts: amazon-linux
+  gather_facts: true
+  roles:
+    - role: github
+      url: git@github.com:NextCenturyCorporation/itm-mvp.git
