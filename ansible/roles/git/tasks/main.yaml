@@ -1,0 +1,36 @@
+- name: Install git
+  yum:
+    name: git
+    state: present
+
+- name: Creates ssh config file if non-existent
+  file:
+    path: /home/ec2-user/.ssh/config
+    state: touch
+
+- name: Check if git ssh config exists
+  shell: cat /home/ec2-user/.ssh/config | grep github.com | wc -l
+  register: check_git_ssh_config
+
+- set_fact:
+    git_ssh_not_configured: "{{ check_git_ssh_config.stdout=='0' }}"
+
+- name: Setup git ssh config
+  shell: |
+    echo "Host github.com" >> /home/ec2-user/.ssh/config
+    echo "  Hostname ssh.github.com">> /home/ec2-user/.ssh/config
+    echo "  Port 443">> /home/ec2-user/.ssh/config
+    echo "  IdentityFile ~/.ssh/itm-github">> /home/ec2-user/.ssh/config
+  when: git_ssh_not_configured
+
+- name: Creates ssh config file if non-existent
+  stat:
+    path: /home/ec2-user/.gitconfig
+  register: gitconfig_state
+
+- name: Setup git ssh config
+  shell: |
+    echo "[user]" >> /home/ec2-user/.gitconfig
+    echo "  name = Ryan Scott" >> /home/ec2-user/.gitconfig
+    echo "  email = ryan.scott@caci.com" >> /home/ec2-user/.gitconfig
+  when: not gitconfig_state.stat.exists
