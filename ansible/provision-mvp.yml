@@ -2,14 +2,14 @@
 
 ---
 - name: Configure ubuntu instances with common requirements
-  hosts: amazon-linux
+  hosts: mvp-server
   gather_facts: true
   become: true
   roles:
     - git
 
 - name: Configure ubuntu instances with common requirements
-  hosts: amazon-linux
+  hosts: mvp-server
   gather_facts: true
   roles:
     - role: github

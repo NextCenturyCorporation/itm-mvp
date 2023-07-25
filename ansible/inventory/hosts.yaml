@@ -5,3 +5,6 @@ all:
     amazon-linux:
       hosts:
         10.216.38.115
+    mvp-server:
+      hosts:
+        10.216.38.115
