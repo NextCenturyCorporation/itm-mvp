@@ -4,5 +4,6 @@
 - name: Configure ubuntu instances with common requirements
   hosts: amazon-linux
   gather_facts: true
+  become: true
   roles:
     - docker

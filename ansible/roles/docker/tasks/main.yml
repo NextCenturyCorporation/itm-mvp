@@ -3,11 +3,10 @@
 ---
 
 - name: Update and upgrade apt packages
-  become: true
   yum:
-    upgrade: yes
+    # upgrade: yes
     update_cache: yes
-    cache_valid_time: 86400
+    # cache_valid_time: 86400
 
 - name: copy service script
   copy:
