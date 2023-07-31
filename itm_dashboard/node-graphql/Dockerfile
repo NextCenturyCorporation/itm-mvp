@@ -19,7 +19,7 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-RUN mv account-configs-env.js account-configs.js
+RUN mv configs-env.js account-configs.js
 
 EXPOSE $PORT_ARG
 CMD [ "node", "server.accounts.js" ]
