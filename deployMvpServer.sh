@@ -1,7 +1,7 @@
 #! /bin/bash
 # Use https://nextcentury.atlassian.net/wiki/spaces/ITM/pages/2966978561/Setup+Local+SSH+credentials+correctly to setup ssh 
 # This is the current EC2 Private IP
-MVP_SERVER=10.216.38.88
+MVP_SERVER=10.216.38.115
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
