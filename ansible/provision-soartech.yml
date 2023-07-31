@@ -2,8 +2,10 @@
 
 ---
 - name: Configure ubuntu instances with common requirements
-  hosts: amazon-linux
+  hosts: soartech
   gather_facts: true
   become: true
   roles:
     - docker
+    - itm-docker-compose
+    - git

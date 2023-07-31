@@ -8,3 +8,9 @@ all:
     mvp-server:
       hosts:
         10.216.38.115
+    parallax:
+      hosts:
+        10.216.38.31
+    soartech:
+      hosts:
+        10.216.38.125

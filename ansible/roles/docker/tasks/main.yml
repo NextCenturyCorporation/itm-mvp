@@ -4,29 +4,38 @@
 
 - name: Update and upgrade apt packages
   yum:
-    # upgrade: yes
     update_cache: yes
-    # cache_valid_time: 86400
 
-- name: copy service script
-  copy:
-    src: service/docker.service
-    dest: /etc/systemd/system/docker.service
+# - name: copy service script
+#   copy:
+#     src: service/docker.service
+#     dest: /etc/systemd/system/docker.service
 
-- name: change permission
-  shell: "chmod +x /etc/systemd/system/docker.service"
+# - name: change permission
+#   shell: "chmod +x /etc/systemd/system/docker.service"
 
-- name: Reload Systemctl 
-  shell: "systemctl daemon-reload"
+# - name: Reload Systemctl 
+#   shell: "systemctl daemon-reload"
 
-- name: Add docker.service to autostart
-  shell: "systemctl enable docker.service"
+# - name: Add docker.service to autostart
+#   shell: "systemctl enable docker.service"
+- name: Ensure docker is installed and running
+  yum:
+    name: docker
+    state: absent
 
 - name: Ensure docker is installed and running
   yum:
     name: docker
+    state: present
 
-- name: Ensure docker for user ec2-user
+- name: Ensure docker group exists
+  become: true
+  group:
+    name: docker
+    state: present
+
+- name: Ensure  user ec2-user is in docker group
   become: true
   user:
     name: "ec2-user"
