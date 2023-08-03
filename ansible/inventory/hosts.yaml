@@ -14,3 +14,6 @@ all:
     soartech:
       hosts:
         10.216.38.125
+    adept:
+      hosts:
+        10.216.38.70
