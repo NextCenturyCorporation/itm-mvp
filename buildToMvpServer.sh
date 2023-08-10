@@ -1,6 +1,6 @@
 #! /bin/bash
 # Use https://nextcentury.atlassian.net/wiki/spaces/ITM/pages/2966978561/Setup+Local+SSH+credentials+correctly to setup ssh 
-MVP_SERVER=10.216.38.115
+MVP_SERVER=
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
