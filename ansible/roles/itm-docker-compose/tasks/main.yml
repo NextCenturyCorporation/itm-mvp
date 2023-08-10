@@ -1,0 +1,16 @@
+
+
+---
+
+- name: Update and upgrade apt packages
+  shell: aws s3 cp s3://itm-safe/installers/docker-compose /usr/bin/docker-compose
+
+- name: Set docker-compose permissions
+  file:
+    path: /usr/bin/docker-compose
+    owner: root
+    group: root
+    mode: '755'
+
+
+

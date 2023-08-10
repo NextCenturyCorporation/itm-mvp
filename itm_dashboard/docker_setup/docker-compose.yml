@@ -15,6 +15,8 @@ services:
       - dashboard-server
     networks:
       - dashboard-net
+    environment:
+      - ITM_HOSTNAME=${ITM_HOSTNAME}
   dashboard-server:
     container_name: dashboard-graphql
     image: dashboard-graphql
@@ -30,7 +32,11 @@ services:
     networks:
       - dashboard-net
     environment:
-      NODE_OPTIONS: "--max-old-space-size=16384"
+      - NODE_OPTIONS="--max-old-space-size=16384"
+      - MONGO_DATABASE=dashboard
+      - MONGO_USER=simplemongousername
+      - MONGO_PASSWORD=simplemongopassword
+      - ITM_HOSTNAME=${ITM_HOSTNAME}
   dashboard-mongo: 
     image: 'mongo'
     container_name: dashboard-mongo
@@ -40,6 +46,7 @@ services:
       - MONGO_INITDB_DATABASE=dashboard
       - MONGO_INITDB_ROOT_USERNAME=dashroot
       - MONGO_INITDB_ROOT_PASSWORD=dashr00tp@ssw0rd
+      - ITM_HOSTNAME=${ITM_HOSTNAME}
     volumes:
       - ./resources/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:

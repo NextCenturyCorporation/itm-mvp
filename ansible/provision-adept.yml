@@ -1,0 +1,18 @@
+#!/usr/bin/env ansible-playbook -i inventory
+
+---
+- name: Configure ubuntu instances with common requirements
+  hosts: mvp-server
+  gather_facts: true
+  become: true
+  roles:
+    - git
+    - docker
+    - itm-docker-compose
+
+# - name: Configure ubuntu instances with common requirements
+#   hosts: mvp-server
+#   gather_facts: true
+#   roles:
+#     - role: github
+#       url: git@github.com:NextCenturyCorporation/itm-mvp.git

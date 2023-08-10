@@ -1,0 +1,13 @@
+- name: Creates fold for github projects
+  file:
+    path: /home/ec2-user/github
+    state: directory
+
+- set_fact:
+    repo_name: "{{ url | basename | splitext | first}}"
+
+- name: pull repo
+  git:
+    repo: "{{url}}"
+    dest: '/home/ec2-user/github/{{repo_name}}'
+    update: yes

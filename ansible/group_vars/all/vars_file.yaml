@@ -1,0 +1,14 @@
+---
+aws_key_type: 'rsa'
+aws_key_pair: "itm-mvp-key"
+project: 'itm'
+ansible_ssh_private_key_file: '~/.ssh/{{ aws_key_pair }}.pem'
+
+s3_bucket_private_keys: "{{ project }}-safe"
+
+CROWDSTRIKE_CID:
+CROWDSTRIKE_TOKEN:
+CROWDSTRIKE_TAG:
+NESSUS_HOST:
+NESSUS_PORT:
+NESSUS_KEY:

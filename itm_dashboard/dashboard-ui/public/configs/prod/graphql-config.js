@@ -1,4 +1,7 @@
-const RESET_PASSWORD_URL = "https://localhost:3000/reset-password";
+var host = process.env.ITM_HOSTNAME; 
+if (!host || host === "") host = "localhost";
+
+const RESET_PASSWORD_URL = "https://" + host + ":3000/reset-password";
 const GRAPHQL_PORT = 9100;
 const MONGO_DB = 'dashboard';
 

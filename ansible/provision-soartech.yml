@@ -1,0 +1,11 @@
+#!/usr/bin/env ansible-playbook -i inventory
+
+---
+- name: Configure ubuntu instances with common requirements
+  hosts: soartech
+  gather_facts: true
+  become: true
+  roles:
+    - docker
+    - itm-docker-compose
+    - git

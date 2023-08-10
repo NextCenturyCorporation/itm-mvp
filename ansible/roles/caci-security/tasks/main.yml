@@ -1,0 +1,32 @@
+---
+
+- name: Creates CaciCyberSecurity directory
+  file:
+    path: /tmp/CaciCyberSecurity/
+    state: directory
+
+- name: Unzip security folder
+  unarchive:
+    src: files/UserDataScripts.zip
+    dest: /tmp/CaciCyberSecurity/
+    mode: '775'
+
+- name: Test for ssm agent
+  shell: "yum info amazon-ssm-agent | grep 'Error' | wc -l"
+  register: ssm_agent_status
+
+- name: Test for ssm agent
+  shell: "yum info amazon-ssm-agent | grep 'Error' | wc -l"
+  register: ssm_agent_status
+
+- set_fact:
+    ssm_agent_installed: "{{ ssm_agent_status.stdout=='0' }}"
+
+- name: Install ssm_agent
+  shell: "echo install ssm-agent"
+  when: "not ssm_agent_installed"
+
+- name: Install security tools
+  shell: "sudo /tmp/CaciCyberSecurity/linux-all-v.10.0.bash"
+
+...
