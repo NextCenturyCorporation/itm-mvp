@@ -154,7 +154,11 @@ const typeDefs = gql`
     getUsers: JSON
     getHistory(id: ID): JSON
     getAllHistory(id: ID): [JSON]
-    getScenario(id: ID): Scenario
+    getAllHistoryByID(historyId: ID): JSON
+    getScenario(scenarioId: ID): Scenario
+    getScenarioNames: [JSON]
+    getPerformerADMsForScenario(scenarioID: ID): JSON
+    getTestByADMandScenario(scenarioID: ID, admName: ID): JSON
     getAllScenarios(id: ID): [Scenario]
     getScenarioState(id: ID): State
     getAllScenarioStates: [State]
@@ -185,8 +189,21 @@ const resolvers = {
       getAllHistory: async (obj, args, context, infow) => {
         return await dashboardDB.db.collection('test').find().toArray().then(result => { return result; });
       },
+      getAllHistoryByID: async (obj, args, context, infow) => {
+        return await dashboardDB.db.collection('test').find({"history.response.id": args.historyId}).toArray().then(result => { return result; });
+      },
       getScenario: async (obj, args, context, infow) => {
-        return await dashboardDB.db.collection('scenarios').findOne(args).then(result => { return result; });
+        return await dashboardDB.db.collection('scenarios').findOne({"id" :args["scenarioId"]}).then(result => { return result; });
+      },
+      getScenarioNames: async (obj, args, context, infow) => {
+        return await dashboardDB.db.collection('scenarios').aggregate([{$group: {_id: {"id": '$id', "name": '$name'}}}])
+          .toArray().then(result => {return result});
+      },
+      getPerformerADMsForScenario: async (obj, args, context, infow) => {
+        return await dashboardDB.db.collection('test').distinct("history.parameters.ADM Name", {"history.response.id": args["scenarioID"]}).then(result => {return result});
+      },
+      getTestByADMandScenario: async (obj, args, context, infow) => {
+        return await dashboardDB.db.collection('test').findOne({"history.parameters.ADM Name": args["admName"], "history.response.id": args["scenarioID"]}).then(result => {return result});
       },
       getAllScenarios: async (obj, args, context, infow) => {
           return await dashboardDB.db.collection('scenarios').find().toArray().then(result => { return result; });

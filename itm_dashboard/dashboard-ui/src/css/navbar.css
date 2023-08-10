@@ -1,0 +1,30 @@
+.itm-app .navbar {
+    background-color: rgba(89, 38, 16, 1) !important;
+    background-size: cover;
+    padding: 0px 10px;
+}
+
+.itm-app .itm-navbar .nav-link, .itm-app .itm-navbar .nav-link-home {
+    color: #ffffff !important;
+    text-decoration: none;
+    margin-left: 8px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.nav-brand-itm {
+    width: 45px;
+    height: 45px;
+}
+
+.navbar-brand {
+    font-family: helvetica, sans-serif;
+    font-size: 20px;
+    color:  #fff !important;
+    margin-left: 20px !important;
+    margin-right: 50px !important;
+}
+
+.itm-app .itm-navbar .nav-login-icon {
+    filter: invert(1);
+}

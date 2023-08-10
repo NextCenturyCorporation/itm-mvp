@@ -1,7 +1,7 @@
 import React from 'react';
 import queryString from 'query-string';
+import ResultsPage from '../Results/results';
 import HomePage from '../Home/home';
-import ScoreChart from '../ScoreChart/scoreChart';
 import ScenarioPage from '../ScenarioPage/scenarioPage';
 import {Router, Switch, Route, Link} from 'react-router-dom';
 import LoginApp from '../Account/login';
@@ -22,7 +22,7 @@ import 'material-design-icons/iconfont/material-icons.css';
 import 'react-dropdown/style.css';
 import 'react-dual-listbox/lib/react-dual-listbox.css';
 
-import brandImage from '../../img/itm-cross.png';
+import brandImage from '../../img/itm-logo.png';
 import userImage from '../../img/account_icon.png';
 
 const history = createBrowserHistory();
@@ -31,12 +31,11 @@ function Home({newState}) {
     if(newState.currentUser == null) {
         history.push('/login');
     }
-
     return <HomePage/>;
 }
 
-function Scores() {
-    return <ScoreChart/>;
+function Results() {
+    return <ResultsPage/>;
 }
 
 function Scenarios() {
@@ -122,14 +121,14 @@ export class App extends React.Component {
                     {currentUser && 
                         <nav className="navbar navbar-expand-lg navbar-light bg-light itm-navbar">
                             <a className="navbar-brand" href="/">
-                                <img className="nav-brand-itm" src={brandImage} alt=""/>
+                                <img className="nav-brand-itm" src={brandImage} alt=""/>ITM
                             </a>
                             <ul className="navbar-nav custom-nav">
                                 <li className="nav-item">
                                     <Link className="nav-link-home" to="/">Home</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link-home" to="/scores">Scores</Link>
+                                    <Link className="nav-link-home" to="/results">Results</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link className="nav-link-home" to="/scenarios">Scenarios</Link>
@@ -167,8 +166,8 @@ export class App extends React.Component {
                         <Route exact path="/">
                             <Home newState={this.state}/>
                         </Route>
-                        <Route exact path="/scores">
-                            <Scores/>
+                        <Route exact path="/results">
+                            <Results/>
                         </Route>
                         <Route exact path="/scenarios">
                             <Scenarios/>
@@ -184,6 +183,11 @@ export class App extends React.Component {
                             <Admin newState={this.state} userLoginHandler={this.userLoginHandler}/>
                         </Route>
                     </Switch>
+
+                    <div className="itm-footer">
+                        <div className="footer-text">This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA). The views, opinions and/or findings expressed are those of the author and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.</div>
+                        <div className="footer-link"><a href="https://www.darpa.mil/program/in-the-moment" target="_blank" rel="noopener noreferrer">DARPA's In the Moment (ITM) Program Page</a></div>
+                    </div>
                 </div>
             </Router>
         );
