@@ -18,7 +18,7 @@ buildContainer() {
         echo "    $BUILD_TAG is unchanged"
     else
         echo "    $BUILD_TAG has new image: pushing to $MVP_SERVER"
-        docker save $BUILD_TAG | gzip | pv | ssh $MVP_SERVER docker load  
+        docker save $BUILD_TAG | gzip | ssh $MVP_SERVER docker load  
     fi
 }
 

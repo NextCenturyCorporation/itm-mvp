@@ -6,7 +6,7 @@ from swagger_server.models import ProbeResponse
 
 ADEPT_PORT = '8081'
 SOARTECH_PORT = '8084'
-HOST = os.getenv('ITM_HOSTNAME') 
+HOST = os.getenv('ITM_HOSTNAME')
 if (HOST == None or HOST == ""):
     HOST = "localhost"
 
